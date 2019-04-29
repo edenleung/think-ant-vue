@@ -12,7 +12,9 @@ ThinkPHP 5.1 与 Ant Design Pro Vue 基础权限系统
 * 普通管理员 `test, 1234`
 
 ### 前端部署
-刷新404问题
+#### 刷新404问题
 ```nginx
 try_files $uri $uri/ /index.html last;
 ```
+#### 后端API配置
+[修改此处](https://github.com/xiaodit/think-ant-vue/blob/master/src/utils/request.js#L14)
