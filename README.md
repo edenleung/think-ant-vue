@@ -12,6 +12,10 @@ ThinkPHP 5.1 与 Ant Design Pro Vue 基础权限系统
 * 普通管理员 `test, 1234`
 
 ### 前端部署
+#### 安装
+```
+npm install
+```
 #### 预览
 ```
 npm run serve
