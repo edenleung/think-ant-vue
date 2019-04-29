@@ -70,7 +70,7 @@
 
 		<a-card>
 			<a-row class="tools">
-				<a-button v-action:add @click="openModal">添加</a-button>
+				<a-button v-action:add @click="openModal" type="primary">添加</a-button>
 			</a-row>
 
 			<a-table :columns="columns"

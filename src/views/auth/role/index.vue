@@ -56,7 +56,7 @@
 
 		<a-card>
 			<a-row class="tools">
-				<a-button @click="openRole" v-action:add>添加</a-button>
+				<a-button v-action:add @click="openRole" type="primary">添加</a-button>
 			</a-row>
 
 			<a-table :columns="columns"
