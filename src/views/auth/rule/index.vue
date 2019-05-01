@@ -150,8 +150,7 @@ export default {
   filters: {
     html: (value) => {
       var arrEntities = {'nbsp' : '  '};
-       return value.replace(/&(nbsp);/ig, function(all, t){return arrEntities[t]})
-      console.log(value)
+      return value.replace(/&(nbsp);/ig, function(all, t){return arrEntities[t]})
     }
   },
   mounted() {
@@ -169,8 +168,9 @@ export default {
     fetch() {
       this.loading = true
       this.fetchRule().then(res => {
-        this.loading = false
         this.data = res
+      }).finally(() => {
+        this.loading = false
       })
     },
     openModal() {

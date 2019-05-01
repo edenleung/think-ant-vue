@@ -70,7 +70,7 @@
 
 		<a-card>
 			<a-row class="tools">
-				<a-button v-action:add @click="openModal" type="primary">添加</a-button>
+				<a-button v-action:add @click="openModal" type="primary" ghost>添加</a-button>
 			</a-row>
 
 			<a-table :columns="columns"
@@ -161,6 +161,7 @@ export default {
 			this.loading = true
 			this.fetchAccount().then(res => {
 				this.data = res
+			}).finally(() => {
 				this.loading = false
 			})
 		},

@@ -56,7 +56,7 @@
 
 		<a-card>
 			<a-row class="tools">
-				<a-button v-action:add @click="openRole" type="primary">添加</a-button>
+				<a-button v-action:add @click="openRole" type="primary" ghost>添加</a-button>
 			</a-row>
 
 			<a-table :columns="columns"
@@ -127,8 +127,6 @@ export default {
 		}
 	},
 	mounted() {
-		const rule = '96'
-		console.log(rule.split(','))
 		this.fetch()
 	},
 	methods: {
@@ -140,10 +138,11 @@ export default {
 		fetch() {
 			this.loading = true
 			this.fetchRole().then(res => {
-				this.loading = false
 				this.data = res.roles
 				this.rules = res.rules
-			})
+			}).finally(() => {
+        this.loading = false
+      })
 		},
 		openRole() {
 			this.visible = true
