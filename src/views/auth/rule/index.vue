@@ -90,8 +90,8 @@
             >
               <template slot="content">
                 <div style="margin-bottom:15px">唯一识别码: {{ action.role }}</div>
-                <a-button size='small' type='primary' ghost @click="openActionModal(action)" style="margin-right:10px">编辑</a-button>
-                <a-button size='small' type='danger' ghost @click="showDeleteConfirm(action.id)">删除</a-button>
+                <a-button size='small' v-action:update type='primary' ghost @click="openActionModal(action)" style="margin-right:10px">编辑</a-button>
+                <a-button size='small' v-action:delete type='danger' ghost @click="showDeleteConfirm(action.id)">删除</a-button>
               </template>
               <a-tag>{{ action.title }}</a-tag>
             </a-popover>
