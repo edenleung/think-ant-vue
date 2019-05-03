@@ -1,7 +1,7 @@
 ## ThinkPHP Ant Design Pro Vue
 ThinkPHP 5.1 与 Ant Design Pro Vue 基础权限系统  
 
-后端: https://github.com/xiaodit/think-ant-admin  
+后端: https://github.com/xiaodit/think-admin  
 
 预览地址: https://ant.xiaodim.com
 
