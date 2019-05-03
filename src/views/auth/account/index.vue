@@ -10,6 +10,7 @@
 			<a-form :form="form">
 				<a-form-item label="登录账号">
 					<a-input
+						:readonly="this.selected !== 0"
 						placeholder="请入登录账号"
 						v-decorator="['admin_user', {
 							rules: [{ required: true, message: '请输入登录账号!' }]
@@ -26,9 +27,9 @@
 					/>
 				</a-form-item>
 
-				<a-form-item label="用户名称">
+				<a-form-item label="用户昵称">
 					<a-input
-						placeholder="请入用户名称"
+						placeholder="请入用户昵称"
 						v-decorator="['admin_nickname', {
 							rules: [{ required: true, message: '请输入用户名称!' }]
 						}]"
@@ -189,7 +190,6 @@ export default {
             this.confirmLoading = true
             const action = this.selected === 0 ? 'addAccount' : 'updateAccount'
 						values.selectId = this.selected
-						values.rules = this.checkedList
             this.$store.dispatch(action, values).then(res => {
               this.$notification['success']({
                 message: '成功通知',
