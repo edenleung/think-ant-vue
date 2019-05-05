@@ -13,4 +13,4 @@ script:
   
 after_script:
   - chmod 600 /home/travis/build/xiaodit/think-ant-vue/deploy/file
-  - rsync -r /home/travis/build/xiaodit/think-ant-vue/public/* -e "ssh -o StrictHostKeyChecking=no -p ${XDPORT} -i /home/travis/build/xiaodit/think-ant-vue/deploy/file" ${XDUSER}@${XDHOST}:~/lnmp/workspace/ant/vue
+  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -o StrictHostKeyChecking=no -p ${XDPORT} -i /home/travis/build/xiaodit/think-ant-vue/deploy/file" ${XDUSER}@${XDHOST}:~/lnmp/workspace/ant/vue
