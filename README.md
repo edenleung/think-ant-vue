@@ -1,4 +1,7 @@
 ## ThinkPHP Ant Design Pro Vue
+
+[![Build Status](https://travis-ci.org/xiaodit/think-ant-vue.svg?branch=master)](https://travis-ci.org/xiaodit/think-ant-vue)
+
 ThinkPHP 5.1 与 Ant Design Pro Vue 基础权限系统  
 
 后端: https://github.com/xiaodit/think-admin  
