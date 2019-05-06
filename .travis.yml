@@ -10,7 +10,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_908217f1fe77_key -iv $encrypted_908217f1fe77_iv -in privatekey.enc -out /home/travis/build/xiaodit/think-ant-vue/privatekey -d
   - chmod 600 /home/travis/build/xiaodit/think-ant-vue/privatekey
   - eval `ssh-agent -s`
-  - ssh-add -K /home/travis/build/xiaodit/think-ant-vue/privatekey
+  - ssh-add -k /home/travis/build/xiaodit/think-ant-vue/privatekey
   
 script:
   - yarn run build
