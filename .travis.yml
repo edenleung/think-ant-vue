@@ -13,4 +13,4 @@ script:
   - yarn run build
   
 after_script:
-  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -o StrictHostKeyChecking=no -i ./privatekey -p ${XDPORT}" ${XDUSER}@${XDHOST}:${XDPATH}
+  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -o StrictHostKeyChecking=no -i /home/travis/build/xiaodit/think-ant-vue/privatekey -p ${XDPORT}" ${XDUSER}@${XDHOST}:${XDPATH}
