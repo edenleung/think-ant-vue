@@ -7,8 +7,8 @@ cache: yarn
 
 before_install:
   - yarn
-  - openssl aes-256-cbc -K $encrypted_908217f1fe77_key -iv $encrypted_908217f1fe77_iv -in privatekey.enc -out ~/.ssh/id_rsa -d
-  - chmod 600 ~/ssh/id_rsa
+  - openssl aes-256-cbc -K $encrypted_908217f1fe77_key -iv $encrypted_908217f1fe77_iv -in privatekey.enc -out /home/travis/ssh/id_rsa -d
+  - chmod 600 /home/travis/ssh/id_rsa
   - ssh-agent bash
   - ssh-add
   
