@@ -8,6 +8,7 @@ cache: yarn
 before_install:
   - yarn
   - openssl aes-256-cbc -K $encrypted_908217f1fe77_key -iv $encrypted_908217f1fe77_iv -in deployer.enc -out deployer -d
+  - ssh-add -K deployer
   
 script:
   - yarn run build
