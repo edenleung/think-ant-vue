@@ -9,6 +9,8 @@ before_install:
   - yarn
   - openssl aes-256-cbc -K $encrypted_908217f1fe77_key -iv $encrypted_908217f1fe77_iv -in privatekey.enc -out privatekey -d
   - chmod 600 ./privatekey
+  - eval `ssh-agent` 
+  - ssh-add
   
 script:
   - yarn run build
