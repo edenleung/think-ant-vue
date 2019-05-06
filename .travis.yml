@@ -7,10 +7,10 @@ cache: yarn
 
 before_install:
   - yarn
-  - chmod 600 ./privatekey
   
 script:
   - yarn run build
   
 after_script:
-  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -o StrictHostKeyChecking=no -i /home/travis/build/xiaodit/think-ant-vue/privatekey -p ${XDPORT}" ${XDUSER}@${XDHOST}:${XDPATH}
+  - chmod 600 ./key
+  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -o StrictHostKeyChecking=no -i ./key -p ${XDPORT}" ${XDUSER}@${XDHOST}:${XDPATH}
