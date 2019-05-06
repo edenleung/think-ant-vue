@@ -7,13 +7,11 @@ cache: yarn
 
 before_install:
   - yarn
-  - openssl aes-256-cbc -K $encrypted_908217f1fe77_key -iv $encrypted_908217f1fe77_iv -in deployer.enc -out ~/.ssh/deployer -d
-  - chmod 600 ~/.ssh/deployer
-  - eval $(ssh-agent)
-  - ssh-add ~/.ssh/deployer
+  - openssl aes-256-cbc -K $encrypted_908217f1fe77_key -iv $encrypted_908217f1fe77_iv -in deployer.enc -out ~/.ssh/id_rsa -d
+  - chmod 600 ~/.ssh/id_rsa
   
 script:
   - yarn run build
   
 after_script:
-  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -o StrictHostKeyChecking=no -p ${XDPORT} -i ~/.ssh/deployer" ${XDUSER}@${XDHOST}:~/lnmp/workspace/ant/vue
+  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -p ${XDPORT}" ${XDUSER}@${XDHOST}:~/lnmp/workspace/ant/vue
