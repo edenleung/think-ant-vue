@@ -64,6 +64,7 @@
         :dataSource="data"
         :pagination="pagination"
         :loading="loading"
+        @change="handleTableChange"
       >
 				<template slot="status" slot-scope="row">
           <template v-if="row.status === 1">正常</template>
@@ -135,13 +136,22 @@ export default {
 			'fetchRole',
 			'deleteRole'
 		]),
-		fetch() {
+		fetch(params = {}) {
 			this.loading = true
-			this.fetchRole().then(res => {
-				this.data = res.roles
-				this.rules = res.rules
+			this.fetchRole(params).then(res => {
+				const { data, pagination } = res.roles
+				this.data = data
+				this.pagination = pagination
+
+				this.rules = res.rules.data
 			}).finally(() => {
         this.loading = false
+      })
+		},
+		handleTableChange(pagination, filters, sorter) {
+			this.fetch({
+        page: pagination.current,
+        pageSize: pagination.pageSize
       })
 		},
 		openRole() {

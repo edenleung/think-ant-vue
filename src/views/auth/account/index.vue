@@ -78,7 +78,9 @@
         :rowKey="item => item.admin_id"
         :dataSource="data"
         :pagination="pagination"
-        :loading="loading">
+        :loading="loading"
+        @change="handleTableChange"
+				>
 
 				<template slot="status" slot-scope="row">
           <template v-if="row.admin_status === 1">正常</template>
@@ -144,28 +146,30 @@ export default {
 	},
 	mounted() {
 		this.fetch()
-		this.fetchRule().then(res => {
-			this.rules = res
-		})
-		this.fetchRole().then(res => {
-			this.roles = res.roles
-		})
 	},
 	methods: {
 		...mapActions([
 			'fetchAccount',
-			'fetchRule',
-			'fetchRole',
 			'deleteAccount'
 		]),
-		fetch() {
+		fetch(params = {}) {
 			this.loading = true
-			this.fetchAccount().then(res => {
-				this.data = res
+			this.fetchAccount(params).then(res => {
+				const { users, roles, rules } = res
+				this.data = users.data
+				this.pagination = users.pagination
+				this.rules = rules.data
+				this.roles = roles.data
 			}).finally(() => {
 				this.loading = false
 			})
 		},
+		handleTableChange(pagination, filters, sorter) {
+      this.fetch({
+        page: pagination.current,
+        pageSize: pagination.pageSize
+      })
+    },
 		openModal() {
 			this.visible = true
 		},

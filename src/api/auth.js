@@ -1,9 +1,10 @@
 import { axios } from '@/utils/request'
 
-export function fetchRule() {
+export function fetchRule(params) {
   return axios({
     url: '/auth/rule',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -37,10 +38,11 @@ export function deleteRule(params) {
   })
 }
 
-export function fetchRole() {
+export function fetchRole(params) {
   return axios({
     url: '/auth/role',
     method: 'get',
+    params
   })
 }
 
@@ -67,10 +69,11 @@ export function deleteRole(params) {
   })
 }
 
-export function fetchAccount() {
+export function fetchAccount(params) {
   return axios({
     url: '/auth/user',
     method: 'get',
+    params
   })
 }
 

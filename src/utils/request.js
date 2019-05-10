@@ -20,7 +20,12 @@ const err = (error) => {
     const data = error.response.data
     const token = Vue.ls.get(ACCESS_TOKEN)
 
-    if ((error.response.status === 401 || error.response.status === 403) && !(data.result && data.result.isLogin)) {
+    if (error.response.status === 500 ) {
+      notification.error({
+        message: `系统异常: 状态码:${error.response.status}`,
+        description: error.response.statusText
+      })
+    } else if ((error.response.status === 401 || error.response.status === 403) && !(data.result && data.result.isLogin)) {
       notification.error({
         message: 'Unauthorized',
         description: data.message

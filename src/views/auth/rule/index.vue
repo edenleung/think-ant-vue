@@ -80,6 +80,7 @@
         :dataSource="data"
         :pagination="pagination"
         :loading="loading"
+        @change="handleTableChange"
       >
         <template slot="actions" slot-scope="row">
           <template v-for="(action, index) in row.action">
@@ -165,12 +166,20 @@ export default {
       'fetchTree',
       'deleteRule'
     ]),
-    fetch() {
+    fetch(params = {}) {
       this.loading = true
-      this.fetchRule().then(res => {
-        this.data = res
+      this.fetchRule(params).then(res => {
+        const { data, pagination } = res
+        this.data = data
+        this.pagination = pagination
       }).finally(() => {
         this.loading = false
+      })
+    },
+    handleTableChange(pagination, filters, sorter) {
+      this.fetch({
+        page: pagination.current,
+        pageSize: pagination.pageSize
       })
     },
     openModal() {

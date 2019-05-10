@@ -13,9 +13,9 @@ const auth = {
 
   actions: {
     // 规则列表
-    fetchRule() {
+    fetchRule(state, params) {
       return new Promise((resolve, reject) => {
-        fetchRule().then(response => {
+        fetchRule(params).then(response => {
           const result = response.data
           resolve(result)
         }).catch(error => {
@@ -73,9 +73,9 @@ const auth = {
     },
 
     // 获取角色
-    fetchRole(state) {
+    fetchRole(state, params) {
       return new Promise((resolve, reject) => {
-        fetchRole().then(response => {
+        fetchRole(params).then(response => {
           const result = response.data
           resolve(result)
         }).catch(error => {
@@ -120,9 +120,9 @@ const auth = {
     },
 
     // 获取管理员
-    fetchAccount(state) {
+    fetchAccount(state, params) {
       return new Promise((resolve, reject) => {
-        fetchAccount().then(response => {
+        fetchAccount(params).then(response => {
           const result = response.data
           resolve(result)
         }).catch(error => {
