@@ -187,7 +187,9 @@ export default {
 		},
 		openInfoModal(row) {
 			this.visible = true
-			this.checkedList = row.rules.split(',').map(item => parseInt(item))
+			if (row.rules) {
+				this.checkedList = row.rules.split(',').map(item => parseInt(item))
+			}
 			this.selected = row.id
       this.$nextTick(() => {
         this.form.setFieldsValue(

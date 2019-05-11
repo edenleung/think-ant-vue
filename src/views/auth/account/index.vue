@@ -39,7 +39,7 @@
 				<a-form-item label="选择角色">
 					<a-select
 						mode="tags"
-            v-decorator="['groups', {
+            v-decorator="['roles', {
               rules: [{ required: true, message: '请选择所属组别!' }]
             }]"
             placeholder="请选择角色"
@@ -182,7 +182,7 @@ export default {
             admin_user: row.admin_user,
             admin_nickname: row.admin_nickname,
 						admin_status: row.admin_status,
-						groups: row.groups.split(',')
+						roles: row.roles.map(item => { return item.toString() })
           }
         )
       })
