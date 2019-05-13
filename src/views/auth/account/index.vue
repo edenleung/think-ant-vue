@@ -12,7 +12,7 @@
 					<a-input
 						:readonly="this.selected !== 0"
 						placeholder="请入登录账号"
-						v-decorator="['admin_user', {
+						v-decorator="['user', {
 							rules: [{ required: true, message: '请输入登录账号!' }]
 						}]"
 					/>
@@ -21,7 +21,7 @@
 				<a-form-item label="登录密码">
 					<a-input
 						:placeholder="this.selected === 0 ? '请入登录密码' : '如需修改密码请输入新密码'"
-						v-decorator="['admin_password', {
+						v-decorator="['password', {
 							rules: [{ required: this.selected === 0, message: '请输入登录密码!' }]
 						}]"
 					/>
@@ -30,7 +30,7 @@
 				<a-form-item label="用户昵称">
 					<a-input
 						placeholder="请入用户昵称"
-						v-decorator="['admin_nickname', {
+						v-decorator="['nickname', {
 							rules: [{ required: true, message: '请输入用户名称!' }]
 						}]"
 					/>
@@ -52,7 +52,7 @@
 
 				<a-form-item label="状态">
 					<a-select
-						v-decorator="['admin_status', {
+						v-decorator="['status', {
 							rules: [{ required: true, message: '请选择状态!' }]
 						}]"
 						placeholder="请选择"
@@ -75,7 +75,7 @@
 			</a-row>
 
 			<a-table :columns="columns"
-        :rowKey="item => item.admin_id"
+        :rowKey="item => item.id"
         :dataSource="data"
         :pagination="pagination"
         :loading="loading"
@@ -83,7 +83,7 @@
 				>
 
 				<template slot="status" slot-scope="row">
-          <template v-if="row.admin_status === 1">正常</template>
+          <template v-if="row.status === 1">正常</template>
           <template v-else>禁用</template>
         </template>
 
@@ -106,7 +106,7 @@
 
 				<template slot="tools" slot-scope="row">
           <a-button v-action:update type="primary" ghost @click="openInfoModal(row)" style="margin-right: 15px">编辑</a-button>
-          <a-button v-action:delete type="danger" ghost @click="showDeleteConfirm(row.admin_id)">删除</a-button>
+          <a-button v-action:delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
         </template>
 			</a-table>
 		</a-card>
@@ -117,10 +117,10 @@ import { mapActions } from 'vuex'
 
 const columns = [{
   title: '账号名',
-  dataIndex: 'admin_nickname',
+  dataIndex: 'nickname',
 }, {
   title: '登录账号',
-  dataIndex: 'admin_user',
+  dataIndex: 'user',
 }, {
   title: '状态',
   scopedSlots: { customRender: 'status' }
@@ -175,13 +175,13 @@ export default {
 		},
 		openInfoModal(row) {
 			this.visible = true
-			this.selected = row.admin_id
+			this.selected = row.id
       this.$nextTick(() => {
         this.form.setFieldsValue(
           {
-            admin_user: row.admin_user,
-            admin_nickname: row.admin_nickname,
-						admin_status: row.admin_status,
+            user: row.user,
+            nickname: row.nickname,
+						status: row.status,
 						roles: row.roles.map(item => { return item.toString() })
           }
         )
