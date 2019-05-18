@@ -46,7 +46,7 @@
 					<a-row v-for="(item, index) in rules" :key="index">
 						<a-col :span="4">{{ item.title }}</a-col>
 						<a-col :span="20">
-							<a-checkbox-group :options="item.action" v-model="checkedList"/>
+							<a-checkbox-group :options="item.actions" v-model="checkedList"/>
 						</a-col>
 					</a-row>
 				</a-form-item>
@@ -77,8 +77,8 @@
 							<a-row>
 								<a-col span="4">{{ item.title }}：</a-col>
 								<a-col span="20">
-									<template v-for="(action, i) in item.action">
-										<a-tag :key="i" v-if="row.rules.split(',').indexOf(action.id.toString()) !== -1">
+									<template v-for="(action, i) in item.actions">
+										<a-tag :key="i" v-if="row.permissions.indexOf(action.id) !== -1">
 											{{ action.title }}
 										</a-tag>
 									</template>
@@ -187,8 +187,8 @@ export default {
 		},
 		openInfoModal(row) {
 			this.visible = true
-			if (row.rules) {
-				this.checkedList = row.rules.split(',').map(item => parseInt(item))
+			if (row.permissions) {
+				this.checkedList = row.permissions
 			}
 			this.selected = row.id
       this.$nextTick(() => {

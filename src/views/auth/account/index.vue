@@ -12,7 +12,7 @@
 					<a-input
 						:readonly="this.selected !== 0"
 						placeholder="请入登录账号"
-						v-decorator="['user', {
+						v-decorator="['name', {
 							rules: [{ required: true, message: '请输入登录账号!' }]
 						}]"
 					/>
@@ -93,8 +93,8 @@
 							<a-row>
 								<a-col span="4">{{ item.title }}：</a-col>
 								<a-col span="20">
-									<template v-for="(action, i) in item.action">
-										<a-tag :key="i" v-if="row.rules.indexOf(action.id.toString()) !== -1">
+									<template v-for="(action, i) in item.actions">
+										<a-tag :key="i" v-if="row.rules.indexOf(action.id) !== -1">
 											{{ action.title }}
 										</a-tag>
 									</template>
@@ -120,7 +120,7 @@ const columns = [{
   dataIndex: 'nickname',
 }, {
   title: '登录账号',
-  dataIndex: 'user',
+  dataIndex: 'name',
 }, {
   title: '状态',
   scopedSlots: { customRender: 'status' }
@@ -179,10 +179,10 @@ export default {
       this.$nextTick(() => {
         this.form.setFieldsValue(
           {
-            user: row.user,
+            name: row.name,
             nickname: row.nickname,
 						status: row.status,
-						roles: row.roles.map(item => { return item.toString() })
+						roles: row.roles.map(item => { return item.id.toString() })
           }
         )
       })

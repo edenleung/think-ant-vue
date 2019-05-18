@@ -11,8 +11,17 @@
         <a-form-item label="唯一识别码">
           <a-input
             placeholder="前端路由菜单识别码"
-            v-decorator="['role', {
+            v-decorator="['action', {
               rules: [{ required: true, message: '请输入唯一识别码!' }]
+            }]"
+          />
+        </a-form-item>
+
+        <a-form-item label="权限规则">
+          <a-input
+            placeholder="权限规则 用作权限验证"
+            v-decorator="['name', {
+              rules: [{ required: true, message: '请输入权限规则!' }]
             }]"
           />
         </a-form-item>
@@ -22,15 +31,6 @@
             placeholder="权限名称"
             v-decorator="['title', {
               rules: [{ required: true, message: '请输入权限名称!' }]
-            }]"
-          />
-        </a-form-item>
-
-        <a-form-item label="权限规则">
-          <a-input 
-            placeholder="模块/控制器/方法"
-            v-decorator="['name', {
-              rules: [{ required: true, message: '请输入权限规则!' }]
             }]"
           />
         </a-form-item>
@@ -83,14 +83,14 @@
         @change="handleTableChange"
       >
         <template slot="actions" slot-scope="row">
-          <template v-for="(action, index) in row.action">
+          <template v-for="(action, index) in row.actions">
             <a-popover
               :key="index"
               title="详情"
               trigger="click"
             >
               <template slot="content">
-                <div style="margin-bottom:15px">唯一识别码: {{ action.role }}</div>
+                <div style="margin-bottom:15px">唯一识别码: {{ action.action }}</div>
                 <a-button size='small' v-action:update type='primary' ghost @click="openActionModal(action)" style="margin-right:10px">编辑</a-button>
                 <a-button size='small' v-action:delete type='danger' ghost @click="showDeleteConfirm(action.id)">删除</a-button>
               </template>
@@ -193,7 +193,7 @@ export default {
           {
             title: row.title,
             name: row.name,
-            role: row.role,
+            action: row.action,
             pid: row.pid,
             status: row.status
           }
