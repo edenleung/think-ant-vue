@@ -156,9 +156,6 @@ export default {
   },
   mounted() {
     this.fetch()
-    this.fetchTree().then(res => {
-      this.tree = res
-    })
   },
   methods: {
     ...mapActions([
@@ -169,9 +166,10 @@ export default {
     fetch(params = {}) {
       this.loading = true
       this.fetchRule(params).then(res => {
-        const { data, pagination } = res
+        const { data, pagination, tree } = res
         this.data = data
         this.pagination = pagination
+        this.tree = tree
       }).finally(() => {
         this.loading = false
       })
