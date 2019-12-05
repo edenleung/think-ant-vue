@@ -8,15 +8,6 @@
       @cancel="handleCancel"
     >
       <a-form :form="form">
-        <a-form-item label="唯一识别码">
-          <a-input
-            placeholder="前端路由菜单识别码"
-            v-decorator="['action', {
-              rules: [{ required: true, message: '请输入唯一识别码!' }]
-            }]"
-          />
-        </a-form-item>
-
         <a-form-item label="权限规则">
           <a-input
             placeholder="权限规则 用作权限验证"
@@ -27,7 +18,7 @@
         </a-form-item>
 
         <a-form-item label="权限名称">
-          <a-input 
+          <a-input
             placeholder="权限名称"
             v-decorator="['title', {
               rules: [{ required: true, message: '请输入权限名称!' }]
@@ -42,13 +33,13 @@
             }]"
             placeholder="请选择所属组别"
           >
-            <a-select-option :value="0">
-              顶级分类
-            </a-select-option>
+            <a-select-option :value="0">顶级分类</a-select-option>
 
-            <a-select-option v-for="(item, index) in tree" :value="item.id" :key="index">
-              {{ item.cname | html }}
-            </a-select-option>
+            <a-select-option
+              v-for="(item, index) in tree"
+              :value="item.id"
+              :key="index"
+            >{{ item.cname | html }}</a-select-option>
           </a-select>
         </a-form-item>
 
@@ -59,12 +50,8 @@
             }]"
             placeholder="请选择"
           >
-            <a-select-option :value="1">
-              正常
-            </a-select-option>
-            <a-select-option :value="0">
-              禁用
-            </a-select-option>
+            <a-select-option :value="1">正常</a-select-option>
+            <a-select-option :value="0">禁用</a-select-option>
           </a-select>
         </a-form-item>
       </a-form>
@@ -72,10 +59,11 @@
 
     <a-card>
       <a-row class="tools">
-        <a-button v-action:add type="primary" ghost @click="openModal">添加</a-button>
+        <a-button v-action:rule-add type="primary" ghost @click="openModal">添加</a-button>
       </a-row>
 
-      <a-table :columns="columns"
+      <a-table
+        :columns="columns"
         :rowKey="item => item.id"
         :dataSource="data"
         :pagination="pagination"
@@ -84,15 +72,24 @@
       >
         <template slot="actions" slot-scope="row">
           <template v-for="(action, index) in row.actions">
-            <a-popover
-              :key="index"
-              title="详情"
-              trigger="click"
-            >
+            <a-popover :key="index" title="详情" trigger="click">
               <template slot="content">
-                <div style="margin-bottom:15px">唯一识别码: {{ action.action }}</div>
-                <a-button size='small' v-action:update type='primary' ghost @click="openActionModal(action)" style="margin-right:10px">编辑</a-button>
-                <a-button size='small' v-action:delete type='danger' ghost @click="showDeleteConfirm(action.id)">删除</a-button>
+                <div style="margin-bottom:15px">唯一识别码: {{ action.name }}</div>
+                <a-button
+                  size="small"
+                  v-action:rule-update
+                  type="primary"
+                  ghost
+                  @click="openActionModal(action)"
+                  style="margin-right:10px"
+                >编辑</a-button>
+                <a-button
+                  size="small"
+                  v-action:rule-delete
+                  type="danger"
+                  ghost
+                  @click="showDeleteConfirm(action.id)"
+                >删除</a-button>
               </template>
               <a-tag>{{ action.title }}</a-tag>
             </a-popover>
@@ -105,8 +102,14 @@
         </template>
 
         <template slot="tools" slot-scope="row">
-          <a-button v-action:update type="primary" ghost @click="openActionModal(row)" style="margin-right: 15px">编辑</a-button>
-          <a-button v-action:delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
+          <a-button
+            v-action:rule-update
+            type="primary"
+            ghost
+            @click="openActionModal(row)"
+            style="margin-right: 15px"
+          >编辑</a-button>
+          <a-button type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
         </template>
       </a-table>
     </a-card>
@@ -115,27 +118,34 @@
 <script>
 import { mapActions } from 'vuex'
 import { createElement } from 'vue'
-const columns = [{
-  title: '唯一识别码',
-  dataIndex: 'permissionId',
-}, {
-  title: '权限名称',
-  dataIndex: 'title',
-}, {
-  title: '可操作权限',
-  scopedSlots: { customRender: 'actions' }
-}, {
-  title: '状态',
-  scopedSlots: { customRender: 'status' }
-}, {
-  title: '操作',
-  scopedSlots: { customRender: 'tools' }
-}]
+const columns = [
+  {
+    title: '唯一识别码',
+    dataIndex: 'name'
+  },
+  {
+    title: '权限名称',
+    dataIndex: 'title'
+  },
+  {
+    title: '可操作权限',
+    scopedSlots: { customRender: 'actions' }
+  },
+  {
+    title: '状态',
+    scopedSlots: { customRender: 'status' }
+  },
+  {
+    title: '操作',
+    scopedSlots: { customRender: 'tools' }
+  }
+]
 
 export default {
   data() {
     return {
-      description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
+      description:
+        '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
       columns: columns,
       data: [],
       pagination: {},
@@ -149,30 +159,30 @@ export default {
     }
   },
   filters: {
-    html: (value) => {
-      var arrEntities = {'nbsp' : '  '};
-      return value.replace(/&(nbsp);/ig, function(all, t){return arrEntities[t]})
+    html: value => {
+      var arrEntities = { nbsp: '  ' }
+      return value.replace(/&(nbsp);/gi, function(all, t) {
+        return arrEntities[t]
+      })
     }
   },
   mounted() {
     this.fetch()
   },
   methods: {
-    ...mapActions([
-      'fetchRule',
-      'fetchTree',
-      'deleteRule'
-    ]),
+    ...mapActions(['fetchRule', 'fetchTree', 'deleteRule']),
     fetch(params = {}) {
       this.loading = true
-      this.fetchRule(params).then(res => {
-        const { data, pagination, tree } = res
-        this.data = data
-        this.pagination = pagination
-        this.tree = tree
-      }).finally(() => {
-        this.loading = false
-      })
+      this.fetchRule(params)
+        .then(res => {
+          const { data, pagination, tree } = res
+          this.data = data
+          this.pagination = pagination
+          this.tree = tree
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     handleTableChange(pagination, filters, sorter) {
       this.fetch({
@@ -187,38 +197,36 @@ export default {
       this.visible = true
       this.selected = row.id
       this.$nextTick(() => {
-        this.form.setFieldsValue(
-          {
-            title: row.title,
-            name: row.name,
-            action: row.action,
-            pid: row.pid,
-            status: row.status
-          }
-        )
+        this.form.setFieldsValue({
+          title: row.title,
+          name: row.name,
+          action: row.action,
+          pid: row.pid,
+          status: row.status
+        })
       })
     },
     handleSubmit() {
-      this.form.validateFields(
-        (err, values) => {
-          if (!err) {
-            this.confirmLoading = true
-            const action = this.selected === 0 ? 'addRule' : 'updateRule'
-            values.selectId = this.selected
-            this.$store.dispatch(action, values).then(res => {
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.confirmLoading = true
+          const action = this.selected === 0 ? 'addRule' : 'updateRule'
+          values.selectId = this.selected
+          this.$store
+            .dispatch(action, values)
+            .then(res => {
               this.$notification['success']({
                 message: '成功通知',
-                description: this.selected === 0 ? '添加成功！' : '更新成功！',
+                description: this.selected === 0 ? '添加成功！' : '更新成功！'
               })
               this.fetch()
               this.handleCancel()
             })
             .finally(() => {
               this.confirmLoading = false
-						})
-          }
+            })
         }
-      )
+      })
     },
     handleCancel() {
       this.visible = false
@@ -233,10 +241,10 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
-          this.deleteRule({ id: id}).then(res => {
+          this.deleteRule({ id: id }).then(res => {
             this.$notification['success']({
               message: '成功通知',
-              description: '删除成功！',
+              description: '删除成功！'
             })
             this.fetch()
           })

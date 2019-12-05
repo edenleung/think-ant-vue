@@ -11,7 +11,7 @@ import {
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'https://ant-api.xiaodim.com', // api base_url
+  baseURL: 'http://super.xiaodim.com/index.php', // api base_url
   timeout: 6000 // 请求超时时间
 })
 
@@ -46,7 +46,7 @@ const err = (error) => {
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   if (token) {
-    config.headers['Authorization'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+    config.headers['Authorization'] = 'Bearer ' + token // 让每个请求携带自定义 token 请根据实际情况自行修改
   }
   return config
 }, err)

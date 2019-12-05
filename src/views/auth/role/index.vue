@@ -56,20 +56,20 @@
 
 		<a-card>
 			<a-row class="tools">
-				<a-button v-action:add @click="openRole" type="primary" ghost>添加</a-button>
+				<a-button v-action:role-add @click="openRole" type="primary" ghost>添加</a-button>
 			</a-row>
 
 			<a-table :columns="columns"
-        :rowKey="item => item.id"
-        :dataSource="data"
-        :pagination="pagination"
-        :loading="loading"
-        @change="handleTableChange"
-      >
+				:rowKey="item => item.id"
+				:dataSource="data"
+				:pagination="pagination"
+				:loading="loading"
+				@change="handleTableChange"
+			>
 				<template slot="status" slot-scope="row">
-          <template v-if="row.status === 1">正常</template>
-          <template v-else>禁用</template>
-        </template>
+				<template v-if="row.status === 1">正常</template>
+				<template v-else>禁用</template>
+				</template>
 
 				<p slot="expandedRowRender" slot-scope="row">
 					<a-row>
@@ -89,9 +89,9 @@
 				</p>
 
 				<template slot="tools" slot-scope="row">
-          <a-button v-action:update type="primary" ghost @click="openInfoModal(row)" style="margin-right: 15px">编辑</a-button>
-          <a-button v-action:delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
-        </template>
+					<a-button v-action:role-update type="primary" ghost @click="openInfoModal(row)" style="margin-right: 15px">编辑</a-button>
+					<a-button v-action:role-delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
+				</template>
 			</a-table>
 		</a-card>
 	</div>

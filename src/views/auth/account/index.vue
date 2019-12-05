@@ -71,7 +71,7 @@
 
 		<a-card>
 			<a-row class="tools">
-				<a-button v-action:add @click="openModal" type="primary" ghost>添加</a-button>
+				<a-button v-action:account-add @click="openModal" type="primary" ghost>添加</a-button>
 			</a-row>
 
 			<a-table :columns="columns"
@@ -105,8 +105,8 @@
 				</p>
 
 				<template slot="tools" slot-scope="row">
-          <a-button v-action:update type="primary" ghost @click="openInfoModal(row)" style="margin-right: 15px">编辑</a-button>
-          <a-button v-action:delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
+          <a-button v-action:account-update type="primary" ghost @click="openInfoModal(row)" style="margin-right: 15px">编辑</a-button>
+          <a-button v-action:account-delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
         </template>
 			</a-table>
 		</a-card>
