@@ -1,8 +1,9 @@
 import { axios } from '@/utils/request'
+import api from './index'
 
 export function fetchRule(params) {
   return axios({
-    url: '/auth/rule',
+    url: api.Rule,
     method: 'get',
     params
   })
@@ -17,7 +18,7 @@ export function fetchTree() {
 
 export function addRule (data) {
   return axios({
-    url: '/auth/rule',
+    url: api.Rule,
     method: 'post',
     data
   })
@@ -25,7 +26,7 @@ export function addRule (data) {
 
 export function updateRule(id, data) {
   return axios({
-    url: '/auth/rule/' + id,
+    url: api.Rule + '/' + id,
     method: 'put',
     data
   })
@@ -33,14 +34,14 @@ export function updateRule(id, data) {
 
 export function deleteRule(params) {
   return axios({
-    url: '/auth/rule/' + params.id,
+    url: api.Rule + '/' + params.id,
     method: 'delete'
   })
 }
 
 export function fetchRole(params) {
   return axios({
-    url: '/auth/role',
+    url: api.Role,
     method: 'get',
     params
   })
@@ -48,7 +49,7 @@ export function fetchRole(params) {
 
 export function addRole(data) {
   return axios({
-    url: '/auth/role',
+    url: api.Role,
     method: 'post',
     data
   })
@@ -56,7 +57,7 @@ export function addRole(data) {
 
 export function updateRole(id, data) {
   return axios({
-    url: '/auth/role/' + id,
+    url: api.Role + '/' + id,
     method: 'put',
     data
   })
@@ -64,14 +65,14 @@ export function updateRole(id, data) {
 
 export function deleteRole(params) {
   return axios({
-    url: '/auth/role/' + params.id,
+    url: api.Role + '/' + params.id,
     method: 'delete'
   })
 }
 
 export function fetchAccount(params) {
   return axios({
-    url: '/auth/user',
+    url: api.User,
     method: 'get',
     params
   })
@@ -79,7 +80,7 @@ export function fetchAccount(params) {
 
 export function addAccount(data) {
   return axios({
-    url: '/auth/user',
+    url: api.User,
     method: 'post',
     data
   })
@@ -87,7 +88,7 @@ export function addAccount(data) {
 
 export function updateAccount(id, data) {
   return axios({
-    url: '/auth/user/' + id,
+    url: api.User + '/' + id,
     method: 'put',
     data
   })
@@ -95,7 +96,7 @@ export function updateAccount(id, data) {
 
 export function deleteAccount(params) {
   return axios({
-    url: '/auth/user/' + params.id,
+    url: api.User + '/' + params.id,
     method: 'delete'
   })
 }
