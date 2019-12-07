@@ -1,16 +1,7 @@
 language: node_js
-
 node_js:
   - 10.15.0
-  
 cache: yarn
-
-before_install:
-  - yarn
-  
 script:
-  - yarn run build
-  
-after_script:
-  - chmod 600 ./key
-  - rsync -r /home/travis/build/xiaodit/think-ant-vue/dist/* -e "ssh -o StrictHostKeyChecking=no -i ./key -p ${XDPORT}" ${XDUSER}@${XDHOST}:${XDPATH}
+  - yarn
+  - yarn run lint --no-fix && yarn run build

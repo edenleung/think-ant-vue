@@ -37,7 +37,7 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const result = response.data
+          const result = response.result
           Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result.token)
           resolve()
@@ -50,15 +50,12 @@ const user = {
     // 获取用户信息
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
-        getInfo({ token: Vue.ls.get(ACCESS_TOKEN)}).then(response => {
-          const result = response.data
-          // console.log('result', result)
-          // console.log('role', result.role)
-          // console.log('permissions', result.role.permissions)
+        getInfo().then(response => {
+          const result = response.result
+
           if (result.role && result.role.permissions.length > 0) {
             const role = result.role
             role.permissions = result.role.permissions
-            
             role.permissions.map(per => {
               if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
                 const action = per.actionEntitySet.map(action => { return action.action })
@@ -85,14 +82,14 @@ const user = {
     // 登出
     Logout ({ commit, state }) {
       return new Promise((resolve) => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        Vue.ls.remove(ACCESS_TOKEN)
-
         logout(state.token).then(() => {
           resolve()
         }).catch(() => {
           resolve()
+        }).finally(() => {
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          Vue.ls.remove(ACCESS_TOKEN)
         })
       })
     }

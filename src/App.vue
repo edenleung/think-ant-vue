@@ -18,18 +18,12 @@ export default {
     }
   },
   mounted () {
+
   }
 }
 </script>
-<style lang="sass">
-  #app
-    height: 100%
-    .ant-card-body
-      .tools
-        margin-bottom: 15px
-      .rule-list
-        padding-left: 12px
-        padding-right: 12px
-        margin-bottom: 12px
-        min-height: 23px
+<style>
+  #app {
+    height: 100%;
+  }
 </style>
