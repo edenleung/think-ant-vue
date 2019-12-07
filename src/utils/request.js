@@ -55,7 +55,7 @@ service.interceptors.response.use((response) => {
       message: '错误',
       description: res.message
     })
-    return Promise.reject('error')
+    return Promise.reject(new Error('error'))
   } else {
     return response.data
   }

@@ -1,53 +1,57 @@
 <template>
   <div class="page-header-index-wide">
-    <a-modal
-      title="详情"
-      :visible="visible"
-      @ok="handleSubmit"
-      :confirmLoading="confirmLoading"
-      @cancel="handleCancel"
-    >
+    <a-modal title="详情" :visible="visible" @ok="handleSubmit" :confirmLoading="confirmLoading" @cancel="handleCancel">
       <a-form :form="form">
         <a-form-item label="权限规则">
           <a-input
             placeholder="权限规则 用作权限验证"
-            v-decorator="['name', {
-              rules: [{ required: true, message: '请输入权限规则!' }]
-            }]"
+            v-decorator="[
+              'name',
+              {
+                rules: [{ required: true, message: '请输入权限规则!' }]
+              }
+            ]"
           />
         </a-form-item>
 
         <a-form-item label="权限名称">
           <a-input
             placeholder="权限名称"
-            v-decorator="['title', {
-              rules: [{ required: true, message: '请输入权限名称!' }]
-            }]"
+            v-decorator="[
+              'title',
+              {
+                rules: [{ required: true, message: '请输入权限名称!' }]
+              }
+            ]"
           />
         </a-form-item>
 
         <a-form-item label="所属组别">
           <a-select
-            v-decorator="['pid', {
-              rules: [{ required: true, message: '请选择所属组别!' }]
-            }]"
+            v-decorator="[
+              'pid',
+              {
+                rules: [{ required: true, message: '请选择所属组别!' }]
+              }
+            ]"
             placeholder="请选择所属组别"
           >
             <a-select-option :value="0">顶级分类</a-select-option>
 
-            <a-select-option
-              v-for="(item, index) in tree"
-              :value="item.id"
-              :key="index"
-            >{{ item.cname | html }}</a-select-option>
+            <a-select-option v-for="(item, index) in tree" :value="item.id" :key="index">{{
+              item.cname | html
+            }}</a-select-option>
           </a-select>
         </a-form-item>
 
         <a-form-item label="状态">
           <a-select
-            v-decorator="['status', {
-              rules: [{ required: true, message: '请选择状态!' }]
-            }]"
+            v-decorator="[
+              'status',
+              {
+                rules: [{ required: true, message: '请选择状态!' }]
+              }
+            ]"
             placeholder="请选择"
           >
             <a-select-option :value="1">正常</a-select-option>
@@ -81,15 +85,8 @@
                   type="primary"
                   ghost
                   @click="openActionModal(action)"
-                  style="margin-right:10px"
-                >编辑</a-button>
-                <a-button
-                  size="small"
-                  v-action:rule-delete
-                  type="danger"
-                  ghost
-                  @click="showDeleteConfirm(action.id)"
-                >删除</a-button>
+                  style="margin-right:10px">编辑</a-button>
+                <a-button size="small" v-action:rule-delete type="danger" ghost @click="showDeleteConfirm(action.id)">删除</a-button>
               </template>
               <a-tag>{{ action.title }}</a-tag>
             </a-popover>
@@ -102,13 +99,7 @@
         </template>
 
         <template slot="tools" slot-scope="row">
-          <a-button
-            v-action:rule-update
-            type="primary"
-            ghost
-            @click="openActionModal(row)"
-            style="margin-right: 15px"
-          >编辑</a-button>
+          <a-button v-action:rule-update type="primary" ghost @click="openActionModal(row)" style="margin-right: 15px">编辑</a-button>
           <a-button v-action:rule-delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
         </template>
       </a-table>
@@ -117,7 +108,6 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
-import { createElement } from 'vue'
 const columns = [
   {
     title: '唯一识别码',
@@ -142,7 +132,7 @@ const columns = [
 ]
 
 export default {
-  data() {
+  data () {
     return {
       description:
         '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
@@ -161,17 +151,17 @@ export default {
   filters: {
     html: value => {
       var arrEntities = { nbsp: '  ' }
-      return value.replace(/&(nbsp);/gi, function(all, t) {
+      return value.replace(/&(nbsp);/gi, (all, t) => {
         return arrEntities[t]
       })
     }
   },
-  mounted() {
+  mounted () {
     this.fetch()
   },
   methods: {
-    ...mapActions(['fetchRule', 'fetchTree', 'deleteRule']),
-    fetch(params = {}) {
+    ...mapActions(['fetchRule', 'deleteRule']),
+    fetch (params = {}) {
       this.loading = true
       this.fetchRule(params)
         .then(res => {
@@ -184,16 +174,16 @@ export default {
           this.loading = false
         })
     },
-    handleTableChange(pagination, filters, sorter) {
+    handleTableChange (pagination, filters, sorter) {
       this.fetch({
         page: pagination.current,
         pageSize: pagination.pageSize
       })
     },
-    openModal() {
+    openModal () {
       this.visible = true
     },
-    openActionModal: function(row) {
+    openActionModal (row) {
       this.visible = true
       this.selected = row.id
       this.$nextTick(() => {
@@ -206,7 +196,7 @@ export default {
         })
       })
     },
-    handleSubmit() {
+    handleSubmit () {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
@@ -228,12 +218,12 @@ export default {
         }
       })
     },
-    handleCancel() {
+    handleCancel () {
       this.visible = false
       this.selected = 0
       this.form.resetFields()
     },
-    showDeleteConfirm(id) {
+    showDeleteConfirm (id) {
       this.$confirm({
         title: '确定删除此规则吗?',
         content: '',

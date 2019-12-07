@@ -27,7 +27,7 @@
             style="margin-bottom: 24px;"
             :bordered="false"
             title="进行中的项目"
-            :body-style="{ padding: 0 }">
+          >
             <a slot="extra">全部项目</a>
             <div>
               <a-card-grid class="project-card-grid" :key="i" v-for="(item, i) in projects">
@@ -85,7 +85,7 @@
               <a-button size="small" type="primary" ghost icon="plus">添加</a-button>
             </div>
           </a-card>
-          <a-card title="XX 指数" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false" :body-style="{ padding: 0 }">
+          <a-card title="XX 指数" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false">
             <div style="min-height: 400px;">
               <!-- :scale="scale" :axis1Opts="axis1Opts" :axis2Opts="axis2Opts"  -->
               <radar :data="radarData" />
@@ -112,15 +112,11 @@
 <script>
 import { timeFix } from '@/utils/util'
 import { mapState } from 'vuex'
-
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
 import { Radar } from '@/components'
-
-import { getRoleList, getServiceList } from '@/api/manage'
-
+// import { getRoleList, getServiceList } from '@/api/manage'
 const DataSet = require('@antv/data-set')
-
 export default {
   name: 'Workplace',
   components: {
@@ -133,13 +129,11 @@ export default {
       timeFix: timeFix(),
       avatar: '',
       user: {},
-
       projects: [],
       loading: true,
       radarLoading: true,
       activities: [],
       teams: [],
-
       // data
       axis1Opts: {
         dataKey: 'item',
@@ -191,20 +185,18 @@ export default {
   created () {
     this.user = this.userInfo
     this.avatar = this.userInfo.avatar
-
-    getRoleList().then(res => {
-      // console.log('workplace -> call getRoleList()', res)
-    })
-
-    getServiceList().then(res => {
-      // console.log('workplace -> call getServiceList()', res)
-    })
+    // getRoleList().then(res => {
+    //   // console.log('workplace -> call getRoleList()', res)
+    // })
+    // getServiceList().then(res => {
+    //   // console.log('workplace -> call getServiceList()', res)
+    // })
   },
   mounted () {
-    this.getProjects()
-    this.getActivity()
-    this.getTeams()
-    this.initRadar()
+    // this.getProjects()
+    // this.getActivity()
+    // this.getTeams()
+    // this.initRadar()
   },
   methods: {
     getProjects () {
@@ -228,7 +220,6 @@ export default {
     },
     initRadar () {
       this.radarLoading = true
-
       this.$http.get('/workplace/radar')
         .then(res => {
           const dv = new DataSet.View().source(res.result)
@@ -238,7 +229,6 @@ export default {
             key: 'user',
             value: 'score'
           })
-
           this.radarData = dv.rows
           this.radarLoading = false
         })
@@ -249,10 +239,8 @@ export default {
 
 <style lang="less" scoped>
   .project-list {
-
     .card-title {
       font-size: 0;
-
       a {
         color: rgba(0, 0, 0, 0.85);
         margin-left: 12px;
@@ -261,7 +249,6 @@ export default {
         display: inline-block;
         vertical-align: top;
         font-size: 14px;
-
         &:hover {
           color: #1890ff;
         }
@@ -284,7 +271,6 @@ export default {
         color: rgba(0, 0, 0, 0.45);
         display: inline-block;
         flex: 1 1 0;
-
         &:hover {
           color: #1890ff;
         }
@@ -302,7 +288,6 @@ export default {
       overflow: hidden;
     }
   }
-
   .item-group {
     padding: 20px 0 8px 24px;
     font-size: 0;
@@ -314,7 +299,6 @@ export default {
       width: 25%;
     }
   }
-
   .members {
     a {
       display: block;
@@ -338,25 +322,19 @@ export default {
       }
     }
   }
-
   .mobile {
-
     .project-list {
-
       .project-card-grid {
         width: 100%;
       }
     }
-
     .more-info {
       border: 0;
       padding-top: 16px;
       margin: 16px 0 16px;
     }
-
     .headerContent .title .welcome-text {
       display: none;
     }
   }
-
 </style>

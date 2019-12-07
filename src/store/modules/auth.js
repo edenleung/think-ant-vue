@@ -1,5 +1,5 @@
-import { 
-  fetchRule, addRule, fetchTree, updateRule, deleteRule,
+import {
+  fetchRule, addRule, updateRule, deleteRule,
   fetchRole, addRole, updateRole, deleteRole,
   fetchAccount, addAccount, updateAccount, deleteAccount
 } from '@/api/auth'
@@ -13,34 +13,22 @@ const auth = {
 
   actions: {
     // 规则列表
-    fetchRule(state, params) {
+    fetchRule (state, params) {
       return new Promise((resolve, reject) => {
         fetchRule(params).then(response => {
-          const result = response.data
+          const result = response.result
           resolve(result)
         }).catch(error => {
           reject(error)
         })
-      }) 
-    },
-
-    // 获取树型结构
-    fetchTree(state) {
-      return new Promise((resolve, reject) => {
-        fetchTree().then(response => {
-          const result = response.data
-          resolve(result)
-        }).catch(error => {
-          reject(error)
-        })
-      }) 
+      })
     },
 
     // 添加规则
     addRule (state, data) {
       return new Promise((resolve, reject) => {
         addRule(data).then(response => {
-          const result = response.data
+          const result = response.result
           resolve(result)
         }).catch(error => {
           reject(error)
@@ -49,7 +37,7 @@ const auth = {
     },
 
     // 更新规则
-    updateRule(state, data) {
+    updateRule (state, data) {
       const id = data.selectId
       delete data.selectId
       return new Promise((resolve, reject) => {
@@ -62,7 +50,7 @@ const auth = {
     },
 
     // 删除规则
-    deleteRule(state, params) {
+    deleteRule (state, params) {
       return new Promise((resolve, reject) => {
         deleteRule(params).then(_ => {
           resolve()
@@ -73,10 +61,10 @@ const auth = {
     },
 
     // 获取角色
-    fetchRole(state, params) {
+    fetchRole (state, params) {
       return new Promise((resolve, reject) => {
         fetchRole(params).then(response => {
-          const result = response.data
+          const result = response.result
           resolve(result)
         }).catch(error => {
           reject(error)
@@ -85,7 +73,7 @@ const auth = {
     },
 
     // 添加角色
-    addRole(state, data) {
+    addRole (state, data) {
       return new Promise((resolve, reject) => {
         addRole(data).then(_ => {
           resolve()
@@ -96,7 +84,7 @@ const auth = {
     },
 
     // 更新角色
-    updateRole(state, data) {
+    updateRole (state, data) {
       const id = data.selectId
       delete data.selectId
       return new Promise((resolve, reject) => {
@@ -109,7 +97,7 @@ const auth = {
     },
 
     // 删除角色
-    deleteRole(state, params) {
+    deleteRole (state, params) {
       return new Promise((resolve, reject) => {
         deleteRole(params).then(_ => {
           resolve()
@@ -120,10 +108,10 @@ const auth = {
     },
 
     // 获取管理员
-    fetchAccount(state, params) {
+    fetchAccount (state, params) {
       return new Promise((resolve, reject) => {
         fetchAccount(params).then(response => {
-          const result = response.data
+          const result = response.result
           resolve(result)
         }).catch(error => {
           reject(error)
@@ -132,7 +120,7 @@ const auth = {
     },
 
     // 添加管理员
-    addAccount(state, data) {
+    addAccount (state, data) {
       return new Promise((resolve, reject) => {
         addAccount(data).then(_ => {
           resolve()
@@ -143,7 +131,7 @@ const auth = {
     },
 
     // 更新管理员
-    updateAccount(state, data) {
+    updateAccount (state, data) {
       const id = data.selectId
       delete data.selectId
       return new Promise((resolve, reject) => {
@@ -156,7 +144,7 @@ const auth = {
     },
 
     // 删除管理员
-    deleteAccount(state, params) {
+    deleteAccount (state, params) {
       return new Promise((resolve, reject) => {
         deleteAccount(params).then(_ => {
           resolve()
