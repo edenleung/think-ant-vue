@@ -109,7 +109,7 @@
             @click="openActionModal(row)"
             style="margin-right: 15px"
           >编辑</a-button>
-          <a-button type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
+          <a-button v-action:rule-delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
         </template>
       </a-table>
     </a-card>
