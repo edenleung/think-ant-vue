@@ -236,7 +236,7 @@ export default {
               message: '成功通知',
               description: '删除成功！'
             })
-            this.fetch()
+            this.fetch({ page: this.data.length === 1 ? this.pagination.current - 1 : this.pagination.current, pageSize: this.pagination.pageSize })
           })
         }
       })
