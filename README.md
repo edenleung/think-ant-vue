@@ -3,7 +3,7 @@
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/xiaodit/think-ant-vue.svg?branch=master)](https://travis-ci.org/xiaodit/think-ant-vue)
 
-ThinkPHP 5.1 与 Ant Design Pro Vue 基础权限系统  
+ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统  
 
 后端: https://github.com/xiaodit/think-admin  
 前端: https://github.com/sendya/ant-design-pro-vue
@@ -33,4 +33,5 @@ npm run build
 try_files $uri $uri/ /index.html last;
 ```
 #### 后端API配置
-[修改此处](https://github.com/xiaodit/think-ant-vue/blob/master/src/utils/request.js#L14)
+[本地测试-修改此处](https://github.com/xiaodit/think-ant-vue/blob/master/.env.development#L3)
+[生产部署-修改此处](https://github.com/xiaodit/think-ant-vue/blob/master/.env.production#L3)
