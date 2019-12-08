@@ -188,6 +188,7 @@ export default {
     handleCancel () {
       this.visible = false
       this.form.resetFields()
+      this.selected = 0
       this.checkedList = []
     },
     openInfoModal (row) {
