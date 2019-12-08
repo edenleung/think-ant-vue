@@ -45,7 +45,7 @@
             v-decorator="[
               'roles',
               {
-                rules: [{ required: true, message: '请选择所属组别!' }]
+                rules: [{ required: this.selected === 0, message: '请选择所属组别!' }]
               }
             ]"
             placeholder="请选择角色"
