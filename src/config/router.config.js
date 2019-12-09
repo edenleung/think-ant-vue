@@ -46,19 +46,19 @@ export const asyncRouterMap = [
             path: '/auth/rule',
             name: 'rule',
             component: () => import('@/views/auth/rule/index'),
-            meta: { title: '规则管理', icon: 'tool', keepAlive: true, permission: [ 'rule' ] }
+            meta: { title: '规则管理', keepAlive: true, permission: [ 'rule' ] }
           },
           {
             path: '/auth/role',
             name: 'role',
             component: () => import('@/views/auth/role/index'),
-            meta: { title: '角色管理', icon: 'tool', keepAlive: true, permission: [ 'role' ] }
+            meta: { title: '角色管理', keepAlive: true, permission: [ 'role' ] }
           },
           {
             path: '/auth/account',
             name: 'account',
             component: () => import('@/views/auth/account/index'),
-            meta: { title: '管理员管理', icon: 'tool', keepAlive: true, permission: [ 'account' ] }
+            meta: { title: '管理员管理', keepAlive: true, permission: [ 'account' ] }
           }
         ]
       }
