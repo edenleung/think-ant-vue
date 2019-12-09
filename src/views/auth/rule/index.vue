@@ -1,20 +1,27 @@
 <template>
   <div class="page-header-index-wide">
-    <a-modal title="详情" :visible="visible" @ok="handleSubmit" :confirmLoading="confirmLoading" @cancel="handleCancel">
+    <a-modal
+      title="详情"
+      :visible="visible"
+      :width="800"
+      @ok="handleSubmit"
+      :confirmLoading="confirmLoading"
+      @cancel="handleCancel">
       <a-form :form="form">
-        <a-form-item label="权限规则">
+        <a-form-item label="唯一识别码" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
           <a-input
-            placeholder="权限规则 用作权限验证"
+            placeholder="唯一识别码 用作权限验证"
+            :disabled="this.selected !== 0"
             v-decorator="[
               'name',
               {
-                rules: [{ required: true, message: '请输入权限规则!' }]
+                rules: [{ required: true, message: '请输入唯一识别码!' }]
               }
             ]"
           />
         </a-form-item>
 
-        <a-form-item label="权限名称">
+        <a-form-item label="权限名称" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
           <a-input
             placeholder="权限名称"
             v-decorator="[
@@ -26,7 +33,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="所属组别">
+        <a-form-item label="所属组别" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-select
             v-decorator="[
               'pid',
@@ -44,7 +51,7 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="状态">
+        <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-select
             v-decorator="[
               'status',
@@ -62,9 +69,9 @@
     </a-modal>
 
     <a-card>
-      <a-row class="tools">
-        <a-button v-action:rule-add type="primary" ghost @click="openModal">添加</a-button>
-      </a-row>
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="openModal">新建</a-button>
+      </div>
 
       <a-table
         :columns="columns"
@@ -94,13 +101,13 @@
         </template>
 
         <template slot="status" slot-scope="row">
-          <template v-if="row.status === 1">正常</template>
-          <template v-else>禁用</template>
+          <a-badge :status="row.status | statusTypeFilter" :text="row.status | statusFilter" />
         </template>
 
         <template slot="tools" slot-scope="row">
-          <a-button v-action:rule-update type="primary" ghost @click="openActionModal(row)" style="margin-right: 15px">编辑</a-button>
-          <a-button v-action:rule-delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
+          <a v-action:rule-update @click="openActionModal(row)">编辑</a>
+          <a-divider type="vertical" />
+          <a v-action:rule-delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </a-table>
     </a-card>
@@ -108,6 +115,18 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+
+const statusMap = {
+  0: {
+    status: 'default',
+    text: '已禁用'
+  },
+  1: {
+    status: 'processing',
+    text: '使用中'
+  }
+}
+
 const columns = [
   {
     title: '唯一识别码',
@@ -137,6 +156,14 @@ export default {
       description:
         '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
       columns: columns,
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 }
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 }
+      },
       data: [],
       pagination: {},
       loading: false,
@@ -154,6 +181,12 @@ export default {
       return value.replace(/&(nbsp);/gi, (all, t) => {
         return arrEntities[t]
       })
+    },
+    statusFilter (type) {
+      return statusMap[type].text
+    },
+    statusTypeFilter (type) {
+      return statusMap[type].status
     }
   },
   mounted () {

@@ -78,9 +78,35 @@
     </a-modal>
 
     <a-card>
-      <a-row class="tools">
-        <a-button v-action:account-add @click="openModal" type="primary" ghost>添加</a-button>
-      </a-row>
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="角色ID">
+                <a-input placeholder="请输入"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="状态">
+                <a-select placeholder="请选择" default-value="0">
+                  <a-select-option value="0">全部</a-select-option>
+                  <a-select-option value="1">关闭</a-select-option>
+                  <a-select-option value="2">运行中</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <span class="table-page-search-submitButtons">
+                <a-button type="primary">查询</a-button>
+                <a-button style="margin-left: 8px">重置</a-button>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+      <div class="table-operator">
+        <a-button v-action:account-add type="primary" icon="plus" @click="openModal">新建</a-button>
+      </div>
 
       <a-table
         :columns="columns"
@@ -113,8 +139,9 @@
         </p>
 
         <template slot="tools" slot-scope="row">
-          <a-button v-action:account-update type="primary" ghost @click="openInfoModal(row)" style="margin-right: 15px">编辑</a-button>
-          <a-button v-action:account-delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
+          <a v-action:account-update @click="openInfoModal(row)">编辑</a>
+          <a-divider type="vertical" />
+          <a v-action:account-delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </a-table>
     </a-card>
@@ -144,8 +171,7 @@ const columns = [
 export default {
   data () {
     return {
-      description:
-        '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
+      description: '',
       visible: false,
       loading: false,
       confirmLoading: false,

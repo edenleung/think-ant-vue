@@ -1,14 +1,20 @@
 <template>
   <div class="page-header-index-wide">
-    <a-modal title="详情" :visible="visible" @ok="handleSubmit" :confirmLoading="confirmLoading" @cancel="handleCancel">
+    <a-modal
+      title="详情"
+      :width="800"
+      :visible="visible"
+      @ok="handleSubmit"
+      :confirmLoading="confirmLoading"
+      @cancel="handleCancel">
       <a-form :form="form">
-        <a-form-item label="唯一标识">
+        <a-form-item label="唯一识别码">
           <a-input
-            placeholder="请入唯一标识（英文即可）"
+            placeholder="请入唯一识别码（英文即可）"
             v-decorator="[
               'name',
               {
-                rules: [{ required: true, message: '请输入唯一标识!' }]
+                rules: [{ required: true, message: '请输入唯一识别码!' }]
               }
             ]"
           />
@@ -37,7 +43,7 @@
             placeholder="请选择"
           >
             <a-select-option :value="1">
-              正常
+              启用
             </a-select-option>
             <a-select-option :value="0">
               禁用
@@ -46,10 +52,20 @@
         </a-form-item>
 
         <a-form-item label="拥有权限">
-          <a-row v-for="(item, index) in rules" :key="index">
-            <a-col :span="4">{{ item.title }}</a-col>
-            <a-col :span="20">
-              <a-checkbox-group :options="item.actions" v-model="checkedList" />
+          <a-row :gutter="16" v-for="(item, index) in rules" :key="index">
+            <a-col :xl="4" :lg="24">
+              {{ item.title }}：
+            </a-col>
+            <a-col :xl="20" :lg="24">
+              <a-checkbox
+                v-if="item.actions.length > 0"
+                :indeterminate="item.indeterminate"
+                :checked="item.checkedAll"
+                @change="onCheckAllChange($event, item)"
+              >
+                全选
+              </a-checkbox>
+              <a-checkbox-group :options="item.actions" v-model="item.selected" @change="onChange(item)" />
             </a-col>
           </a-row>
         </a-form-item>
@@ -57,9 +73,36 @@
     </a-modal>
 
     <a-card>
-      <a-row class="tools">
-        <a-button v-action:role-add @click="openRole" type="primary" ghost>添加</a-button>
-      </a-row>
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="角色ID">
+                <a-input placeholder="请输入"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="状态">
+                <a-select placeholder="请选择" default-value="0">
+                  <a-select-option value="0">全部</a-select-option>
+                  <a-select-option value="1">关闭</a-select-option>
+                  <a-select-option value="2">运行中</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <span class="table-page-search-submitButtons">
+                <a-button type="primary">查询</a-button>
+                <a-button style="margin-left: 8px">重置</a-button>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="openRole">新建</a-button>
+      </div>
 
       <a-table
         :columns="columns"
@@ -70,8 +113,7 @@
         @change="handleTableChange"
       >
         <template slot="status" slot-scope="row">
-          <template v-if="row.status === 1">正常</template>
-          <template v-else>禁用</template>
+          <a-badge :status="row.status | statusTypeFilter" :text="row.status | statusFilter" />
         </template>
 
         <p slot="expandedRowRender" slot-scope="row">
@@ -92,8 +134,9 @@
         </p>
 
         <template slot="tools" slot-scope="row">
-          <a-button v-action:role-update type="primary" ghost @click="openInfoModal(row)" style="margin-right: 15px">编辑</a-button>
-          <a-button v-action:role-delete type="danger" ghost @click="showDeleteConfirm(row.id)">删除</a-button>
+          <a v-action:role-update @click="openInfoModal(row)">编辑</a>
+          <a-divider type="vertical" />
+          <a v-action:role-delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </a-table>
     </a-card>
@@ -101,6 +144,17 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+const statusMap = {
+  0: {
+    status: 'default',
+    text: '已禁用'
+  },
+  1: {
+    status: 'processing',
+    text: '使用中'
+  }
+}
+
 const columns = [
   {
     title: '唯一识别码',
@@ -129,7 +183,6 @@ export default {
       visible: false,
       form: this.$form.createForm(this),
       rules: [],
-      checkedList: [],
       selected: 0,
       data: [],
       pagination: {},
@@ -139,16 +192,25 @@ export default {
   mounted () {
     this.fetch()
   },
+  filters: {
+    statusFilter (type) {
+      return statusMap[type].text
+    },
+    statusTypeFilter (type) {
+      return statusMap[type].status
+    }
+  },
   methods: {
     ...mapActions(['fetchRule', 'fetchRole', 'deleteRole']),
     fetch (params = {}) {
       this.loading = true
       this.fetchRole(params).then(res => {
         const { data, pagination } = res.roles
+        const { rules } = res
         this.data = data
         this.pagination = pagination
 
-        this.rules = res.rules.data
+        this.rulesSelectedInit(rules.data)
       }).finally(() => {
         this.loading = false
       })
@@ -165,10 +227,17 @@ export default {
     handleSubmit () {
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.confirmLoading = true
+          const checkedList = []
+          this.rules.map(item => {
+            item.selected.map(s => {
+              checkedList.push(s)
+            })
+          })
+
           const action = this.selected === 0 ? 'addRole' : 'updateRole'
           values.selectId = this.selected
-          values.rules = this.checkedList
+          values.rules = checkedList
+          this.confirmLoading = true
           this.$store
             .dispatch(action, values)
             .then(res => {
@@ -189,14 +258,25 @@ export default {
       this.visible = false
       this.form.resetFields()
       this.selected = 0
-      this.checkedList = []
+      this.loading = false
+      this.rulesSelectedInit(this.rules)
     },
     openInfoModal (row) {
       this.visible = true
-      if (row.permissions) {
-        this.checkedList = row.permissions
-      }
       this.selected = row.id
+      if (row.permissions) {
+        // 当前角色拥有的权限
+        this.rules.map(permission => {
+          permission.actions.map(action => {
+            if (row.permissions.indexOf(action.value) >= 0) {
+              permission.selected.push(action.value)
+            }
+          })
+
+          permission.indeterminate = !!permission.selected.length && (permission.selected.length < permission.actions.length)
+          permission.checkedAll = permission.selected.length === permission.actions.length
+        })
+      }
       this.$nextTick(() => {
         this.form.setFieldsValue({
           title: row.title,
@@ -221,6 +301,27 @@ export default {
             this.fetch({ page: this.data.length === 1 ? this.pagination.current - 1 : this.pagination.current, pageSize: this.pagination.pageSize })
           })
         }
+      })
+    },
+    onChange (permission) {
+      permission.indeterminate = !!permission.selected.length && (permission.selected.length < permission.actions.length)
+      permission.checkedAll = permission.selected.length === permission.actions.length
+    },
+    onCheckAllChange (e, permission) {
+      Object.assign(permission, {
+        selected: e.target.checked ? permission.actions.map(obj => obj.value) : [],
+        indeterminate: false,
+        checkedAll: e.target.checked
+      })
+    },
+    rulesSelectedInit (rules) {
+      this.rules = rules.map(item => {
+        Object.assign(item, {
+          selected: [],
+          indeterminate: false,
+          checkedAll: false
+        })
+        return item
       })
     }
   }
