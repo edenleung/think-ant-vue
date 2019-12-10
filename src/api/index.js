@@ -1,6 +1,7 @@
 const api = {
   Login: '/auth/login',
   Logout: '/auth/logout',
+  RefreshToken: '/auth/refresh_token',
   ForgePassword: '/auth/forge-password',
   Register: '/auth/register',
   twoStepCode: '/auth/2step-code',

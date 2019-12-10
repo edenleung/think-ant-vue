@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { login, getInfo, logout } from '@/api/login'
+import { login, getInfo, logout, refreshToken } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
@@ -38,7 +38,7 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.result
-          Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+          Vue.ls.set(ACCESS_TOKEN, result.token, (result.expires_in + 10) * 1000)
           commit('SET_TOKEN', result.token)
           resolve()
         }).catch(error => {
@@ -93,8 +93,21 @@ const user = {
           Vue.ls.remove(ACCESS_TOKEN)
         })
       })
-    }
+    },
 
+    // Token续期
+    RefreshToken ({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        refreshToken({ token: state.token }).then((response) => {
+          const result = response.result
+          Vue.ls.set(ACCESS_TOKEN, result.token, (result.expires_in + 10) * 1000)
+          commit('SET_TOKEN', result.token)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    }
   }
 }
 

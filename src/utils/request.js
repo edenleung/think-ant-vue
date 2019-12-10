@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import store from '@/store'
 import notification from 'ant-design-vue/es/notification'
+import message from 'ant-design-vue/es/message'
 import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
@@ -21,16 +22,49 @@ const err = (error) => {
         description: data.message
       })
     }
-    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-      notification.error({
-        message: 'Unauthorized',
-        description: 'Authorization verification failed'
-      })
-      if (token) {
-        store.dispatch('Logout').then(() => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500)
+    if (error.response.status === 401) {
+      if (data.code === 50401) {
+        notification.error({
+          message: 'Unauthorized',
+          description: 'Authorization verification failed'
+        })
+        if (token) {
+          store.dispatch('Logout').then(() => {
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500)
+          })
+        }
+      } else if (data.code === 50402) {
+        const key = `open${Date.now()}`
+        notification.open({
+          message: 'Notification',
+          description:
+            'Token已过期，你暂不能操作任何操作，是否续期(10秒后重新登录)？',
+          btn: h => {
+            return h(
+              'a-button',
+              {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    store.dispatch('RefreshToken').then(() => {
+                      message.success('登录已续期')
+                      setTimeout(() => {
+                        window.location.reload()
+                      }, 1500)
+                    })
+                  }
+                }
+              },
+              'Confirm'
+            )
+          },
+          key,
+          onClose: close
         })
       }
     }

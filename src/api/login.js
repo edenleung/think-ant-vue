@@ -60,3 +60,11 @@ export function get2step (parameter) {
     data: parameter
   })
 }
+
+export function refreshToken (params) {
+  return axios({
+    url: api.RefreshToken,
+    method: 'get',
+    params
+  })
+}
