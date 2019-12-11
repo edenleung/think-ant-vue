@@ -26,6 +26,7 @@
             :loading="loading"
             style="margin-bottom: 24px;"
             :bordered="false"
+            :body-style="{ padding: 0 }"
             title="进行中的项目"
           >
             <a slot="extra">全部项目</a>
@@ -34,7 +35,7 @@
                 <a-card :bordered="false" :body-style="{ padding: 0 }">
                   <a-card-meta>
                     <div slot="title" class="card-title">
-                      <a-avatar size="small" :src="item.cover"/>
+                      <a-avatar size="small" :src="item.logo"/>
                       <a>{{ item.title }}</a>
                     </div>
                     <div slot="description" class="card-description">
@@ -42,26 +43,23 @@
                     </div>
                   </a-card-meta>
                   <div class="project-item">
-                    <a href="/#/">科学搬砖组</a>
-                    <span class="datetime">9小时前</span>
+                    <a href="/#/">{{ item.member }}</a>
+                    <span class="datetime">{{ item.updatedAt | now }}</span>
                   </div>
                 </a-card>
               </a-card-grid>
             </div>
           </a-card>
-
           <a-card :loading="loading" title="动态" :bordered="false">
             <a-list>
               <a-list-item :key="index" v-for="(item, index) in activities">
                 <a-list-item-meta>
                   <a-avatar slot="avatar" :src="item.user.avatar" />
                   <div slot="title">
-                    <span>{{ item.user.nickname }}</span>&nbsp;
-                    在&nbsp;<a href="#">{{ item.project.name }}</a>&nbsp;
-                    <span>{{ item.project.action }}</span>&nbsp;
-                    <a href="#">{{ item.project.event }}</a>
+                    <span>{{ item.user.name }}</span>&nbsp;
+                    <vnodes :vnodes="item.event"/>
                   </div>
-                  <div slot="description">{{ item.time }}</div>
+                  <div slot="description">{{ item.updatedAt | now }}</div>
                 </a-list-item-meta>
               </a-list-item>
             </a-list>
@@ -85,7 +83,7 @@
               <a-button size="small" type="primary" ghost icon="plus">添加</a-button>
             </div>
           </a-card>
-          <a-card title="XX 指数" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false">
+          <a-card title="XX 指数" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false" :body-style="{ padding: 0 }">
             <div style="min-height: 400px;">
               <!-- :scale="scale" :axis1Opts="axis1Opts" :axis2Opts="axis2Opts"  -->
               <radar :data="radarData" />
@@ -122,7 +120,11 @@ export default {
   components: {
     PageView,
     HeadInfo,
-    Radar
+    Radar,
+    vnodes: {
+      functional: true,
+      render: (h, ctx) => ctx.props.vnodes
+    }
   },
   data () {
     return {
@@ -193,35 +195,49 @@ export default {
     // })
   },
   mounted () {
-    // this.getProjects()
-    // this.getActivity()
-    // this.getTeams()
-    // this.initRadar()
+    this.getProjects()
+    this.getActivity()
+    this.getTeams()
+    this.initRadar()
   },
   methods: {
     getProjects () {
-      this.$http.get('/list/search/projects')
+      this.$http.get('/mock/list/search/projects')
         .then(res => {
           this.projects = res.result && res.result.data
           this.loading = false
         })
     },
     getActivity () {
-      this.$http.get('/workplace/activity')
+      this.$http.get('/mock/workplace/activity')
         .then(res => {
           this.activities = res.result
+          this.activities.map(activitie => {
+            const event = activitie.template.split(/@\{([^{}]*)\}/gi).map(key => {
+              if (activitie[key]) {
+                return (
+                  <a href={activitie[key].link} key={activitie[key].name}>
+                    { activitie[key]['name'] }
+                  </a>
+                )
+              }
+              return key
+            })
+            activitie.event = event
+          })
         })
     },
     getTeams () {
-      this.$http.get('/workplace/teams')
+      this.$http.get('/mock/workplace/teams')
         .then(res => {
           this.teams = res.result
         })
     },
     initRadar () {
       this.radarLoading = true
-      this.$http.get('/workplace/radar')
+      this.$http.get('/mock/workplace/radar')
         .then(res => {
+          console.log(res.result)
           const dv = new DataSet.View().source(res.result)
           dv.transform({
             type: 'fold',
