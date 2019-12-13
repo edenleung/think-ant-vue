@@ -12,6 +12,8 @@ const api = {
 
   Role: '/role',
   Rule: '/rule',
-  User: '/user'
+  User: '/user',
+
+  Log: '/log'
 }
 export default api

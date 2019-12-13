@@ -59,6 +59,12 @@ export const asyncRouterMap = [
             name: 'account',
             component: () => import('@/views/auth/account/index'),
             meta: { title: '管理员管理', keepAlive: true, permission: [ 'account' ] }
+          },
+          {
+            path: '/auth/log',
+            name: 'log',
+            component: () => import('@/views/auth/log/index'),
+            meta: { title: '管理员日志', keepAlive: true }
           }
         ]
       },
