@@ -46,7 +46,7 @@
             <a-select-option :value="0">顶级分类</a-select-option>
 
             <a-select-option v-for="(item, index) in tree" :value="item.id" :key="index">{{
-              item.cname | html
+              item.title
             }}</a-select-option>
           </a-select>
         </a-form-item>
@@ -176,12 +176,6 @@ export default {
     }
   },
   filters: {
-    html: value => {
-      var arrEntities = { nbsp: '  ' }
-      return value.replace(/&(nbsp);/gi, (all, t) => {
-        return arrEntities[t]
-      })
-    },
     statusFilter (type) {
       return statusMap[type].text
     },

@@ -59,12 +59,29 @@ export const asyncRouterMap = [
             name: 'account',
             component: () => import('@/views/auth/account/index'),
             meta: { title: '管理员管理', keepAlive: true, permission: [ 'account' ] }
-          },
+          }
+        ]
+      },
+
+      // 日志模块
+      {
+        path: '/log',
+        name: 'log',
+        component: PageView,
+        meta: { title: '日志管理', icon: 'slack' },
+        redirect: '/log/account',
+        children: [
           {
-            path: '/auth/log',
+            path: '/log/account',
             name: 'log',
             component: () => import('@/views/auth/log/index'),
             meta: { title: '管理员日志', keepAlive: true }
+          },
+          {
+            path: '/log/db',
+            name: 'db',
+            component: () => import('@/views/auth/log/db'),
+            meta: { title: '数据库日志', keepAlive: true }
           }
         ]
       },
