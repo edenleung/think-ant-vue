@@ -5,7 +5,7 @@
         <a-card :bordered="false" :loading="loading">
           <div class="account-center-avatarHolder">
             <div class="avatar">
-              <img :src="userInfo.avatar || 'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png'">
+              <img :src="avatar" alt="avatar">
             </div>
             <div class="username">{{ userInfo.nickname }}</div>
             <div class="bio">海纳百川，有容乃大</div>
@@ -99,6 +99,7 @@
 import { PageView, RouteView } from '@/layouts'
 import { AppPage, ArticlePage, ProjectPage } from './page'
 import { current } from '@/api/user'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -136,6 +137,9 @@ export default {
       ],
       noTitleKey: 'app'
     }
+  },
+  computed: {
+    ...mapGetters(['avatar'])
   },
   mounted () {
     this.getCurrent()
