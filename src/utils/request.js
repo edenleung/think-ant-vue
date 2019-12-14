@@ -85,10 +85,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use((response) => {
   const res = response.data
   if (res.code !== 20000) {
-    notification.error({
-      message: '错误',
-      description: res.message
-    })
+    message.warning(res.message)
     return Promise.reject(new Error('error'))
   } else {
     return response.data
