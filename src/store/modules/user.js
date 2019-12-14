@@ -26,6 +26,9 @@ const user = {
       state.welcome = welcome
     },
     SET_AVATAR: (state, avatar) => {
+      if (avatar === null) {
+        avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
+      }
       state.avatar = process.env.VUE_APP_API_BASE_URL + '/' + avatar
     },
     SET_ROLES: (state, roles) => {
