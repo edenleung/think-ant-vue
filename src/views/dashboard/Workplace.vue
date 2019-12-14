@@ -1,7 +1,7 @@
 <template>
   <page-view :avatar="avatar" :title="false">
     <div slot="headerContent">
-      <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span></div>
+      <div class="title">{{ timeFix }}，{{ nickname }}<span class="welcome-text">，{{ welcome }}</span></div>
       <div>前端工程师 | 蚂蚁金服 - 某某某事业群 - VUE平台</div>
     </div>
     <div slot="extra">
@@ -129,8 +129,6 @@ export default {
   data () {
     return {
       timeFix: timeFix(),
-      avatar: '',
-      user: {},
       projects: [],
       loading: true,
       radarLoading: true,
@@ -177,16 +175,15 @@ export default {
   },
   computed: {
     ...mapState({
-      nickname: (state) => state.user.nickname,
-      welcome: (state) => state.user.welcome
+      nickname: state => state.user.name,
+      welcome: (state) => state.user.welcome,
+      avatar: (state) => state.user.avatar
     }),
     userInfo () {
       return this.$store.getters.userInfo
     }
   },
   created () {
-    this.user = this.userInfo
-    this.avatar = this.userInfo.avatar
     // getRoleList().then(res => {
     //   // console.log('workplace -> call getRoleList()', res)
     // })
