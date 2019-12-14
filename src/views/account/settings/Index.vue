@@ -20,7 +20,7 @@
                 安全设置
               </router-link>
             </a-menu-item>
-            <a-menu-item key="/account/settings/custom">
+            <!-- <a-menu-item key="/account/settings/custom">
               <router-link :to="{ name: 'CustomSettings' }">
                 个性化
               </router-link>
@@ -34,7 +34,7 @@
               <router-link :to="{ name: 'NotificationSettings' }">
                 新消息通知
               </router-link>
-            </a-menu-item>
+            </a-menu-item> -->
           </a-menu>
         </div>
         <div class="account-settings-info-right">

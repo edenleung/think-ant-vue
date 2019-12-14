@@ -2,12 +2,12 @@
   <div class="page-header-index-wide page-header-wrapper-grid-content-main">
     <a-row :gutter="24">
       <a-col :md="24" :lg="7">
-        <a-card :bordered="false">
+        <a-card :bordered="false" :loading="loading">
           <div class="account-center-avatarHolder">
             <div class="avatar">
-              <img :src="avatar()">
+              <img :src="userInfo.avatar || 'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png'">
             </div>
-            <div class="username">{{ nickname() }}</div>
+            <div class="username">{{ userInfo.nickname }}</div>
             <div class="bio">海纳百川，有容乃大</div>
           </div>
           <div class="account-center-detail">
@@ -98,8 +98,7 @@
 <script>
 import { PageView, RouteView } from '@/layouts'
 import { AppPage, ArticlePage, ProjectPage } from './page'
-
-import { mapGetters } from 'vuex'
+import { current } from '@/api/user'
 
 export default {
   components: {
@@ -111,6 +110,8 @@ export default {
   },
   data () {
     return {
+      loading: true,
+      userInfo: {},
       tags: ['很有想法的', '专注设计', '辣~', '大长腿', '川妹子', '海纳百川'],
 
       tagInputVisible: false,
@@ -137,13 +138,18 @@ export default {
     }
   },
   mounted () {
+    this.getCurrent()
     this.getTeams()
   },
   methods: {
-    ...mapGetters(['nickname', 'avatar']),
-
+    getCurrent (res) {
+      current().then(res => {
+        this.loading = false
+        this.userInfo = res.result
+      })
+    },
     getTeams () {
-      this.$http.get('/workplace/teams').then(res => {
+      this.$http.get('/mock/workplace/teams').then(res => {
         this.teams = res.result
         this.teamSpinning = false
       })
@@ -186,7 +192,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .page-header-wrapper-grid-content-main {
   width: 100%;
   height: 100%;

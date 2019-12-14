@@ -13,7 +13,8 @@ const api = {
   Role: '/role',
   Rule: '/rule',
   User: '/user',
-
+  UserCurrent: '/user/current',
+  Avatar: '/user/avatar',
   Log: {
     Acount: '/log/acount',
     Db: '/log/db'

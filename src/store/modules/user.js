@@ -5,6 +5,7 @@ import { welcome } from '@/utils/util'
 
 const user = {
   state: {
+    email: '',
     token: '',
     name: '',
     welcome: '',
@@ -17,12 +18,15 @@ const user = {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    SET_NAME: (state, { name, welcome }) => {
+    SET_NAME: (state, name) => {
       state.name = name
+      state.info.nickname = name
+    },
+    SET_WELCOME: (state, welcome) => {
       state.welcome = welcome
     },
     SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
+      state.avatar = process.env.VUE_APP_API_BASE_URL + '/' + avatar
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
@@ -70,7 +74,8 @@ const user = {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          commit('SET_NAME', { name: result.name, welcome: welcome() })
+          commit('SET_NAME', result.nickname)
+          commit('SET_WELCOME', welcome())
           commit('SET_AVATAR', result.avatar)
 
           resolve(response)

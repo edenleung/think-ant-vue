@@ -1,162 +1,159 @@
 <template>
   <div class="account-settings-info-view">
-    <a-row :gutter="16">
-      <a-col :md="24" :lg="16">
+    <div class="account-settings-info-right">
+      <div class="account-settings-info-view-left">
 
-        <a-form layout="vertical">
+        <a-form layout="vertical" :form="form" @submit="handleSubmit">
+          <a-form-item
+            label="邮箱"
+            :required="true"
+          >
+            <a-input v-decorator="['email', { rules: [{ required: true, message: '请输入您的邮箱!' }] }]" />
+          </a-form-item>
+
           <a-form-item
             label="昵称"
           >
-            <a-input placeholder="给自己起个名字" />
+            <a-input v-decorator="['nickname', { rules: [{ required: true, message: '请输入您的昵称!!' }] }]"/>
           </a-form-item>
-          <a-form-item
-            label="Bio"
-          >
-            <a-textarea rows="4" placeholder="You are not alone."/>
-          </a-form-item>
-
-          <a-form-item
-            label="电子邮件"
-            :required="false"
-          >
-            <a-input placeholder="exp@admin.com"/>
-          </a-form-item>
-          <a-form-item
-            label="加密方式"
-            :required="false"
-          >
-            <a-select defaultValue="aes-256-cfb">
-              <a-select-option value="aes-256-cfb">aes-256-cfb</a-select-option>
-              <a-select-option value="aes-128-cfb">aes-128-cfb</a-select-option>
-              <a-select-option value="chacha20">chacha20</a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item
-            label="连接密码"
-            :required="false"
-          >
-            <a-input placeholder="h3gSbecd"/>
-          </a-form-item>
-          <a-form-item
-            label="登录密码"
-            :required="false"
-          >
-            <a-input placeholder="密码"/>
-          </a-form-item>
-
           <a-form-item>
-            <a-button type="primary">提交</a-button>
-            <a-button style="margin-left: 8px">保存</a-button>
+            <a-button type="primary" html-type="submit" :loading="updating">更新基本信息</a-button>
           </a-form-item>
         </a-form>
 
-      </a-col>
-      <a-col :md="24" :lg="8" :style="{ minHeight: '180px' }">
-        <div class="ant-upload-preview" @click="$refs.modal.edit(1)" >
-          <a-icon type="cloud-upload-o" class="upload-icon"/>
-          <div class="mask">
-            <a-icon type="plus" />
-          </div>
-          <img :src="option.img"/>
+      </div>
+      <div class="account-settings-info-view-right">
+        <dir class="account-settings-info-view-avatar_title">
+          <span>头像</span>
+        </dir>
+        <div class="account-settings-info-view-avatar">
+          <a-avatar :src="avatar" style="width: 144px;height:144px" />
         </div>
-      </a-col>
-
-    </a-row>
-
-    <avatar-modal ref="modal" @ok="setavatar"/>
-
+        <a-upload
+          name="file"
+          :multiple="true"
+          :action="action"
+          :headers="headers"
+          :showUploadList="false"
+          :beforeUpload="beforeUpload"
+          @change="handleChange"
+        >
+          <div class="account-settings-info-view-button_view">
+            <a-button icon="upload">
+              {{ uploading ? '上传中' : '更换头像' }}
+            </a-button>
+          </div>
+        </a-upload>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import AvatarModal from './AvatarModal'
+import { mapGetters, mapMutations } from 'vuex'
+import api from '@/api/index'
+import { updateCurrent } from '@/api/user'
 
 export default {
-  components: {
-    AvatarModal
-  },
   data () {
     return {
-      // cropper
-      preview: {},
-      option: {
-        img: '/avatar2.jpg',
-        info: true,
-        size: 1,
-        outputType: 'jpeg',
-        canScale: false,
-        autoCrop: true,
-        // 只有自动截图开启 宽度高度才生效
-        autoCropWidth: 180,
-        autoCropHeight: 180,
-        fixedBox: true,
-        // 开启宽度和高度比例
-        fixed: true,
-        fixedNumber: [1, 1]
+      loading: true,
+      updating: false,
+      uploading: false,
+      action: process.env.VUE_APP_API_BASE_URL + api.Avatar,
+      headers: {
+        authorization: ''
       }
     }
   },
+  computed: {
+    ...mapGetters(['userInfo', 'token', 'avatar'])
+  },
+  created () {
+    this.headers.authorization = 'Bearer ' + this.token
+    this.form = this.$form.createForm(this, {
+      mapPropsToFields: () => {
+        return {
+          email: this.$form.createFormField({
+            value: this.userInfo.email
+          }),
+          nickname: this.$form.createFormField({
+            value: this.userInfo.nickname
+          })
+        }
+      }
+    })
+  },
   methods: {
-    setavatar (url) {
-      this.option.img = url
+    ...mapMutations(['SET_AVATAR', 'SET_NAME']),
+
+    beforeUpload () {
+      this.uploading = true
+    },
+    handleChange (r) {
+      if (r.file.response !== undefined) {
+        this.uploading = false
+        const { code, result } = r.file.response
+        if (code === 20000) {
+          this.$message.success('更换头像成功')
+          this.SET_AVATAR(result)
+        }
+      }
+    },
+    handleSubmit (e) {
+      e.preventDefault()
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.updating = true
+          const hide = this.$message.loading('更新中..', 0)
+          updateCurrent(values).then(res => {
+            this.$message.success('更新成功')
+            this.SET_NAME(values.nickname)
+          }).finally(() => {
+            hide()
+            this.updating = false
+          })
+        }
+      })
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
-
-  .avatar-upload-wrapper {
-    height: 200px;
-    width: 100%;
+<style lang="scss" scoped>
+  .account-settings-info-right {
+    display: flex;
   }
-
-  .ant-upload-preview {
-    position: relative;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 180px;
-    border-radius: 50%;
-    box-shadow: 0 0 4px #ccc;
-
-    .upload-icon {
-      position: absolute;
-      top: 0;
-      right: 10px;
-      font-size: 1.4rem;
-      padding: 0.5rem;
-      background: rgba(222, 221, 221, 0.7);
-      border-radius: 50%;
-      border: 1px solid rgba(0, 0, 0, 0.2);
+  .account-settings-info-view- {
+    &button_view {
+      width: 144px;
+      text-align: center;
     }
-    .mask {
-      opacity: 0;
-      position: absolute;
-      background: rgba(0,0,0,0.4);
-      cursor: pointer;
-      transition: opacity 0.4s;
-
-      &:hover {
-        opacity: 1;
-      }
-
-      i {
-        font-size: 2rem;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-left: -1rem;
-        margin-top: -1rem;
-        color: #d6d6d6;
-      }
+    &avatar_title {
+      height: 22px;
+      margin-bottom: 8px;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      padding-left: 0;
+      margin-top: 0;
+      line-height: 22px;
     }
-
-    img, .mask {
-      width: 100%;
-      max-width: 180px;
-      height: 100%;
-      border-radius: 50%;
+    &left {
+      min-width: 307px;
+      max-width: 448px;
+    }
+    &right {
+      flex: 1 1;
+      padding-left: 104px;
+    }
+    &avatar {
+      width: 144px;
+      height: 144px;
+      margin-bottom: 12px;
       overflow: hidden;
+        img {
+          width: 100%;
+        }
     }
   }
 </style>
