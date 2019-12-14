@@ -15,3 +15,11 @@ export function updateCurrent (data) {
     data
   })
 }
+
+export function resetPassword (data) {
+  return axios({
+    url: api.ResetPassword,
+    method: 'put',
+    data
+  })
+}

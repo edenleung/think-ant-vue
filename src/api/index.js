@@ -14,6 +14,7 @@ const api = {
   Rule: '/rule',
   User: '/user',
   UserCurrent: '/user/current',
+  ResetPassword: '/user/reset-password',
   Avatar: '/user/avatar',
   Log: {
     Acount: '/log/acount',
