@@ -1,50 +1,47 @@
 <template>
   <div class="account-settings-info-view">
-    <div class="account-settings-info-right">
-      <div class="account-settings-info-view-left">
-
-        <a-form layout="vertical" :form="form" @submit="handleSubmit">
-          <a-form-item
-            label="邮箱"
-            :required="true"
-          >
-            <a-input v-decorator="['email', { rules: [{ required: true, message: '请输入您的邮箱!' }] }]" />
-          </a-form-item>
-
-          <a-form-item
-            label="昵称"
-          >
-            <a-input v-decorator="['nickname', { rules: [{ required: true, message: '请输入您的昵称!!' }] }]"/>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" html-type="submit" :loading="updating">更新基本信息</a-button>
-          </a-form-item>
-        </a-form>
-
-      </div>
-      <div class="account-settings-info-view-right">
-        <dir class="account-settings-info-view-avatar_title">
-          <span>头像</span>
-        </dir>
-        <div class="account-settings-info-view-avatar">
-          <a-avatar :src="avatar" style="width: 144px;height:144px" />
-        </div>
-        <a-upload
-          name="file"
-          :multiple="true"
-          :action="action"
-          :headers="headers"
-          :showUploadList="false"
-          :beforeUpload="beforeUpload"
-          @change="handleChange"
+    <div class="account-settings-info-view-left">
+      <a-form layout="vertical" :form="form" @submit="handleSubmit">
+        <a-form-item
+          label="邮箱"
+          :required="false"
         >
-          <div class="account-settings-info-view-button_view">
-            <a-button icon="upload">
-              {{ uploading ? '上传中' : '更换头像' }}
-            </a-button>
-          </div>
-        </a-upload>
+          <a-input v-decorator="['email', { rules: [{ required: true, message: '请输入您的邮箱!' }] }]" />
+        </a-form-item>
+
+        <a-form-item
+          label="昵称"
+          :required="false"
+        >
+          <a-input v-decorator="['nickname', { rules: [{ required: true, message: '请输入您的昵称!' }] }]"/>
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary" html-type="submit" :loading="updating">更新基本信息</a-button>
+        </a-form-item>
+      </a-form>
+    </div>
+    <div class="account-settings-info-view-right">
+      <dir class="account-settings-info-view-avatar_title">
+        <span>头像</span>
+      </dir>
+      <div class="account-settings-info-view-avatar">
+        <a-avatar :src="avatar" style="width: 144px;height:144px" />
       </div>
+      <a-upload
+        name="file"
+        :multiple="true"
+        :action="action"
+        :headers="headers"
+        :showUploadList="false"
+        :beforeUpload="beforeUpload"
+        @change="handleChange"
+      >
+        <div class="account-settings-info-view-button_view">
+          <a-button icon="upload">
+            {{ uploading ? '上传中' : '更换头像' }}
+          </a-button>
+        </div>
+      </a-upload>
     </div>
   </div>
 </template>
@@ -121,8 +118,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .account-settings-info-right {
+  .account-settings-info-view {
     display: flex;
+    padding-top: 12px;
   }
   .account-settings-info-view- {
     &button_view {
@@ -139,7 +137,7 @@ export default {
       line-height: 22px;
     }
     &left {
-      min-width: 307px;
+      min-width: 224px;
       max-width: 448px;
     }
     &right {
@@ -154,6 +152,22 @@ export default {
         img {
           width: 100%;
         }
+    }
+  }
+
+  @media screen and (max-width: 1200px) {
+    .account-settings-info-view {
+      flex-direction: column-reverse;
+    }
+    .account-settings-info-view-avatar_title {
+      display: none
+    }
+    .account-settings-info-view-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 448px;
+      padding: 20px;
     }
   }
 </style>
