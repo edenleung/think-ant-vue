@@ -63,12 +63,14 @@ export default {
     window.addEventListener('resize', this.resize)
     this.resize()
   },
+  destroyed () {
+    window.removeEventListener('resize', this.resize)
+  },
   methods: {
     resize () {
       if (!this.$refs.main) {
         return
       }
-      console.log('resize')
       const { offsetWidth } = this.$refs.main
       let mode = 'inline'
       if (this.$refs.main.offsetWidth < 641 && offsetWidth > 400) {
@@ -77,7 +79,6 @@ export default {
       if (window.innerWidth < 768 && offsetWidth > 400) {
         mode = 'horizontal'
       }
-      console.log(mode)
       this.mode = mode
     },
     onOpenChange (openKeys) {
