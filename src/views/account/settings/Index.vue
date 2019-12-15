@@ -63,7 +63,7 @@ export default {
     window.addEventListener('resize', this.resize)
     this.resize()
   },
-  destroyed () {
+  beforeDestroy () {
     window.removeEventListener('resize', this.resize)
   },
   methods: {
