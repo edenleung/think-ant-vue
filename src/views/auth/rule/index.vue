@@ -271,3 +271,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.rule-list {
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-bottom: 12px;
+  min-height: 23px;
+}
+</style>

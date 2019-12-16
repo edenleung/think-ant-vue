@@ -1,10 +1,31 @@
 import Vue from 'vue'
 import axios from 'axios'
+import router from '../router'
+
 import store from '@/store'
 import notification from 'ant-design-vue/es/notification'
 import message from 'ant-design-vue/es/message'
+import modal from 'ant-design-vue/es/modal'
 import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+
+const codeMessage = {
+  200: '服务器成功返回请求的数据。',
+  201: '新建或修改数据成功。',
+  202: '一个请求已经进入后台排队（异步任务）。',
+  204: '删除数据成功。',
+  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
+  401: '用户没有权限（令牌、用户名、密码错误）。',
+  403: '用户得到授权，但是访问是被禁止的。',
+  404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
+  406: '请求的格式不可得。',
+  410: '请求的资源被永久删除，且不会再得到的。',
+  422: '当创建一个对象时，发生一个验证错误。',
+  500: '服务器发生错误，请检查服务器。',
+  502: '网关错误。',
+  503: '服务不可用，服务器暂时过载或维护。',
+  504: '网关超时。'
+}
 
 // 创建 axios 实例
 const service = axios.create({
@@ -13,61 +34,56 @@ const service = axios.create({
 })
 
 const err = (error) => {
-  if (error.response) {
-    const data = error.response.data
-    const token = Vue.ls.get(ACCESS_TOKEN)
-    if (error.response.status === 403) {
+  const { response } = error
+
+  if (response && response.status) {
+    const { status, config } = response
+    const { url } = config
+    const errorText = codeMessage[response.status] || response.statusText
+    console.log(errorText)
+    console.log(response)
+
+    if (status === 401) {
+      const { code } = response.data
+      if (error.response) {
+        // const data = error.response.data
+        // const token = Vue.ls.get(ACCESS_TOKEN)
+        switch (code) {
+          // Token验证失败
+          case 50401: {
+            router.push({ path: '/user/login', query: { redirect: router.history.current.fullPath } })
+            break
+          }
+
+          // Token 已过期
+          case 50402: {
+            modal.confirm({
+              title: 'Notification',
+              content: 'Token已过期，你暂不能操作任何操作，是否续期(10秒后需重新登录)？',
+              onOk () {
+                store.dispatch('RefreshToken').then(() => {
+                  message.success('登录已续期')
+                  setTimeout(() => {
+                    window.location.reload()
+                  }, 1500)
+                })
+              }
+            })
+            break
+          }
+        }
+      }
+    } else {
       notification.error({
-        message: 'Forbidden',
-        description: data.message
+        message: `请求错误 ${status}: ${url}`,
+        description: errorText
       })
     }
-    if (error.response.status === 401) {
-      if (data.code === 50401) {
-        notification.error({
-          message: 'Unauthorized',
-          description: 'Authorization verification failed'
-        })
-        if (token) {
-          store.dispatch('Logout').then(() => {
-            setTimeout(() => {
-              window.location.reload()
-            }, 1500)
-          })
-        }
-      } else if (data.code === 50402) {
-        const key = `open${Date.now()}`
-        notification.open({
-          message: 'Notification',
-          description:
-            'Token已过期，你暂不能操作任何操作，是否续期(10秒后重新登录)？',
-          btn: h => {
-            return h(
-              'a-button',
-              {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    store.dispatch('RefreshToken').then(() => {
-                      message.success('登录已续期')
-                      setTimeout(() => {
-                        window.location.reload()
-                      }, 1500)
-                    })
-                  }
-                }
-              },
-              'Confirm'
-            )
-          },
-          key,
-          onClose: close
-        })
-      }
-    }
+  } else if (!response) {
+    notification.error({
+      message: '网络异常',
+      description: '您的网络发生异常，无法连接服务器'
+    })
   }
   return Promise.reject(error)
 }
