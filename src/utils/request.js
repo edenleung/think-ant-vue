@@ -51,7 +51,9 @@ const err = (error) => {
         switch (code) {
           // Token验证失败
           case 50401: {
-            router.push({ path: '/user/login', query: { redirect: router.history.current.fullPath } })
+            store.dispatch('RefreshToken').then(() => {
+              router.push({ path: '/user/login', query: { redirect: router.history.current.fullPath } })
+            })
             break
           }
 
