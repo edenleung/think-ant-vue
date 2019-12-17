@@ -49,10 +49,18 @@ const err = (error) => {
         // const data = error.response.data
         // const token = Vue.ls.get(ACCESS_TOKEN)
         switch (code) {
-          // Token验证失败
+          // Token 已在其它终端登录
           case 50401: {
-            store.dispatch('RefreshToken').then(() => {
-              router.push({ path: '/user/login', query: { redirect: router.history.current.fullPath } })
+            modal.confirm({
+              title: 'Notification',
+              content: '已在其它终端登录，请重新登录',
+              onOk () {
+                const hide = message.loading('正在退出登录..', 0)
+                store.dispatch('Logout').then(() => {
+                  hide()
+                  router.push({ path: '/user/login', query: { redirect: router.history.current.fullPath } })
+                })
+              }
             })
             break
           }
