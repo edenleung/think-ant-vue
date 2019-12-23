@@ -1,7 +1,7 @@
 ## ThinkPHP Ant Design Pro Vue
 
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/xiaodit/think-ant-vue.svg?branch=master)](https://travis-ci.org/xiaodit/think-ant-vue)
+[![Build Status](https://travis-ci.org/edenleung/think-ant-vue.svg?branch=master)](https://travis-ci.org/xiaodit/think-ant-vue)
 
 ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统  
 
