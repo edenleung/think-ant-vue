@@ -88,6 +88,11 @@ const err = (error) => {
         message: `请求错误 ${status}: ${url}`,
         description: errorText
       })
+
+      if ([403, 404, 500].indexOf(status) !== -1) {
+        router.push({ path: `/exception/${status}` })
+      }
+      // store
     }
   } else if (!response) {
     notification.error({
