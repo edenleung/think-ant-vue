@@ -28,7 +28,7 @@ import TagSelect from '@/components/TagSelect'
 import ExceptionPage from '@/components/Exception'
 import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
-
+import HeaderSearch from '@/components/HeaderSearch'
 export {
   AvatarList,
   Bar,
@@ -58,5 +58,6 @@ export {
   IconSelector,
   TagSelect,
   StandardFormRow,
-  ArticleListContent
+  ArticleListContent,
+  HeaderSearch
 }

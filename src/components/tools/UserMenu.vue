@@ -1,6 +1,7 @@
 <template>
   <div class="user-wrapper">
     <div class="content-box">
+      <HeaderSearch :dataSource="dataSource" @onVisibleChange="handleVisibleChange" />
       <a href="https://pro.loacg.com/docs/getting-started" target="_blank">
         <span class="action">
           <a-icon type="question-circle-o"></a-icon>
@@ -44,12 +45,19 @@
 
 <script>
 import NoticeIcon from '@/components/NoticeIcon'
+import { HeaderSearch } from '@/components'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'UserMenu',
   components: {
-    NoticeIcon
+    NoticeIcon,
+    HeaderSearch
+  },
+  data () {
+    return {
+      dataSource: ['搜索提示一', '搜索提示二', '搜索提示三']
+    }
   },
   computed: {
     ...mapGetters(['nickname', 'avatar'])
@@ -76,6 +84,9 @@ export default {
         onCancel () {
         }
       })
+    },
+    handleVisibleChange (status) {
+      console.log('搜索框打开')
     }
   }
 }
