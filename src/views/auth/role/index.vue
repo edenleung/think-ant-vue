@@ -20,6 +20,24 @@
           />
         </a-form-item>
 
+        <a-form-item label="上级管理员">
+          <a-tree-select
+            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+            placeholder="选择上级管理员"
+            allowClear
+            treeDefaultExpandAll
+            @change="handleTreeChange"
+            :treeData="treeData"
+            v-decorator="[
+              'pid',
+              {
+                rules: [{ required: true, message: '请选择上级管理员!' }]
+              }
+            ]"
+          >
+          </a-tree-select>
+        </a-form-item>
+
         <a-form-item label="角色名称">
           <a-input
             placeholder="请入角色名称"
@@ -65,7 +83,7 @@
               >
                 全选
               </a-checkbox>
-              <a-checkbox-group :options="item.actions" v-model="item.selected" @change="onChange(item)" />
+              <a-checkbox-group :options="filterActions(item.actions)" v-model="item.selected" @change="onChange(item)" />
             </a-col>
           </a-row>
         </a-form-item>
@@ -101,7 +119,7 @@
       </div>
 
       <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="openRole">新建</a-button>
+        <a-button type="primary" icon="plus" @click="openRole" :loading="loading" :disabled="loading">新建</a-button>
       </div>
 
       <a-table
@@ -144,6 +162,7 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+// import action from '../../../core/directives/action'
 const statusMap = {
   0: {
     status: 'default',
@@ -186,7 +205,9 @@ export default {
       selected: 0,
       data: [],
       pagination: {},
-      columns
+      columns,
+      treeData: [],
+      rolePermissionSelect: []
     }
   },
   mounted () {
@@ -205,9 +226,10 @@ export default {
     fetch (params = {}) {
       this.loading = true
       this.fetchRole(params).then(res => {
-        const { data, pagination } = res.roles
+        const { data, pagination, tree } = res.roles
         const { rules } = res
         this.data = data
+        this.treeData = tree
         this.pagination = pagination
 
         this.rulesSelectedInit(rules.data)
@@ -260,10 +282,12 @@ export default {
       this.selected = 0
       this.loading = false
       this.rulesSelectedInit(this.rules)
+      this.rolePermissionSelect = []
     },
     openInfoModal (row) {
       this.visible = true
       this.selected = row.id
+      this.rolePermissionSelect = row.permissions
       if (row.permissions) {
         // 当前角色拥有的权限
         this.rules.map(permission => {
@@ -281,7 +305,8 @@ export default {
         this.form.setFieldsValue({
           title: row.title,
           name: row.name,
-          status: row.status
+          status: row.status,
+          pid: row.pid.toString()
         })
       })
     },
@@ -293,7 +318,9 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
+          const hide = this.$message.loading('删除中..', 0)
           this.deleteRole({ id: id }).then(res => {
+            hide()
             this.$notification['success']({
               message: '成功通知',
               description: '删除成功！'
@@ -323,6 +350,34 @@ export default {
         })
         return item
       })
+    },
+    handleTreeChange (v) {
+      const { data } = this
+      // 获取当前已选中角色
+      const role = data.find(item => {
+        if (item.id.toString() === v) {
+          return item
+        }
+      })
+      const { permissions } = role
+      this.rolePermissionSelect = permissions
+    },
+    // 过滤角色有效权限
+    filterActions (actions) {
+      // TODO 点击全选还是可以勾选到已禁用的权限
+      const { rolePermissionSelect } = this
+      if (!rolePermissionSelect.length) {
+        return actions
+      }
+      const filterActions = []
+      for (var i in actions) {
+        actions[i].disabled = false
+        if (rolePermissionSelect.indexOf(actions[i].id) === -1) {
+          actions[i].disabled = true
+        }
+        filterActions.push(actions[i])
+      }
+      return filterActions
     }
   }
 }
