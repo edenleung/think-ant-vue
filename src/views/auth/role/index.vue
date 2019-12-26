@@ -134,6 +134,10 @@
           <a-badge :status="row.status | statusTypeFilter" :text="row.status | statusFilter" />
         </template>
 
+        <template slot="fulltitle" slot-scope="row">
+          <span v-html="row.fulltitle"></span>
+        </template>
+
         <p slot="expandedRowRender" slot-scope="row">
           <a-row>
             <a-col class="rule-list" span="12" v-for="(item, index) in rules" :key="index">
@@ -163,6 +167,7 @@
 <script>
 import { mapActions } from 'vuex'
 // import permission from '../../../store/modules/permission'
+// import permission from '../../../store/modules/permission'
 // import action from '../../../core/directives/action'
 const statusMap = {
   0: {
@@ -182,7 +187,7 @@ const columns = [
   },
   {
     title: '角色名称',
-    dataIndex: 'title'
+    scopedSlots: { customRender: 'fulltitle' }
   },
   {
     title: '状态',
@@ -282,8 +287,16 @@ export default {
       this.form.resetFields()
       this.selected = 0
       this.loading = false
-      this.rulesSelectedInit(this.rules)
       this.rolePermissionSelect = []
+
+      this.rules.map(rule => {
+        rule.selected = []
+        rule.indeterminate = false
+        rule.checkedAll = false
+        rule.actions.map(action => {
+          action.disabled = false
+        })
+      })
     },
     openInfoModal (row) {
       const { id, permissions } = row
@@ -363,12 +376,17 @@ export default {
           indeterminate: false,
           checkedAll: false
         })
+
+        // 初始化状态
+        item.actions.map(action => {
+          action.disabled = false
+        })
         return item
       })
     },
     handleTreeChange (v) {
       if (v !== '0') {
-        const { data } = this
+        const { data, rules } = this
         // 获取当前已选中角色
         const role = data.find(item => {
           if (item.id.toString() === v) {
@@ -377,6 +395,18 @@ export default {
         })
         const { permissions } = role
         this.rolePermissionSelect = permissions
+        rules.map(rule => {
+          rule.selected = []
+          rule.indeterminate = false
+          rule.checkedAll = false
+          rule.actions.map(action => {
+            // 清除上一次所选角色设置的禁用状态
+            action.disabled = false
+            if (permissions.indexOf(action.value) === -1) {
+              action.disabled = true
+            }
+          })
+        })
       }
     }
   }
