@@ -367,15 +367,17 @@ export default {
       })
     },
     handleTreeChange (v) {
-      const { data } = this
-      // 获取当前已选中角色
-      const role = data.find(item => {
-        if (item.id.toString() === v) {
-          return item
-        }
-      })
-      const { permissions } = role
-      this.rolePermissionSelect = permissions
+      if (v !== '0') {
+        const { data } = this
+        // 获取当前已选中角色
+        const role = data.find(item => {
+          if (item.id.toString() === v) {
+            return item
+          }
+        })
+        const { permissions } = role
+        this.rolePermissionSelect = permissions
+      }
     }
   }
 }
