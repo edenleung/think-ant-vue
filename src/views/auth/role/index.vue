@@ -83,7 +83,7 @@
               >
                 全选
               </a-checkbox>
-              <a-checkbox-group :options="filterActions(item.actions)" v-model="item.selected" @change="onChange(item)" />
+              <a-checkbox-group :options="item.actions" v-model="item.selected" @change="onChange(item)" />
             </a-col>
           </a-row>
         </a-form-item>
@@ -162,6 +162,7 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+// import permission from '../../../store/modules/permission'
 // import action from '../../../core/directives/action'
 const statusMap = {
   0: {
@@ -285,20 +286,27 @@ export default {
       this.rolePermissionSelect = []
     },
     openInfoModal (row) {
+      const { id, permissions } = row
       this.visible = true
-      this.selected = row.id
-      this.rolePermissionSelect = row.permissions
-      if (row.permissions) {
-        // 当前角色拥有的权限
-        this.rules.map(permission => {
-          permission.actions.map(action => {
-            if (row.permissions.indexOf(action.value) >= 0) {
-              permission.selected.push(action.value)
+      this.selected = id
+      this.rolePermissionSelect = permissions
+      if (permissions.length) {
+        // 自动勾选当前角色拥有的权限
+        this.rules.map(rule => {
+          // 记录当前权限可选操作数量
+          let ruleSelectCount = 0
+          rule.actions.map(action => {
+            action.readonly = true
+            if (permissions.indexOf(action.value) >= 0) {
+              rule.selected.push(action.value)
+              action.disabled = false
+              ruleSelectCount = ruleSelectCount + 1
+            } else {
+              action.disabled = true
             }
           })
-
-          permission.indeterminate = !!permission.selected.length && (permission.selected.length < permission.actions.length)
-          permission.checkedAll = permission.selected.length === permission.actions.length
+          rule.indeterminate = !!rule.selected.length && (rule.selected.length < ruleSelectCount)
+          rule.checkedAll = rule.selected.length === ruleSelectCount
         })
       }
       this.$nextTick(() => {
@@ -335,8 +343,15 @@ export default {
       permission.checkedAll = permission.selected.length === permission.actions.length
     },
     onCheckAllChange (e, permission) {
+      // 记录有权限的操作
+      const hasPermissionAction = []
+      permission.actions.map(action => {
+        if (action.disabled === false) {
+          hasPermissionAction.push(action.value)
+        }
+      })
       Object.assign(permission, {
-        selected: e.target.checked ? permission.actions.map(obj => obj.value) : [],
+        selected: e.target.checked ? hasPermissionAction : [],
         indeterminate: false,
         checkedAll: e.target.checked
       })
@@ -361,23 +376,6 @@ export default {
       })
       const { permissions } = role
       this.rolePermissionSelect = permissions
-    },
-    // 过滤角色有效权限
-    filterActions (actions) {
-      // TODO 点击全选还是可以勾选到已禁用的权限
-      const { rolePermissionSelect } = this
-      if (!rolePermissionSelect.length) {
-        return actions
-      }
-      const filterActions = []
-      for (var i in actions) {
-        actions[i].disabled = false
-        if (rolePermissionSelect.indexOf(actions[i].id) === -1) {
-          actions[i].disabled = true
-        }
-        filterActions.push(actions[i])
-      }
-      return filterActions
     }
   }
 }
