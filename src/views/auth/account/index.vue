@@ -105,7 +105,7 @@
         </a-form>
       </div>
       <div class="table-operator">
-        <a-button v-action:account-add type="primary" icon="plus" @click="openModal">新建</a-button>
+        <a-button v-action:account-add type="primary" icon="plus" :loading="loading" @click="openModal">新建</a-button>
       </div>
 
       <a-table
@@ -193,10 +193,11 @@ export default {
       this.loading = true
       this.fetchAccount(params).then(res => {
         const { users, roles, rules } = res
-        this.data = users.data
-        this.pagination = users.pagination
-        this.rules = rules.data
-        this.roles = roles.data
+        const { data, pagination } = users
+        this.data = data
+        this.pagination = pagination
+        this.rules = rules
+        this.roles = roles
       }).finally(() => {
         this.loading = false
       })

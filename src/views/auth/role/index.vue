@@ -232,13 +232,13 @@ export default {
     fetch (params = {}) {
       this.loading = true
       this.fetchRole(params).then(res => {
-        const { data, pagination, tree } = res.roles
-        const { rules } = res
+        const { rules, roles } = res
+        const { data, pagination, tree } = roles
         this.data = data
         this.treeData = tree
         this.pagination = pagination
 
-        this.rulesSelectedInit(rules.data)
+        this.rulesSelectedInit(rules)
       }).finally(() => {
         this.loading = false
       })
@@ -341,12 +341,13 @@ export default {
         onOk: () => {
           const hide = this.$message.loading('删除中..', 0)
           this.deleteRole({ id: id }).then(res => {
-            hide()
             this.$notification['success']({
               message: '成功通知',
               description: '删除成功！'
             })
             this.fetch({ page: this.data.length === 1 ? this.pagination.current - 1 : this.pagination.current, pageSize: this.pagination.pageSize })
+          }).finally(r => {
+            hide()
           })
         }
       })
