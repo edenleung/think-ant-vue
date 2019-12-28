@@ -14,9 +14,9 @@ export default {
       type: String,
       default: 'ant-editor-wang'
     },
-    // eslint-disable-next-line
     value: {
-      type: String
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -26,13 +26,16 @@ export default {
     }
   },
   watch: {
-    value (val) {
-      this.editorContent = val
-      this.editor.txt.html(val)
+    value (value) {
+      if (value !== this.editor.txt.html()) {
+        this.editorContent = value
+        this.editor.txt.html(value)
+      }
     }
   },
   mounted () {
     this.initEditor()
+    this.editor.txt.html(this.value)
   },
   methods: {
     initEditor () {
