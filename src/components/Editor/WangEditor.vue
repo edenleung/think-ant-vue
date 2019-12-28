@@ -17,6 +17,16 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    customConfig: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    timeout: {
+      type: Number,
+      default: 200
     }
   },
   data () {
@@ -40,7 +50,8 @@ export default {
   methods: {
     initEditor () {
       this.editor = new WEditor(this.$refs.editor)
-      // this.editor.onchangeTimeout = 200
+      this.editor.onchangeTimeout = this.timeout
+      this.editor.customConfig = { ...this.customConfig }
       this.editor.customConfig.onchange = (html) => {
         this.editorContent = html
         this.$emit('change', this.editorContent)
