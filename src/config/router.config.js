@@ -247,6 +247,22 @@ export const asyncRouterMap = [
         ]
       },
 
+      {
+        path: '/editor',
+        name: 'editor',
+        component: PageView,
+        redirect: '/editor/wangeditor',
+        meta: { title: '编辑器', icon: 'edit' },
+        children: [
+          {
+            path: '/editor/wangeditor',
+            name: 'wangeditor',
+            component: () => import('@/views/editor/wangeditor'),
+            meta: { title: 'WangEditor', keepAlive: true }
+          }
+        ]
+      },
+
       // account
       {
         path: '/account',
