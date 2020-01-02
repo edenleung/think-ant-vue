@@ -40,20 +40,19 @@
         </a-form-item>
 
         <a-form-item label="选择角色">
-          <a-select
-            mode="tags"
+          <a-tree-select
+            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+            :treeData="roles"
+            placeholder="请选择角色"
+            treeDefaultExpandAll
+            multiple
             v-decorator="[
-              'roles',
+              'pid',
               {
-                rules: [{ required: this.selected === 0, message: '请选择所属组别!' }]
+                rules: [{ required: true, message: '请选择角色!' }]
               }
             ]"
-            placeholder="请选择角色"
-          >
-            <a-select-option v-for="(role, index) in roles" :value="role.id.toString()" :key="index">
-              {{ role.title }}
-            </a-select-option>
-          </a-select>
+          />
         </a-form-item>
 
         <a-form-item label="状态">
