@@ -62,10 +62,13 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .ant-editor-wang {
   .editor-wrapper {
     text-align: left;
+    .w-e-toolbar {
+      flex-wrap: wrap;
+    }
   }
 }
 </style>
