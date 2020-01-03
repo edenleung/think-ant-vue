@@ -193,6 +193,8 @@ export default {
       queryParam: {},
       loadData: parameter => {
         return this.fetchRule(Object.assign(parameter, this.queryParam)).then(res => {
+          const { tree } = res
+          this.tree = tree
           return res
         })
       },

@@ -47,7 +47,7 @@
             treeDefaultExpandAll
             multiple
             v-decorator="[
-              'pid',
+              'roles',
               {
                 rules: [{ required: true, message: '请选择角色!' }]
               }
@@ -148,12 +148,13 @@
           <template v-else>禁用</template>
         </template>
 
-        <p slot="expandedRowRender" slot-scope="row">
+        <template slot="expandedRowRender" slot-scope="row">
           <a-row>
             <a-col class="rule-list" span="12" v-for="(item, index) in rules" :key="index">
               <a-row>
                 <a-col span="4">{{ item.title }}：</a-col>
                 <a-col span="20">
+                  <template v-if="!item.actions.length">-</template>
                   <template v-for="(action, i) in item.actions">
                     <a-tag :key="i" v-if="row.rules.indexOf(action.id) !== -1">
                       {{ action.title }}
@@ -163,7 +164,7 @@
               </a-row>
             </a-col>
           </a-row>
-        </p>
+        </template>
 
         <template slot="tools" slot-scope="row">
           <a v-action:account-update @click="openInfoModal(row)">编辑</a>
