@@ -90,8 +90,8 @@
       </a-form>
     </a-modal>
 
-    <a-card>
-      <div class="table-page-search-wrapper">
+    <a-card :body-style="{ padding: 0 }">
+      <!-- <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
@@ -116,19 +116,37 @@
             </a-col>
           </a-row>
         </a-form>
+      </div> -->
+
+      <div class="ant-pro-table-toolbar">
+        <div class="ant-pro-table-toolbar-title">角色列表</div>
+        <div class="ant-pro-table-toolbar-option">
+          <div class="ant-pro-table-toolbar-item">
+            <a-button v-action:role-add type="primary" icon="plus" @click="openRole">新建</a-button>
+          </div>
+          <template v-if="selectedRows.length">
+            <div class="ant-pro-table-toolbar-item">
+              <a-dropdown>
+                <a-menu slot="overlay" @click="handleMenuClick">
+                  <a-menu-item key="remove"><a-icon type="delete" />批量删除</a-menu-item>
+                </a-menu>
+                <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
+              </a-dropdown>
+            </div>
+          </template>
+        </div>
       </div>
 
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="openRole" :loading="loading" :disabled="loading">新建</a-button>
-      </div>
-
-      <a-table
+      <s-table
+        ref="table"
+        size="default"
+        :rowKey="(record) => record.id"
         :columns="columns"
-        :rowKey="item => item.id"
-        :dataSource="data"
-        :pagination="pagination"
-        :loading="loading"
-        @change="handleTableChange"
+        :data="loadData"
+        :alert="true"
+        :expandRowByClick="true"
+        :expandIcon="expandIcon"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="status" slot-scope="row">
           <a-badge :status="row.status | statusTypeFilter" :text="row.status | statusFilter" />
@@ -160,15 +178,14 @@
           <a-divider type="vertical" />
           <a v-action:role-delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
-      </a-table>
+      </s-table>
     </a-card>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
-// import permission from '../../../store/modules/permission'
-// import permission from '../../../store/modules/permission'
-// import action from '../../../core/directives/action'
+import { STable } from '@/components'
+
 const statusMap = {
   0: {
     status: 'default',
@@ -210,14 +227,27 @@ export default {
       rules: [],
       selected: 0,
       data: [],
-      pagination: {},
       columns,
       treeData: [],
-      rolePermissionSelect: []
+      rolePermissionSelect: [],
+      queryParam: {},
+      loadData: parameter => {
+        return this.fetchRole(Object.assign(parameter, this.queryParam)).then(res => {
+          const { rules, roles } = res
+          const { data, tree } = roles
+          this.data = data
+          this.treeData = tree
+
+          this.rulesSelectedInit(rules)
+          return roles
+        })
+      },
+      selectedRowKeys: [],
+      selectedRows: []
     }
   },
+  components: { STable },
   mounted () {
-    this.fetch()
   },
   filters: {
     statusFilter (type) {
@@ -229,26 +259,6 @@ export default {
   },
   methods: {
     ...mapActions(['fetchRule', 'fetchRole', 'deleteRole']),
-    fetch (params = {}) {
-      this.loading = true
-      this.fetchRole(params).then(res => {
-        const { rules, roles } = res
-        const { data, pagination, tree } = roles
-        this.data = data
-        this.treeData = tree
-        this.pagination = pagination
-
-        this.rulesSelectedInit(rules)
-      }).finally(() => {
-        this.loading = false
-      })
-    },
-    handleTableChange (pagination, filters, sorter) {
-      this.fetch({
-        page: pagination.current,
-        pageSize: pagination.pageSize
-      })
-    },
     openRole () {
       this.visible = true
     },
@@ -273,8 +283,8 @@ export default {
                 message: '成功通知',
                 description: this.selected === 0 ? '添加成功！' : '更新成功！'
               })
-              this.fetch()
               this.handleCancel()
+              this.refreshTable()
             })
             .finally(() => {
               this.confirmLoading = false
@@ -345,7 +355,7 @@ export default {
               message: '成功通知',
               description: '删除成功！'
             })
-            this.fetch({ page: this.data.length === 1 ? this.pagination.current - 1 : this.pagination.current, pageSize: this.pagination.pageSize })
+            this.refreshTable()
           }).finally(r => {
             hide()
           })
@@ -409,6 +419,20 @@ export default {
           })
         })
       }
+    },
+    refreshTable () {
+      this.$refs.table.refresh()
+    },
+    onSelectChange (selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+    handleMenuClick () {},
+    expandIcon ({ expanded }) {
+      if (expanded === true) {
+        return <a-icon type='down' />
+      }
+      return <a-icon type='right' />
     }
   }
 }

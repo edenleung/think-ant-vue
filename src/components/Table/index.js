@@ -255,9 +255,9 @@ export default {
 
       // 绘制 alert 组件
       return (
-        <a-alert showIcon={true} style="margin-bottom: 16px">
+        <a-alert showIcon={true} style="margin: 0 24px 16px;">
           <template slot="message">
-            <span style="margin-right: 12px">已选择: <a style="font-weight: 600">{this.selectedRows.length}</a></span>
+            已选择 <a style={{ fontWeight: 600 }}>{ this.selectedRows.length }</a> 项&nbsp;&nbsp;
             {needTotalItems}
             {clearItem}
           </template>

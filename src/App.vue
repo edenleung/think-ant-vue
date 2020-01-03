@@ -37,4 +37,35 @@ export default {
     margin-bottom: 12px;
     min-height: 23px;
   }
+
+  .ant-pro-table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    padding: 0 24px;
+    line-height: 64px;
+  }
+  .ant-pro-table-toolbar-title {
+    flex: 1 1;
+    color: #000;
+    font-size: 16px;
+    line-height: 24px;
+    opacity: .85;
+  }
+  .ant-pro-table-toolbar-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .ant-pro-table-toolbar-item {
+    margin-right: 8px;
+  }
+  .ant-pro-table-toolbar-item-icon {
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .ant-table-wrapper .anticon {
+    font-size: 12px;
+  }
 </style>

@@ -1,24 +1,30 @@
 <template>
   <div class="page-header-index-wide">
-    <a-card>
-      <div style="margin-bottom: 16px">
-        <a-button type="danger" icon="delete" @click="handleDeleteSelected" :disabled="!hasSelected" :loading="loading">
-          批量删除
-        </a-button>
-        <span style="margin-left: 8px">
-          <template v-if="hasSelected">
-            {{ `已选中 ${selectedRowKeys.length} 项` }}
+    <a-card :body-style="{ padding: 0 }">
+      <div class="ant-pro-table-toolbar">
+        <div class="ant-pro-table-toolbar-title">日志</div>
+        <div class="ant-pro-table-toolbar-option">
+          <template v-if="selectedRows.length">
+            <div class="ant-pro-table-toolbar-item">
+              <a-dropdown>
+                <a-menu slot="overlay" @click="handleMenuClick">
+                  <a-menu-item key="remove"><a-icon type="delete" />批量删除</a-menu-item>
+                </a-menu>
+                <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
+              </a-dropdown>
+            </div>
           </template>
-        </span>
+        </div>
       </div>
-      <a-table
+
+      <s-table
+        ref="table"
+        size="default"
+        :rowKey="(record) => record.id"
         :columns="columns"
-        :rowKey="item => item.id"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-        :dataSource="data"
-        :pagination="pagination"
-        :loading="loading"
-        @change="handleTableChange"
+        :data="loadData"
+        :alert="true"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="sql" slot-scope="sql">
           <a-tooltip placement="left" :title="sql">
@@ -29,12 +35,13 @@
         <template slot="tools" slot-scope="row">
           <a @click="handleDeleteRow(row)">删除</a>
         </template>
-      </a-table>
+      </s-table>
     </a-card>
   </div>
 </template>
 <script>
 import { fetchDbLog, deleteDbLog } from '@/api/log'
+import { STable } from '@/components'
 
 const columns = [
   {
@@ -66,37 +73,29 @@ const columns = [
 export default {
   data () {
     return {
-      description: '查看CURD日志',
+      description: '',
       loading: false,
-      pagination: {},
-      data: [],
       selectedRowKeys: [],
+      selectedRows: [],
       form: this.$form.createForm(this),
-      columns
+      columns,
+      queryParam: {},
+      loadData: parameter => {
+        return fetchDbLog(Object.assign(parameter, this.queryParam)).then(res => {
+          return res.result
+        })
+      }
     }
   },
+  components: { STable },
   computed: {
     hasSelected () {
       return this.selectedRowKeys.length > 0
     }
   },
   mounted () {
-    this.fetch()
   },
   methods: {
-    fetch (params = {}) {
-      this.loading = true
-      fetchDbLog(params).then(res => {
-        const { data, pagination } = res.result
-        this.data = data
-        this.pagination = pagination
-      }).finally(() => {
-        this.loading = false
-      })
-    },
-    onSelectChange (selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys
-    },
     handleDeleteRow (row) {
       this.handleDelete(true, row)
     },
@@ -118,19 +117,24 @@ export default {
               message: '成功通知',
               description: '删除成功！'
             })
-            this.fetch({ page: this.data.length === 1 ? this.pagination.current - 1 : this.pagination.current, pageSize: this.pagination.pageSize })
           })
+          this.refreshTable()
         }
       })
     },
-    getPopupContainer (trigger) {
-      return trigger.parentElement
+    refreshTable () {
+      this.$refs.table.refresh()
     },
-    handleTableChange (pagination, filters, sorter) {
-      this.fetch({
-        page: pagination.current,
-        pageSize: pagination.pageSize
-      })
+    onSelectChange (selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+    handleMenuClick ({ key }) {
+      switch (key) {
+        case 'remove': {
+          this.handleDeleteSelected()
+        }
+      }
     }
   }
 }

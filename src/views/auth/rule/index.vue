@@ -68,18 +68,43 @@
       </a-form>
     </a-modal>
 
-    <a-card>
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="openModal">新建</a-button>
+    <a-card :body-style="{ padding: 0 }">
+      <div class="ant-pro-table-toolbar">
+        <div class="ant-pro-table-toolbar-title">规则列表</div>
+        <div class="ant-pro-table-toolbar-option">
+          <div class="ant-pro-table-toolbar-item">
+            <a-button v-action:rule-add type="primary" icon="plus" @click="openModal">新建</a-button>
+          </div>
+          <template v-if="selectedRows.length">
+            <div class="ant-pro-table-toolbar-item">
+              <a-dropdown>
+                <a-menu slot="overlay" @click="handleMenuClick">
+                  <a-menu-item key="remove"><a-icon type="delete" />批量删除</a-menu-item>
+                </a-menu>
+                <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
+              </a-dropdown>
+            </div>
+          </template>
+          <a-divider type="vertical" />
+          <span class="ant-pro-table-toolbar-item-icon">
+            <a-tooltip placement="top">
+              <template slot="title">
+                <span>刷新</span>
+              </template>
+              <a-icon type="reload" />
+            </a-tooltip>
+          </span>
+        </div>
       </div>
 
-      <a-table
+      <s-table
+        ref="table"
+        size="default"
+        :rowKey="(record) => record.id"
         :columns="columns"
-        :rowKey="item => item.id"
-        :dataSource="data"
-        :pagination="pagination"
-        :loading="loading"
-        @change="handleTableChange"
+        :data="loadData"
+        :alert="true"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="actions" slot-scope="row">
           <template v-for="(action, index) in row.actions">
@@ -109,13 +134,13 @@
           <a-divider type="vertical" />
           <a v-action:rule-delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
-      </a-table>
+      </s-table>
     </a-card>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
-
+import { STable } from '@/components'
 const statusMap = {
   0: {
     status: 'default',
@@ -164,17 +189,24 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      data: [],
-      pagination: {},
+      queryParam: {},
+      loadData: parameter => {
+        return this.fetchRule(Object.assign(parameter, this.queryParam)).then(res => {
+          return res
+        })
+      },
       loading: false,
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
       info: {},
       tree: [],
-      selected: 0
+      selected: 0,
+      selectedRowKeys: [],
+      selectedRows: []
     }
   },
+  components: { STable },
   filters: {
     statusFilter (type) {
       return statusMap[type].text
@@ -184,29 +216,9 @@ export default {
     }
   },
   mounted () {
-    this.fetch()
   },
   methods: {
     ...mapActions(['fetchRule', 'deleteRule']),
-    fetch (params = {}) {
-      this.loading = true
-      this.fetchRule(params)
-        .then(res => {
-          const { data, pagination, tree } = res
-          this.data = data
-          this.pagination = pagination
-          this.tree = tree
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    handleTableChange (pagination, filters, sorter) {
-      this.fetch({
-        page: pagination.current,
-        pageSize: pagination.pageSize
-      })
-    },
     openModal () {
       this.visible = true
     },
@@ -236,7 +248,7 @@ export default {
                 message: '成功通知',
                 description: this.selected === 0 ? '添加成功！' : '更新成功！'
               })
-              this.fetch()
+              this.refreshTable()
               this.handleCancel()
             })
             .finally(() => {
@@ -263,11 +275,19 @@ export default {
               message: '成功通知',
               description: '删除成功！'
             })
-            this.fetch({ page: this.data.length === 1 ? this.pagination.current - 1 : this.pagination.current, pageSize: this.pagination.pageSize })
+            this.refreshTable()
           })
         }
       })
-    }
+    },
+    refreshTable () {
+      this.$refs.table.refresh()
+    },
+    onSelectChange (selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+    handleMenuClick () {}
   }
 }
 </script>
