@@ -34,21 +34,37 @@
         </a-form-item>
 
         <a-form-item label="所属组别" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-select
+          <a-tree-select
+            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+            placeholder="请选择所属组别"
+            allowClear
+            treeDefaultExpandAll
+            :treeData="tree"
+            @change="handleTreeChange"
             v-decorator="[
               'pid',
               {
                 rules: [{ required: true, message: '请选择所属组别!' }]
               }
             ]"
-            placeholder="请选择所属组别"
           >
-            <a-select-option :value="0">顶级分类</a-select-option>
+          </a-tree-select>
+        </a-form-item>
 
-            <a-select-option v-for="(item, index) in tree" :value="item.id" :key="index">{{
-              item.title
-            }}</a-select-option>
-          </a-select>
+        <a-form-item label="类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-radio-group
+            defaultValue="menu"
+            buttonStyle="solid"
+            v-decorator="[
+              'type',
+              {
+                rules: [{ required: true, message: '请选择类型!' }]
+              }
+            ]"
+          >
+            <a-radio-button value="menu">菜单</a-radio-button>
+            <a-radio-button value="action">按钮</a-radio-button>
+          </a-radio-group>
         </a-form-item>
 
         <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -106,8 +122,12 @@
         :alert="true"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
+        <template slot="fulltitle" slot-scope="row">
+          <span v-html="row.fulltitle"></span>
+        </template>
+
         <template slot="actions" slot-scope="row">
-          <template v-if="!row.actions.length">/</template>
+          <template v-if="!row.actions.length">-</template>
           <template v-for="(action, index) in row.actions">
             <a-popover :key="index" title="详情" trigger="click">
               <template slot="content">
@@ -160,7 +180,7 @@ const columns = [
   },
   {
     title: '权限名称',
-    dataIndex: 'title'
+    scopedSlots: { customRender: 'fulltitle' }
   },
   {
     title: '可操作权限',
@@ -295,6 +315,11 @@ export default {
         case 'remove': {
           // TODO
         }
+      }
+    },
+    handleTreeChange (v) {
+      if (v === '0') {
+        // TODO 当选择‘根’时，类型不能选择按钮
       }
     }
   }
