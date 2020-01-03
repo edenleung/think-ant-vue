@@ -162,6 +162,7 @@
               <a-row>
                 <a-col span="4">{{ item.title }}：</a-col>
                 <a-col span="20">
+                  <template v-if="!item.actions.length">-</template>
                   <template v-for="(action, i) in item.actions">
                     <a-tag :key="i" v-if="row.permissions.indexOf(action.id) !== -1">
                       {{ action.title }}

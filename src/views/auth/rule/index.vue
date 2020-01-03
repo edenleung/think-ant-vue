@@ -107,6 +107,7 @@
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="actions" slot-scope="row">
+          <template v-if="!row.actions.length">/</template>
           <template v-for="(action, index) in row.actions">
             <a-popover :key="index" title="详情" trigger="click">
               <template slot="content">
@@ -287,7 +288,13 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    handleMenuClick () {}
+    handleMenuClick ({ key }) {
+      switch (key) {
+        case 'remove': {
+          // TODO
+        }
+      }
+    }
   }
 }
 </script>
