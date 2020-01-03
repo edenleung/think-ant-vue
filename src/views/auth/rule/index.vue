@@ -91,7 +91,7 @@
               <template slot="title">
                 <span>刷新</span>
               </template>
-              <a-icon type="reload" />
+              <a-icon type="reload" @click="refreshTable()"/>
             </a-tooltip>
           </span>
         </div>

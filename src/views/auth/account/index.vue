@@ -120,6 +120,15 @@
               </a-dropdown>
             </div>
           </template>
+          <a-divider type="vertical" />
+          <span class="ant-pro-table-toolbar-item-icon">
+            <a-tooltip placement="top">
+              <template slot="title">
+                <span>刷新</span>
+              </template>
+              <a-icon type="reload" @click="refreshTable()"/>
+            </a-tooltip>
+          </span>
         </div>
       </div>
 

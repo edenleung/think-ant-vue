@@ -13,7 +13,16 @@
                 <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
               </a-dropdown>
             </div>
+            <a-divider type="vertical" />
           </template>
+          <span class="ant-pro-table-toolbar-item-icon">
+            <a-tooltip placement="top">
+              <template slot="title">
+                <span>刷新</span>
+              </template>
+              <a-icon type="reload" @click="refreshTable()"/>
+            </a-tooltip>
+          </span>
         </div>
       </div>
       <s-table
