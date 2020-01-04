@@ -33,7 +33,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="所属组别" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="所属组别" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
           <a-tree-select
             :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
             placeholder="请选择所属组别"
@@ -53,7 +53,6 @@
 
         <a-form-item label="类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-radio-group
-            defaultValue="menu"
             buttonStyle="solid"
             v-decorator="[
               'type',
@@ -62,12 +61,11 @@
               }
             ]"
           >
-            <a-radio-button value="menu">菜单</a-radio-button>
-            <a-radio-button value="action">按钮</a-radio-button>
+            <a-radio-button :value="type.value" v-for="type in typeMap" :key="type.value">{{ type.text }}</a-radio-button>
           </a-radio-group>
         </a-form-item>
 
-        <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
           <a-select
             v-decorator="[
               'status',
@@ -146,6 +144,10 @@
           </template>
         </template>
 
+        <template slot="type" slot-scope="row">
+          <a-tag :color="row.type | typeColorFilter">{{ row.type | typeTextFilter }}</a-tag>
+        </template>
+
         <template slot="status" slot-scope="row">
           <a-badge :status="row.status | statusTypeFilter" :text="row.status | statusFilter" />
         </template>
@@ -173,6 +175,24 @@ const statusMap = {
   }
 }
 
+const typeMap = {
+  'path': {
+    value: 'path',
+    text: '目录',
+    color: 'purple'
+  },
+  'menu': {
+    value: 'menu',
+    text: '菜单',
+    color: 'blue'
+  },
+  'action': {
+    value: 'action',
+    text: '按钮',
+    color: 'cyan'
+  }
+}
+
 const columns = [
   {
     title: '唯一识别码',
@@ -185,6 +205,10 @@ const columns = [
   {
     title: '可操作权限',
     scopedSlots: { customRender: 'actions' }
+  },
+  {
+    title: '类型',
+    scopedSlots: { customRender: 'type' }
   },
   {
     title: '状态',
@@ -201,7 +225,8 @@ export default {
     return {
       description:
         '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
-      columns: columns,
+      columns,
+      typeMap,
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 }
@@ -236,6 +261,12 @@ export default {
     },
     statusTypeFilter (type) {
       return statusMap[type].status
+    },
+    typeTextFilter (type) {
+      return typeMap[type].text
+    },
+    typeColorFilter (type) {
+      return typeMap[type].color
     }
   },
   mounted () {
@@ -249,13 +280,7 @@ export default {
       this.visible = true
       this.selected = row.id
       this.$nextTick(() => {
-        this.form.setFieldsValue({
-          title: row.title,
-          name: row.name,
-          action: row.action,
-          pid: row.pid,
-          status: row.status
-        })
+        this.form.setFieldsValue({ ...row })
       })
     },
     handleSubmit () {
