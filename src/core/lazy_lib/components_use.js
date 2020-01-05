@@ -47,10 +47,12 @@ import {
   Popconfirm,
   message,
   notification,
-  AutoComplete
+  AutoComplete,
+  TreeSelect
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
+Vue.use(TreeSelect)
 Vue.use(AutoComplete)
 Vue.use(LocaleProvider)
 Vue.use(Layout)
