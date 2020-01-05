@@ -34,6 +34,11 @@ const vueConfig = {
       // Ignore all locale files of moment.js
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
+    resolve: {
+      alias: {
+        '@ant-design/icons/lib/dist$': resolve('./src/core/antd/icons.js')
+      }
+    },
     // if prod, add externals
     externals: isProd ? assetsCDN.externals : {}
   },
