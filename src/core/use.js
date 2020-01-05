@@ -3,7 +3,7 @@ import VueStorage from 'vue-ls'
 import config from '@/config/defaultSettings'
 
 // base library
-import Antd from 'ant-design-vue'
+import Antd from 'ant-design-vue/es'
 import Viser from 'viser-vue'
 import VueCropper from 'vue-cropper'
 import 'ant-design-vue/dist/antd.less'
