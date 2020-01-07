@@ -55,3 +55,21 @@ export {
   default as LogoutOutline
 } from '@ant-design/icons/lib/outline/LogoutOutline'
 /* Layout end */
+export {
+  default as SlackOutline
+} from '@ant-design/icons/lib/outline/SlackOutline'
+export {
+  default as FileTextOutline
+} from '@ant-design/icons/lib/outline/FileTextOutline'
+export {
+  default as EditOutline
+} from '@ant-design/icons/lib/outline/EditOutline'
+export {
+  default as SearchOutline
+} from '@ant-design/icons/lib/outline/SearchOutline'
+export {
+  default as BellOutline
+} from '@ant-design/icons/lib/outline/BellOutline'
+export {
+  default as QuestionCircleOutline
+} from '@ant-design/icons/lib/outline/QuestionCircleOutline'
