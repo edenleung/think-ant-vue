@@ -73,3 +73,9 @@ export {
 export {
   default as QuestionCircleOutline
 } from '@ant-design/icons/lib/outline/QuestionCircleOutline'
+export {
+  default as CheckCircleOutline
+} from '@ant-design/icons/lib/outline/CheckCircleOutline'
+export {
+  default as CloseCircleOutline
+} from '@ant-design/icons/lib/outline/CloseCircleOutline'
