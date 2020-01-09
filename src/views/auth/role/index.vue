@@ -8,7 +8,7 @@
       :confirmLoading="confirmLoading"
       @cancel="handleCancel">
       <a-form :form="form">
-        <a-form-item label="唯一识别码">
+        <a-form-item label="唯一识别码" hasFeedback>
           <a-input
             placeholder="请入唯一识别码（英文即可）"
             v-decorator="[
@@ -20,7 +20,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="上级管理员">
+        <a-form-item label="上级管理员" hasFeedback>
           <a-tree-select
             :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
             placeholder="选择上级管理员"
@@ -38,7 +38,7 @@
           </a-tree-select>
         </a-form-item>
 
-        <a-form-item label="角色名称">
+        <a-form-item label="角色名称" hasFeedback>
           <a-input
             placeholder="请入角色名称"
             v-decorator="[
@@ -50,7 +50,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="状态">
+        <a-form-item label="状态" hasFeedback>
           <a-select
             v-decorator="[
               'status',
@@ -69,7 +69,7 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="拥有权限">
+        <a-form-item label="拥有权限" v-if="form.getFieldValue('pid')" hasFeedback>
           <a-row :gutter="16" v-for="(item, index) in rules" :key="index">
             <a-col :xl="4" :lg="24">
               {{ item.title }}：
@@ -90,39 +90,75 @@
       </a-form>
     </a-modal>
 
-    <a-card :body-style="{ padding: 0 }">
-      <!-- <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="角色ID">
-                <a-input placeholder="请输入"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="状态">
-                <a-select placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <span class="table-page-search-submitButtons">
-                <a-button type="primary">查询</a-button>
-                <a-button style="margin-left: 8px">重置</a-button>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div> -->
+    <a-modal
+      title="分配数据权限"
+      :width="500"
+      :visible="dataVisible"
+      @ok="handleDataSubmit"
+      :confirmLoading="confirmLoading"
+      @cancel="handleCancel">
+      <a-form :form="dataForm">
+        <a-form-item label="唯一识别码" hasFeedback>
+          <a-input
+            readonly
+            v-decorator="[
+              'name'
+            ]"
+          />
+        </a-form-item>
 
+        <a-form-item label="角色名称" hasFeedback>
+          <a-input
+            readonly
+            v-decorator="[
+              'title'
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="数据范围" hasFeedback>
+          <a-select
+            @change="handleSelectChange"
+            v-decorator="[
+              'mode',
+              {
+                rules: [{ required: true, message: '请输入角色名称!' }]
+              }
+            ]">
+            <a-select-option :value="1">全部数据权限</a-select-option>
+            <a-select-option :value="2">自定义数据权限</a-select-option>
+            <a-select-option :value="3">本部门数据权限</a-select-option>
+            <a-select-option :value="4">本部门及以下数据权限</a-select-option>
+            <a-select-option :value="5">仅本人数据权限</a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item v-if="dataForm.getFieldValue('mode') === 2" label="数据权限" hasFeedback>
+          <a-tree
+            checkable
+            @expand="onExpand"
+            v-model="checkedKeys"
+            :autoExpandParent="true"
+            @select="onSelect"
+            :treeData="deptTreeData"
+            :showLine="true"
+            v-decorator="[
+              'deptIds',
+              {
+                rules: [{ required: true, message: '请选择数据权限!' }]
+              }
+            ]"
+          />
+        </a-form-item>
+      </a-form>
+    </a-modal>
+
+    <a-card :body-style="{ padding: 0 }">
       <div class="ant-pro-table-toolbar">
         <div class="ant-pro-table-toolbar-title">角色列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:role-add type="primary" icon="plus" @click="openRole">新建</a-button>
+            <a-button v-action:role-add type="primary" icon="plus" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -162,7 +198,7 @@
         </template>
 
         <template slot="fulltitle" slot-scope="row">
-          <span v-html="row.fulltitle"></span>
+          <span v-html="row.title"></span>
         </template>
 
         <p slot="expandedRowRender" slot-scope="row">
@@ -186,6 +222,8 @@
         <template slot="tools" slot-scope="row">
           <a v-action:role-update @click="openInfoModal(row)">编辑</a>
           <a-divider type="vertical" />
+          <a v-action:role-update @click="openDataInfoModal(row)">数据权限</a>
+          <a-divider type="vertical" />
           <a v-action:role-delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
@@ -193,9 +231,8 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
 import { STable } from '@/components'
-
+import { fetchRole, addRole, updateRole, deleteRole, updateMode } from '@/api/role'
 const statusMap = {
   0: {
     status: 'default',
@@ -228,25 +265,35 @@ const columns = [
 export default {
   data () {
     return {
+      expandedKeys: ['0-0-0', '0-0-1'],
+      selectedKeys: [],
+      checkedKeys: [],
       description:
         '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
       loading: false,
       confirmLoading: false,
       visible: false,
-      form: this.$form.createForm(this),
+      dataVisible: false,
+      customDataVisable: false,
+      form: this.$form.createForm(this, { name: 'role' }),
+      dataForm: this.$form.createForm(this, { name: 'dept' }),
       rules: [],
+      allActionIds: [],
       selected: 0,
+      info: {},
       data: [],
       columns,
       treeData: [],
+      deptTreeData: [],
       rolePermissionSelect: [],
       queryParam: {},
       loadData: parameter => {
-        return this.fetchRole(Object.assign(parameter, this.queryParam)).then(res => {
-          const { rules, roles } = res
+        return fetchRole(Object.assign(parameter, this.queryParam)).then(res => {
+          const { rules, roles, depts } = res.result
           const { data, tree } = roles
           this.data = data
           this.treeData = tree
+          this.deptTreeData = depts
 
           this.rulesSelectedInit(rules)
           return roles
@@ -257,7 +304,12 @@ export default {
     }
   },
   components: { STable },
-  mounted () {
+  watch: {
+    checkedKeys (v) {
+      this.dataForm.setFieldsValue({
+        deptIds: v
+      })
+    }
   },
   filters: {
     statusFilter (type) {
@@ -268,9 +320,19 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchRule', 'fetchRole', 'deleteRole']),
-    openRole () {
-      this.visible = true
+    handleDataSubmit () {
+      this.dataForm.validateFields((err, values) => {
+        if (!err) {
+          updateMode(this.selected, values).then(res => {
+            this.$notification['success']({
+              message: '成功通知',
+              description: '更新成功！'
+            })
+            this.handleCancel()
+            this.refreshTable()
+          })
+        }
+      })
     },
     handleSubmit () {
       this.form.validateFields((err, values) => {
@@ -281,29 +343,25 @@ export default {
               checkedList.push(s)
             })
           })
-
-          const action = this.selected === 0 ? 'addRole' : 'updateRole'
-          values.selectId = this.selected
           values.rules = checkedList
+          const promise = this.selected === 0 ? addRole(values) : updateRole(this.selected, values)
           this.confirmLoading = true
-          this.$store
-            .dispatch(action, values)
-            .then(res => {
-              this.$notification['success']({
-                message: '成功通知',
-                description: this.selected === 0 ? '添加成功！' : '更新成功！'
-              })
-              this.handleCancel()
-              this.refreshTable()
+          promise.then(res => {
+            this.$notification['success']({
+              message: '成功通知',
+              description: this.selected === 0 ? '添加成功！' : '更新成功！'
             })
-            .finally(() => {
-              this.confirmLoading = false
-            })
+            this.handleCancel()
+            this.refreshTable()
+          }).finally(() => {
+            this.confirmLoading = false
+          })
         }
       })
     },
     handleCancel () {
       this.visible = false
+      this.dataVisible = false
       this.form.resetFields()
       this.selected = 0
       this.loading = false
@@ -318,36 +376,75 @@ export default {
         })
       })
     },
-    openInfoModal (row) {
-      const { id, permissions } = row
-      this.visible = true
-      this.selected = id
-      this.rolePermissionSelect = permissions
-      if (permissions.length) {
-        // 自动勾选当前角色拥有的权限
-        this.rules.map(rule => {
-          // 记录当前权限可选操作数量
-          let ruleSelectCount = 0
+    filterRuleAction (selectRoleId = '1') {
+      // 更新时 自动勾选已选择的权限
+      if (this.selected > 0) {
+        const { info: { pid } } = this
+        selectRoleId = pid.toString()
+      }
+      const { data, rules } = this
+      let allPermissionActionsIds = []
+      if (selectRoleId !== '1') {
+        const parentRole = data.find(item => {
+          if (item.id.toString() === selectRoleId) {
+            return item
+          }
+        })
+        allPermissionActionsIds = parentRole.permissions
+      } else {
+        allPermissionActionsIds = this.allActionIds
+      }
+      console.log(allPermissionActionsIds)
+      // 更新时 自动勾选已选择的权限
+      if (this.selected > 0) {
+        const { info: { permissions } } = this
+        rules.map(rule => {
           rule.actions.map(action => {
-            action.readonly = true
-            if (permissions.indexOf(action.value) >= 0) {
-              rule.selected.push(action.value)
-              action.disabled = false
-              ruleSelectCount = ruleSelectCount + 1
-            } else {
+            if (permissions.indexOf(action.id) !== -1) {
+              rule.selected.push(action.id)
+            }
+
+            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
+          })
+        })
+      } else {
+        // 创建时
+        rules.map(rule => {
+          rule.actions.map(action => {
+            if (allPermissionActionsIds.indexOf(action.id) === -1) {
               action.disabled = true
+            } else {
+              action.disabled = false
             }
           })
-          rule.indeterminate = !!rule.selected.length && (rule.selected.length < ruleSelectCount)
-          rule.checkedAll = rule.selected.length === ruleSelectCount
         })
       }
+    },
+    openInfoModal (row) {
+      this.selected = row.id
+      this.info = row
+      this.visible = true
+      this.filterRuleAction(row.pid.toString())
       this.$nextTick(() => {
         this.form.setFieldsValue({
           title: row.title,
           name: row.name,
           status: row.status,
           pid: row.pid.toString()
+        })
+      })
+    },
+    openDataInfoModal (row) {
+      this.dataVisible = true
+      this.selected = row.id
+      const deptIds = row.deptIds.map(item => item.toString())
+      this.checkedKeys = deptIds
+      this.$nextTick(() => {
+        this.dataForm.setFieldsValue({
+          title: row.title,
+          name: row.name,
+          mode: row.mode,
+          deptIds: deptIds
         })
       })
     },
@@ -360,7 +457,7 @@ export default {
         cancelText: '取消',
         onOk: () => {
           const hide = this.$message.loading('删除中..', 0)
-          this.deleteRole({ id: id }).then(res => {
+          deleteRole(id).then(res => {
             this.$notification['success']({
               message: '成功通知',
               description: '删除成功！'
@@ -391,6 +488,7 @@ export default {
       })
     },
     rulesSelectedInit (rules) {
+      const allActionIds = []
       this.rules = rules.map(item => {
         Object.assign(item, {
           selected: [],
@@ -400,35 +498,16 @@ export default {
 
         // 初始化状态
         item.actions.map(action => {
+          allActionIds.push(action.id)
           action.disabled = false
         })
         return item
       })
+
+      this.allActionIds = allActionIds
     },
     handleTreeChange (v) {
-      if (v !== '0') {
-        const { data, rules } = this
-        // 获取当前已选中角色
-        const role = data.find(item => {
-          if (item.id.toString() === v) {
-            return item
-          }
-        })
-        const { permissions } = role
-        this.rolePermissionSelect = permissions
-        rules.map(rule => {
-          rule.selected = []
-          rule.indeterminate = false
-          rule.checkedAll = false
-          rule.actions.map(action => {
-            // 清除上一次所选角色设置的禁用状态
-            action.disabled = false
-            if (permissions.indexOf(action.value) === -1) {
-              action.disabled = true
-            }
-          })
-        })
-      }
+      this.filterRuleAction(v)
     },
     refreshTable () {
       this.$refs.table.refresh()
@@ -443,6 +522,24 @@ export default {
         return <a-icon type='down' />
       }
       return <a-icon type='right' />
+    },
+    handleSelectChange (v) {
+      this.customDataVisable = v === 2
+    },
+    onExpand (expandedKeys) {
+      console.log('onExpand', expandedKeys)
+      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+      // or, you can remove all expanded children keys.
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
+    },
+    onCheck (checkedKeys) {
+      console.log('onCheck', checkedKeys)
+      this.checkedKeys = checkedKeys
+    },
+    onSelect (selectedKeys, info) {
+      console.log('onSelect', info)
+      this.selectedKeys = selectedKeys
     }
   }
 }

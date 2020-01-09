@@ -40,7 +40,7 @@ export const asyncRouterMap = [
         path: '/auth',
         name: 'auth',
         component: PageView,
-        meta: { title: '权限管理', icon: 'slack', permission: [ 'rule', 'role', 'account' ] },
+        meta: { title: '系统管理', icon: 'slack', permission: [ 'rule', 'role', 'account' ] },
         redirect: '/auth/rule',
         children: [
           {
@@ -59,7 +59,13 @@ export const asyncRouterMap = [
             path: '/auth/account',
             name: 'account',
             component: () => import('@/views/auth/account/index'),
-            meta: { title: '管理员管理', keepAlive: true, permission: [ 'account' ] }
+            meta: { title: '用户管理', keepAlive: true, permission: [ 'account' ] }
+          },
+          {
+            path: '/system/dept',
+            name: 'dept',
+            component: () => import('@/views/system/dept'),
+            meta: { title: '部门管理', keepAlive: true }
           }
         ]
       },

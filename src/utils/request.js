@@ -40,8 +40,6 @@ const err = (error) => {
     const { status, config } = response
     const { url } = config
     const errorText = codeMessage[response.status] || response.statusText
-    console.log(errorText)
-    console.log(response)
 
     if (status === 401) {
       const { code } = response.data

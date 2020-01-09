@@ -2,7 +2,7 @@
   <div class="page-header-index-wide">
     <a-modal title="详情" :visible="visible" @ok="handleSubmit" :confirmLoading="confirmLoading" @cancel="handleCancel">
       <a-form :form="form">
-        <a-form-item label="登录账号">
+        <a-form-item label="登录账号" hasFeedback>
           <a-input
             :readonly="this.selected !== 0"
             placeholder="请入登录账号"
@@ -15,7 +15,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="登录密码">
+        <a-form-item label="登录密码" hasFeedback>
           <a-input
             :placeholder="this.selected === 0 ? '请入登录密码' : '如需修改密码请输入新密码'"
             v-decorator="[
@@ -27,7 +27,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="用户昵称">
+        <a-form-item label="用户昵称" hasFeedback>
           <a-input
             placeholder="请入用户昵称"
             v-decorator="[
@@ -39,7 +39,23 @@
           />
         </a-form-item>
 
-        <a-form-item label="选择角色">
+        <a-form-item label="归属部门" hasFeedback>
+          <a-tree-select
+            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+            :treeData="depts"
+            placeholder="请选择角色"
+            treeDefaultExpandAll
+            @select="onSelect"
+            v-decorator="[
+              'dept_id',
+              {
+                rules: [{ required: true, message: '请选择归属部门!' }]
+              }
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="选择角色" hasFeedback>
           <a-tree-select
             :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
             :treeData="roles"
@@ -55,7 +71,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="状态">
+        <a-form-item label="状态" hasFeedback>
           <a-select
             v-decorator="[
               'status',
@@ -105,10 +121,10 @@
       </div> -->
 
       <div class="ant-pro-table-toolbar">
-        <div class="ant-pro-table-toolbar-title">角色列表</div>
+        <div class="ant-pro-table-toolbar-title">用户列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:account-add type="primary" icon="plus" :loading="loading" @click="openModal">新建</a-button>
+            <a-button v-action:account-add type="primary" icon="plus" :loading="loading" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -143,6 +159,11 @@
         :expandIcon="expandIcon"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
+
+        <template slot="dept" slot-scope="row">
+          <a-tag color="purple">{{ row.dept_name }}</a-tag>
+        </template>
+
         <template slot="status" slot-scope="row">
           <template v-if="row.status === 1">正常</template>
           <template v-else>禁用</template>
@@ -176,9 +197,8 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
 import { STable } from '@/components'
-
+import { fetchAccount, addAccount, updateAccount, deleteAccount } from '@/api/account'
 const columns = [
   {
     title: '账号名',
@@ -187,6 +207,10 @@ const columns = [
   {
     title: '登录账号',
     dataIndex: 'name'
+  },
+  {
+    title: '部门',
+    scopedSlots: { customRender: 'dept' }
   },
   {
     title: '状态',
@@ -208,15 +232,18 @@ export default {
       data: [],
       rules: [],
       roles: [],
+      depts: [],
       form: this.$form.createForm(this),
       columns,
       selected: 0,
       queryParam: {},
       loadData: parameter => {
-        return this.fetchAccount(Object.assign(parameter, this.queryParam)).then(res => {
-          const { users, roles, rules } = res
+        return fetchAccount(Object.assign(parameter, this.queryParam)).then(res => {
+          res = res.result
+          const { users, roles, rules, depts } = res
           this.rules = rules
           this.roles = roles
+          this.depts = depts
 
           return users
         })
@@ -229,10 +256,6 @@ export default {
   mounted () {
   },
   methods: {
-    ...mapActions(['fetchAccount', 'deleteAccount']),
-    openModal () {
-      this.visible = true
-    },
     openInfoModal (row) {
       this.visible = true
       this.selected = row.id
@@ -241,6 +264,7 @@ export default {
           name: row.name,
           nickname: row.nickname,
           status: row.status,
+          dept_id: row.dept_id,
           roles: row.roles.map(item => {
             return item.id.toString()
           })
@@ -251,21 +275,17 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
-          const action = this.selected === 0 ? 'addAccount' : 'updateAccount'
-          values.selectId = this.selected
-          this.$store
-            .dispatch(action, values)
-            .then(res => {
-              this.$notification['success']({
-                message: '成功通知',
-                description: this.selected === 0 ? '添加成功！' : '更新成功！'
-              })
-              this.refreshTable()
-              this.handleCancel()
+          const promise = this.selected === 0 ? addAccount(values) : updateAccount(this.selected, values)
+          promise.then(res => {
+            this.$notification['success']({
+              message: '成功通知',
+              description: this.selected === 0 ? '添加成功！' : '更新成功！'
             })
-            .finally(() => {
-              this.confirmLoading = false
-            })
+            this.refreshTable()
+            this.handleCancel()
+          }).finally(() => {
+            this.confirmLoading = false
+          })
         }
       })
     },
@@ -285,7 +305,7 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
-          this.deleteAccount({ id: id }).then(res => {
+          deleteAccount(id).then(res => {
             this.$notification['success']({
               message: '成功通知',
               description: '删除成功！'
@@ -305,6 +325,17 @@ export default {
         return <a-icon type='down' />
       }
       return <a-icon type='right' />
+    },
+    onSelect (value, node, extra) {
+      if (node.dataRef.children.length > 0) {
+        this.$message.info('不能选择父节点')
+        this.$nextTick(() => {
+          this.form.setFieldsValue({
+            dept_id: null
+          })
+        })
+        return false
+      }
     }
   }
 }

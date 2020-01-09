@@ -3,7 +3,7 @@
     <a-modal
       title="详情"
       :visible="visible"
-      :width="800"
+      :width="500"
       @ok="handleSubmit"
       :confirmLoading="confirmLoading"
       @cancel="handleCancel">
@@ -87,7 +87,7 @@
         <div class="ant-pro-table-toolbar-title">规则列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:rule-add type="primary" icon="plus" @click="openModal">新建</a-button>
+            <a-button v-action:rule-add type="primary" icon="plus" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -162,8 +162,8 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
 import { STable } from '@/components'
+import { fetchRule, addRule, updateRule, deleteRule } from '@/api/rule'
 const statusMap = {
   0: {
     status: 'default',
@@ -237,7 +237,8 @@ export default {
       },
       queryParam: {},
       loadData: parameter => {
-        return this.fetchRule(Object.assign(parameter, this.queryParam)).then(res => {
+        return fetchRule(Object.assign(parameter, this.queryParam)).then(res => {
+          res = res.result
           const { tree } = res
           this.tree = tree
           return res
@@ -269,13 +270,7 @@ export default {
       return typeMap[type].color
     }
   },
-  mounted () {
-  },
   methods: {
-    ...mapActions(['fetchRule', 'deleteRule']),
-    openModal () {
-      this.visible = true
-    },
     openActionModal (row) {
       this.visible = true
       this.selected = row.id
@@ -287,21 +282,17 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
-          const action = this.selected === 0 ? 'addRule' : 'updateRule'
-          values.selectId = this.selected
-          this.$store
-            .dispatch(action, values)
-            .then(res => {
-              this.$notification['success']({
-                message: '成功通知',
-                description: this.selected === 0 ? '添加成功！' : '更新成功！'
-              })
-              this.refreshTable()
-              this.handleCancel()
+          const promise = this.selected === 0 ? addRule(values) : updateRule(this.selected, values)
+          promise.then(res => {
+            this.$notification['success']({
+              message: '成功通知',
+              description: this.selected === 0 ? '添加成功！' : '更新成功！'
             })
-            .finally(() => {
-              this.confirmLoading = false
-            })
+            this.refreshTable()
+            this.handleCancel()
+          }).finally(() => {
+            this.confirmLoading = false
+          })
         }
       })
     },
@@ -318,7 +309,7 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
-          this.deleteRule({ id: id }).then(res => {
+          deleteRule(id).then(res => {
             this.$notification['success']({
               message: '成功通知',
               description: '删除成功！'
