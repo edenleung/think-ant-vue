@@ -35,7 +35,7 @@
         :rowKey="(record) => record.dept_id"
         :columns="columns"
         :data="loadData"
-        :alert="true"
+        :defaultExpandedRowKeys="[1, 2, 3]"
       >
         <template slot="status" slot-scope="row">
           <template v-if="row.dept_status === 1">正常</template>
