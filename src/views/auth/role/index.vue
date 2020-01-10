@@ -2,13 +2,13 @@
   <div class="page-header-index-wide">
     <a-modal
       title="详情"
-      :width="800"
+      :width="650"
       :visible="visible"
       @ok="handleSubmit"
       :confirmLoading="confirmLoading"
       @cancel="handleCancel">
-      <a-form :form="form">
-        <a-form-item label="唯一识别码" hasFeedback>
+      <a-form :form="form" layout="horizontal">
+        <a-form-item label="唯一识别码" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input
             placeholder="请入唯一识别码（英文即可）"
             v-decorator="[
@@ -20,14 +20,14 @@
           />
         </a-form-item>
 
-        <a-form-item label="上级管理员" hasFeedback>
+        <a-form-item label="上级管理员" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-tree-select
             :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
             placeholder="选择上级管理员"
             allowClear
             treeDefaultExpandAll
             @change="handleTreeChange"
-            :treeData="treeData"
+            :treeData="roleTree"
             v-decorator="[
               'pid',
               {
@@ -38,7 +38,7 @@
           </a-tree-select>
         </a-form-item>
 
-        <a-form-item label="角色名称" hasFeedback>
+        <a-form-item label="角色名称" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input
             placeholder="请入角色名称"
             v-decorator="[
@@ -50,7 +50,7 @@
           />
         </a-form-item>
 
-        <a-form-item label="状态" hasFeedback>
+        <a-form-item label="状态" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-select
             v-decorator="[
               'status',
@@ -69,12 +69,12 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="拥有权限" v-if="form.getFieldValue('pid')" hasFeedback>
-          <a-row :gutter="16" v-for="(item, index) in rules" :key="index">
-            <a-col :xl="4" :lg="24">
+        <a-form-item label="拥有权限" v-if="form.getFieldValue('pid')" hasFeedback :label-col="{span: 4}" :wrapper-col="{span: 20}">
+          <a-row v-for="(item, index) in rules" :key="index">
+            <a-col :xl="5">
               {{ item.title }}：
             </a-col>
-            <a-col :xl="20" :lg="24">
+            <a-col :xl="19">
               <a-checkbox
                 v-if="item.actions.length > 0"
                 :indeterminate="item.indeterminate"
@@ -191,6 +191,7 @@
         :alert="true"
         :expandRowByClick="true"
         :expandIcon="expandIcon"
+        :showPagination="false"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="status" slot-scope="row">
@@ -266,6 +267,8 @@ export default {
   data () {
     return {
       expandedKeys: ['0-0-0', '0-0-1'],
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
       selectedKeys: [],
       checkedKeys: [],
       description:
@@ -283,7 +286,7 @@ export default {
       info: {},
       data: [],
       columns,
-      treeData: [],
+      roleTree: [],
       deptTreeData: [],
       rolePermissionSelect: [],
       queryParam: {},
@@ -292,7 +295,7 @@ export default {
           const { rules, roles, depts } = res.result
           const { data, tree } = roles
           this.data = data
-          this.treeData = tree
+          this.roleTree = tree
           this.deptTreeData = depts
 
           this.rulesSelectedInit(rules)
@@ -394,18 +397,25 @@ export default {
       } else {
         allPermissionActionsIds = this.allActionIds
       }
-      console.log(allPermissionActionsIds)
       // 更新时 自动勾选已选择的权限
       if (this.selected > 0) {
         const { info: { permissions } } = this
         rules.map(rule => {
+          // 记录当前菜单可选操作数量
+          let ruleSelectCount = 0
           rule.actions.map(action => {
             if (permissions.indexOf(action.id) !== -1) {
               rule.selected.push(action.id)
             }
 
             action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
+            if (action.disabled === false) {
+              ruleSelectCount = ruleSelectCount + 1
+            }
           })
+
+          rule.indeterminate = !!rule.selected.length && (rule.selected.length < ruleSelectCount.length)
+          rule.checkedAll = rule.selected.length === ruleSelectCount
         })
       } else {
         // 创建时
