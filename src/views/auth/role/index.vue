@@ -288,7 +288,6 @@ export default {
       columns,
       roleTree: [],
       deptTreeData: [],
-      rolePermissionSelect: [],
       queryParam: {},
       loadData: parameter => {
         return fetchRole(Object.assign(parameter, this.queryParam)).then(res => {
@@ -368,7 +367,6 @@ export default {
       this.form.resetFields()
       this.selected = 0
       this.loading = false
-      this.rolePermissionSelect = []
 
       this.rules.map(rule => {
         rule.selected = []
@@ -421,11 +419,7 @@ export default {
         // 创建时
         rules.map(rule => {
           rule.actions.map(action => {
-            if (allPermissionActionsIds.indexOf(action.id) === -1) {
-              action.disabled = true
-            } else {
-              action.disabled = false
-            }
+            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
           })
         })
       }
