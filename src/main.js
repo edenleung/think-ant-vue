@@ -13,7 +13,9 @@ import { VueAxios } from './utils/request'
 // import './mock'
 
 import bootstrap from './core/bootstrap'
-import './core/lazy_use'
+// 按需加载 import './core/lazy_use'
+// 默认注册Antd全部组件
+import './core/use'
 import './permission' // permission control
 import './utils/filter' // global filter
 import './components/global.less'
