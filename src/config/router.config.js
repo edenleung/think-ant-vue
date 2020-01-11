@@ -24,13 +24,13 @@ export const asyncRouterMap = [
             path: '/dashboard/analysis',
             name: 'Analysis',
             component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: '分析页', keepAlive: false }
+            meta: { title: '分析页', keepAlive: false, permission: ['analysis'] }
           },
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: '工作台', keepAlive: true }
+            meta: { title: '工作台', keepAlive: true, permission: ['workspace'] }
           }
         ]
       },
@@ -40,7 +40,7 @@ export const asyncRouterMap = [
         path: '/auth',
         name: 'auth',
         component: PageView,
-        meta: { title: '系统管理', icon: 'slack', permission: [ 'rule', 'role', 'account' ] },
+        meta: { title: '系统管理', icon: 'slack', permission: [ 'rule', 'role', 'account', 'dept' ] },
         redirect: '/auth/rule',
         children: [
           {
@@ -65,7 +65,7 @@ export const asyncRouterMap = [
             path: '/system/dept',
             name: 'dept',
             component: () => import('@/views/system/dept'),
-            meta: { title: '部门管理', keepAlive: true }
+            meta: { title: '部门管理', keepAlive: true, permission: [ 'dept' ] }
           }
         ]
       },
@@ -75,20 +75,20 @@ export const asyncRouterMap = [
         path: '/log',
         name: 'log',
         component: PageView,
-        meta: { title: '日志管理', icon: 'file-text' },
+        meta: { title: '日志管理', icon: 'file-text', permission: ['log-account', 'log-db'] },
         redirect: '/log/account',
         children: [
           {
             path: '/log/account',
             name: 'log',
             component: () => import('@/views/auth/log/index'),
-            meta: { title: '管理员日志', keepAlive: true }
+            meta: { title: '管理员日志', keepAlive: true, permission: ['log-account'] }
           },
           {
             path: '/log/db',
             name: 'db',
             component: () => import('@/views/auth/log/db'),
-            meta: { title: '数据库日志', keepAlive: true }
+            meta: { title: '数据库日志', keepAlive: true, permission: ['log-db'] }
           }
         ]
       },
@@ -276,19 +276,19 @@ export const asyncRouterMap = [
         component: RouteView,
         redirect: '/account/center',
         name: 'account',
-        meta: { title: '个人页', icon: 'user', keepAlive: true },
+        meta: { title: '个人页', icon: 'user', keepAlive: true, permission: ['profile-account', 'profile-setting'] },
         children: [
           {
             path: '/account/center',
             name: 'center',
             component: () => import('@/views/account/center/Index'),
-            meta: { title: '个人中心', keepAlive: true }
+            meta: { title: '个人中心', keepAlive: true, permission: ['profile-account'] }
           },
           {
             path: '/account/settings',
             name: 'settings',
             component: () => import('@/views/account/settings/Index'),
-            meta: { title: '个人设置', hideHeader: true },
+            meta: { title: '个人设置', hideHeader: true, permission: ['profile-setting'] },
             redirect: '/account/settings/base',
             hideChildrenInMenu: true,
             children: [
