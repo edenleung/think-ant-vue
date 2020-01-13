@@ -79,6 +79,12 @@ const err = (error) => {
             })
             break
           }
+
+          // 没有操作权限
+          case 50403: {
+            router.push({ path: `/exception/403` })
+            break
+          }
         }
       }
     } else {
