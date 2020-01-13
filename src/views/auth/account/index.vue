@@ -312,8 +312,8 @@ export default {
         }
       })
     },
-    refreshTable () {
-      this.$refs.table.refresh()
+    refreshTable (bool = false) {
+      this.$refs.table.refresh(bool)
     },
     handleCancel () {
       this.visible = false
@@ -373,8 +373,12 @@ export default {
     },
     onSelects (selectedKeys, info) {
       console.log('onSelect', info)
-      this.$message.info('未开发')
+      const { node: { value } } = info
       this.selectedKeys = selectedKeys
+      Object.assign(this.queryParam, {
+        deptPid: value
+      })
+      this.refreshTable(true)
     },
     expandedDept (depts) {
       depts.map(dept => {
