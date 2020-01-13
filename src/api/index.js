@@ -11,7 +11,7 @@ const api = {
   UserInfo: '/user/info',
 
   Role: '/role',
-  Rule: '/rule',
+  Permission: '/permission',
   User: '/user',
   UserCurrent: '/user/current',
   ResetPassword: '/user/reset-password',

@@ -35,36 +35,36 @@ export const asyncRouterMap = [
         ]
       },
 
-      // 权限模块
+      // 系统模块
       {
-        path: '/auth',
-        name: 'auth',
+        path: '/system',
+        name: 'system',
         component: PageView,
-        meta: { title: '系统管理', icon: 'slack', permission: [ 'rule', 'role', 'account', 'dept' ] },
-        redirect: '/auth/rule',
+        meta: { title: '系统管理', icon: 'slack', permission: [ 'permission', 'role', 'account', 'dept' ] },
+        redirect: '/system/permission',
         children: [
           {
-            path: '/auth/rule',
-            name: 'rule',
-            component: () => import('@/views/auth/rule/index'),
-            meta: { title: '规则管理', keepAlive: true, permission: [ 'rule' ] }
+            path: '/system/permission',
+            name: 'permission',
+            component: () => import('@/views/system/permission/index'),
+            meta: { title: '菜单管理', keepAlive: true, permission: [ 'permission' ] }
           },
           {
-            path: '/auth/role',
+            path: '/system/role',
             name: 'role',
-            component: () => import('@/views/auth/role/index'),
+            component: () => import('@/views/system/role/index'),
             meta: { title: '角色管理', keepAlive: true, permission: [ 'role' ] }
           },
           {
-            path: '/auth/account',
-            name: 'account',
-            component: () => import('@/views/auth/account/index'),
+            path: '/system/user',
+            name: 'user',
+            component: () => import('@/views/system/user/index'),
             meta: { title: '用户管理', keepAlive: true, permission: [ 'account' ] }
           },
           {
             path: '/system/dept',
             name: 'dept',
-            component: () => import('@/views/system/dept'),
+            component: () => import('@/views/system/dept/index'),
             meta: { title: '部门管理', keepAlive: true, permission: [ 'dept' ] }
           }
         ]
@@ -81,13 +81,13 @@ export const asyncRouterMap = [
           {
             path: '/log/account',
             name: 'log',
-            component: () => import('@/views/auth/log/index'),
+            component: () => import('@/views/log/index'),
             meta: { title: '管理员日志', keepAlive: true, permission: ['log-account'] }
           },
           {
             path: '/log/db',
             name: 'db',
-            component: () => import('@/views/auth/log/db'),
+            component: () => import('@/views/log/db'),
             meta: { title: '数据库日志', keepAlive: true, permission: ['log-db'] }
           }
         ]

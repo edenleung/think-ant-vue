@@ -118,6 +118,7 @@
         :columns="columns"
         :data="loadData"
         :alert="true"
+        :showPagination="false"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="fulltitle" slot-scope="row">
@@ -163,7 +164,7 @@
 </template>
 <script>
 import { STable } from '@/components'
-import { fetchRule, addRule, updateRule, deleteRule } from '@/api/rule'
+import { fetchPermission, addPermission, updatePermission, deletePermission } from '@/api/permission'
 const statusMap = {
   0: {
     status: 'default',
@@ -237,7 +238,7 @@ export default {
       },
       queryParam: {},
       loadData: parameter => {
-        return fetchRule(Object.assign(parameter, this.queryParam)).then(res => {
+        return fetchPermission(Object.assign(parameter, this.queryParam)).then(res => {
           res = res.result
           const { tree } = res
           this.tree = tree
@@ -282,7 +283,7 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
-          const promise = this.selected === 0 ? addRule(values) : updateRule(this.selected, values)
+          const promise = this.selected === 0 ? addPermission(values) : updatePermission(this.selected, values)
           promise.then(res => {
             this.$notification['success']({
               message: '成功通知',
@@ -309,7 +310,7 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
-          deleteRule(id).then(res => {
+          deletePermission(id).then(res => {
             this.$notification['success']({
               message: '成功通知',
               description: '删除成功！'
