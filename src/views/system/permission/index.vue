@@ -87,7 +87,7 @@
         <div class="ant-pro-table-toolbar-title">规则列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:rule-add type="primary" icon="plus" @click="visible = true">新建</a-button>
+            <a-button v-action:permission-add type="primary" icon="plus" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -133,12 +133,12 @@
                 <div style="margin-bottom:15px">唯一识别码: {{ action.name }}</div>
                 <a-button
                   size="small"
-                  v-action:rule-update
+                  v-action:permission-update
                   type="primary"
                   ghost
                   @click="openActionModal(action)"
                   style="margin-right:10px">编辑</a-button>
-                <a-button size="small" v-action:rule-delete type="danger" ghost @click="showDeleteConfirm(action.id)">删除</a-button>
+                <a-button size="small" v-action:permission-delete type="danger" ghost @click="showDeleteConfirm(action.id)">删除</a-button>
               </template>
               <a-tag>{{ action.title }}</a-tag>
             </a-popover>
@@ -154,9 +154,9 @@
         </template>
 
         <template slot="tools" slot-scope="row">
-          <a v-action:rule-update @click="openActionModal(row)">编辑</a>
+          <a v-action:permission-update @click="openActionModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:rule-delete @click="showDeleteConfirm(row.id)">删除</a>
+          <a v-action:permission-delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
     </a-card>
