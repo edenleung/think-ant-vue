@@ -8,7 +8,7 @@ ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统
 后端: https://github.com/xiaodit/think-admin  
 前端: https://github.com/sendya/ant-design-pro-vue
 
-预览地址: https://ant.xiaodim.com  
+预览地址: https://ant.wfunc.com  
 文档: https://pro.loacg.com/docs/getting-started
 
 ### 账号
