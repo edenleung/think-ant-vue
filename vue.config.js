@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
-
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
@@ -14,15 +14,25 @@ const assetsCDN = {
     vue: 'Vue',
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
-    axios: 'axios'
+    axios: 'axios',
+    'ant-design-vue': 'Antd',
+    'wangeditor': 'wangEditor',
+    'viser-vue': 'ViserVue',
+    '@antv/data-set': 'DataSet'
   },
-  css: [],
-  // https://unpkg.com/browse/vue@2.6.10/
+  css: [
+    '//cdn.jsdelivr.net/npm/ant-design-vue@1.4.10/dist/antd.min.css'
+  ],
   js: [
     '//cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
     '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
     '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
-    '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
+    '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js',
+    '//cdn.jsdelivr.net/npm/ant-design-vue@1.4.10/dist/antd.min.js',
+    '//cdn.jsdelivr.net/npm/wangeditor@3.1.1/release/wangEditor.min.js',
+    '//unpkg.com/viser-vue/umd/viser-vue.min.js',
+    '//gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.3.2/dist/g2.min.js',
+    '//gw.alipayobjects.com/os/antv/pkg/_antv.data-set-0.9.6/dist/data-set.min.js'
   ]
 }
 
@@ -114,6 +124,10 @@ if (process.env.VUE_APP_PREVIEW === 'true') {
   console.log('VUE_APP_PREVIEW', true)
   // add `ThemeColorReplacer` plugin to webpack plugins
   vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
+}
+
+if (isProd) {
+  vueConfig.configureWebpack.plugins.push(new BundleAnalyzerPlugin())
 }
 
 module.exports = vueConfig
