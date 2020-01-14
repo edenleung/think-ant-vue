@@ -1,7 +1,9 @@
 const path = require('path')
 const webpack = require('webpack')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// 有需要查看打包分布情况 请取消注释
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
@@ -126,8 +128,9 @@ if (process.env.VUE_APP_PREVIEW === 'true') {
   vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
 }
 
-if (isProd) {
-  vueConfig.configureWebpack.plugins.push(new BundleAnalyzerPlugin())
-}
+// 有需要查看打包分布情况 请取消注释
+// if (isProd) {
+//   vueConfig.configureWebpack.plugins.push(new BundleAnalyzerPlugin())
+// }
 
 module.exports = vueConfig
