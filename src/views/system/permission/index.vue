@@ -238,13 +238,9 @@
         :showPagination="false"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
-        <template slot="fulltitle" slot-scope="row">
-          <span v-html="row.fulltitle"></span>
-        </template>
-
         <template slot="actions" slot-scope="row">
-          <template v-if="!row.actions.length">-</template>
-          <template v-for="(action, index) in row.actions">
+          <template v-if="row.type !== 'menu'">-</template>
+          <template v-for="(action, index) in row.actions" v-else>
             <a-popover :key="index" title="详情" trigger="click">
               <template slot="content">
                 <div style="margin-bottom:15px">唯一识别码: {{ action.name }}</div>
@@ -255,7 +251,7 @@
                   ghost
                   @click="openActionModal(action)"
                   style="margin-right:10px">编辑</a-button>
-                <a-button size="small" v-action:permission-delete type="danger" ghost @click="showDeleteConfirm(action.id)">删除</a-button>
+                <a-button size="small" v-action:PermissionDelete type="danger" ghost @click="showDeleteConfirm(action.id)">删除</a-button>
               </template>
               <a-tag>{{ action.title }}</a-tag>
             </a-popover>
@@ -358,8 +354,8 @@ const columns = [
     dataIndex: 'name'
   },
   {
-    title: '权限名称',
-    scopedSlots: { customRender: 'fulltitle' }
+    title: '菜单名称',
+    dataIndex: 'title'
   },
   {
     title: '可操作权限',
