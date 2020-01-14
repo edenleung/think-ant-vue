@@ -133,7 +133,7 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item v-if="dataForm.getFieldValue('mode') === 2" label="数据权限" hasFeedback>
+        <a-form-item v-show="dataForm.getFieldValue('mode') === 2" label="数据权限" hasFeedback>
           <a-tree
             checkable
             @expand="onExpand"
@@ -142,6 +142,7 @@
             @select="onSelect"
             :treeData="deptTreeData"
             :showLine="true"
+            :expandedKeys="expandedKeys"
             v-decorator="[
               'deptIds',
               {
@@ -266,7 +267,7 @@ const columns = [
 export default {
   data () {
     return {
-      expandedKeys: ['0-0-0', '0-0-1'],
+      expandedKeys: [],
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
       selectedKeys: [],
@@ -443,6 +444,8 @@ export default {
       this.selected = row.id
       const deptIds = row.deptIds.map(item => item.toString())
       this.checkedKeys = deptIds
+      // 展开组织架构
+      this.expandedDept(this.deptTreeData)
       this.$nextTick(() => {
         this.dataForm.setFieldsValue({
           title: row.title,
@@ -450,6 +453,14 @@ export default {
           mode: row.mode,
           deptIds: deptIds
         })
+      })
+    },
+    expandedDept (depts) {
+      depts.map(dept => {
+        this.expandedKeys.push(dept.value)
+        if (dept.children !== undefined) {
+          this.expandedDept(dept.children)
+        }
       })
     },
     showDeleteConfirm (id) {
