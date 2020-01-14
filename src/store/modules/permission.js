@@ -1,4 +1,5 @@
-import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
+import { constantRouterMap } from '@/config/router.config'
+import { Components } from '@/config/componentConfigs'
 
 /**
  * 过滤账户是否拥有某一个权限，并将菜单从加载列表移除
@@ -7,6 +8,7 @@ import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
  * @param route
  * @returns {boolean}
  */
+// eslint-disable-next-line no-unused-vars
 function hasPermission (permission, route) {
   if (route.meta && route.meta.permission) {
     let flag = false
@@ -40,6 +42,7 @@ function hasRole(roles, route) {
 function filterAsyncRouter (routerMap, roles) {
   const accessedRouters = routerMap.filter(route => {
     if (hasPermission(roles.permissionList, route)) {
+      route.component = Components[route.component]
       if (route.children && route.children.length) {
         route.children = filterAsyncRouter(route.children, roles)
       }
@@ -64,8 +67,8 @@ const permission = {
   actions: {
     GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
-        const { roles } = data
-        const accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+        const { roles, menus } = data
+        const accessedRouters = filterAsyncRouter(menus, roles)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })
