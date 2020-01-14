@@ -27,6 +27,7 @@ const codeMessage = {
   504: '网关超时。'
 }
 
+console.log('api', process.env.VUE_APP_API_BASE_URL)
 // 创建 axios 实例
 const service = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL, // api base_url

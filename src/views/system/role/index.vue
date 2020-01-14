@@ -158,7 +158,7 @@
         <div class="ant-pro-table-toolbar-title">角色列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:role-add type="primary" icon="plus" @click="visible = true">新建</a-button>
+            <a-button v-action:RoleAdd type="primary" icon="plus" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -221,11 +221,11 @@
         </p>
 
         <template slot="tools" slot-scope="row">
-          <a v-action:role-update @click="openInfoModal(row)">编辑</a>
+          <a v-action:RoleUpdate @click="openInfoModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:role-update @click="openDataInfoModal(row)">数据权限</a>
+          <a v-action:RoleUpdate @click="openDataInfoModal(row)">数据权限</a>
           <a-divider type="vertical" />
-          <a v-action:role-delete @click="showDeleteConfirm(row.id)">删除</a>
+          <a v-action:RoleDelete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
     </a-card>

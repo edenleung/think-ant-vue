@@ -203,9 +203,9 @@
             </template>
 
             <template slot="tools" slot-scope="row">
-              <a v-action:account-update @click="openInfoModal(row)">编辑</a>
+              <a v-action:AccountUpdate @click="openInfoModal(row)">编辑</a>
               <a-divider type="vertical" />
-              <a v-action:account-delete @click="showDeleteConfirm(row.id)">删除</a>
+              <a v-action:AccountDelete @click="showDeleteConfirm(row.id)">删除</a>
             </template>
           </s-table>
         </a-card>
