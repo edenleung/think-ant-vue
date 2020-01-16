@@ -3,10 +3,17 @@ ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
 
-FROM nginx:latest
+FROM nginx:1.17.7-alpine
+
+ARG TZ="Asia/Shanghai"
+ENV TZ ${TZ}
+
+RUN apk upgrade --update \
+    && apk add bash tzdata \
+    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone \
+    && rm -rf /var/cache/apk/*
 
 COPY dist/ /usr/share/nginx/html/
 
-RUN rm /etc/nginx/conf.d/default.conf
-
-ADD default.conf /etc/nginx/conf.d/
+CMD ["nginx", "-g", "daemon off;"]
