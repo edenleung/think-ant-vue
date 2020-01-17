@@ -25,6 +25,5 @@ script:
   - docker buildx create --use --name mybuilder
   - yarn run build
   - docker buildx ls
-  - docker buildx build -t xiaodi93/ant-design:latest --platform=linux/amd64 . --push
-  - docker buildx build -t xiaodi93/ant-design:arm64 --platform=linux/arm64 . --push
+  - docker buildx build -t xiaodi93/ant-design:latest --platform=linux/arm64 . --push
   
