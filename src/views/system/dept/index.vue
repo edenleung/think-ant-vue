@@ -35,7 +35,7 @@
         :rowKey="(record) => record.dept_id"
         :columns="columns"
         :data="loadData"
-        :defaultExpandedRowKeys="[1, 2, 3]"
+        :defaultExpandedRowKeys="expandedKeys"
       >
         <template slot="status" slot-scope="row">
           <template v-if="row.dept_status === 1">正常</template>
@@ -144,10 +144,14 @@ export default {
         sm: { span: 16 }
       },
       form: this.$form.createForm(this),
+      expandedKeys: [],
       queryParam: {},
       loadData: parameter => {
         return fetchDept(Object.assign(parameter, this.queryParam)).then(res => {
           this.tree = res.result.data
+
+          // 展开所有行
+          this.expandedRow(res.result.data)
           return res.result
         })
       },
@@ -218,6 +222,15 @@ export default {
             })
             this.refreshTable()
           })
+        }
+      })
+    },
+    expandedRow (data) {
+      console.log(data)
+      data.map(item => {
+        this.expandedKeys.push(item.dept_id)
+        if (item.children !== undefined) {
+          this.expandedRow(item.children)
         }
       })
     }

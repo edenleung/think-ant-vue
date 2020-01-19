@@ -236,6 +236,7 @@
         :data="loadData"
         :alert="true"
         :showPagination="false"
+        :defaultExpandedRowKeys="expandedKeys"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="actions" slot-scope="row">
@@ -382,6 +383,7 @@ export default {
         '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
       columns,
       typeMap,
+      expandedKeys: [],
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 }
@@ -394,8 +396,11 @@ export default {
       loadData: parameter => {
         return fetchPermission(Object.assign(parameter, this.queryParam)).then(res => {
           res = res.result
-          const { tree } = res
+          const { tree, data } = res
           this.tree = tree
+
+          // 展开所有
+          this.expandedRow(data)
           return res
         })
       },
@@ -498,6 +503,14 @@ export default {
       if (v === '0') {
         // TODO 当选择‘根’时，类型不能选择按钮
       }
+    },
+    expandedRow (data) {
+      data.map(item => {
+        this.expandedKeys.push(item.id)
+        if (item.children !== undefined) {
+          this.expandedRow(item.children)
+        }
+      })
     }
   }
 }
