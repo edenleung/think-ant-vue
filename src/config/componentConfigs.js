@@ -1,5 +1,3 @@
-import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-
 export const Components = {
   Analysis: () => import('@/views/dashboard/Analysis'),
   Workplace: () => import('@/views/dashboard/Workplace'),
@@ -10,6 +8,7 @@ export const Components = {
   LogAccount: () => import('@/views/log/index'),
   LogDb: () => import('@/views/log/db'),
   WangEditor: () => import('@/views/editor/wangeditor'),
+  Post: () => import('@/views/system/post/index'),
   Center: () => import('@/views/account/center/Index'),
   Settings: () => import('@/views/account/settings/Index'),
   BaseSettings: () => import('@/views/account/settings/BaseSetting'),
@@ -17,9 +16,10 @@ export const Components = {
   CustomSettings: () => import('@/views/account/settings/Custom'),
   BindingSettings: () => import('@/views/account/settings/Binding'),
   NotificationSettings: () => import('@/views/account/settings/Notification'),
-  BasicLayout,
-  UserLayout,
-  RouteView,
-  BlankLayout,
-  PageView
+  // 一些布局文件
+  BasicLayout: () => import('@/layouts/BasicLayout'),
+  UserLayout: () => import('@/layouts/UserLayout'),
+  RouteView: () => import('@/layouts/RouteView'),
+  BlankLayout: () => import('@/layouts/BlankLayout'),
+  PageView: () => import('@/layouts/PageView')
 }

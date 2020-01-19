@@ -1,94 +1,132 @@
 <template>
   <div class="page-header-index-wide">
     <a-modal title="详情" :visible="visible" @ok="handleSubmit" :confirmLoading="confirmLoading" @cancel="handleCancel">
-      <a-form :form="form">
-        <a-form-item label="登录账号" hasFeedback>
-          <a-input
-            :readonly="this.selected !== 0"
-            placeholder="请入登录账号"
-            v-decorator="[
-              'name',
-              {
-                rules: [{ required: true, message: '请输入登录账号!' }]
-              }
-            ]"
-          />
-        </a-form-item>
+      <a-form :form="form" layout="inline">
+        <a-row :gutter="0">
+          <a-col :span="12">
+            <a-form-item label="登录账号" hasFeedback>
+              <a-input
+                :readonly="this.selected !== 0"
+                placeholder="请入登录账号"
+                v-decorator="[
+                  'name',
+                  {
+                    rules: [{ required: true, message: '请输入登录账号!' }]
+                  }
+                ]"
+              />
+            </a-form-item>
+          </a-col>
 
-        <a-form-item label="登录密码" hasFeedback>
-          <a-input
-            :placeholder="this.selected === 0 ? '请入登录密码' : '如需修改密码请输入新密码'"
-            v-decorator="[
-              'password',
-              {
-                rules: [{ required: this.selected === 0, message: '请输入登录密码!' }]
-              }
-            ]"
-          />
-        </a-form-item>
+          <a-col :span="12">
+            <a-form-item label="登录密码" hasFeedback>
+              <a-input
+                :placeholder="this.selected === 0 ? '请入登录密码' : '如需修改密码请输入新密码'"
+                v-decorator="[
+                  'password',
+                  {
+                    rules: [{ required: this.selected === 0, message: '请输入登录密码!' }]
+                  }
+                ]"
+              />
+            </a-form-item>
+          </a-col>
 
-        <a-form-item label="用户昵称" hasFeedback>
-          <a-input
-            placeholder="请入用户昵称"
-            v-decorator="[
-              'nickname',
-              {
-                rules: [{ required: true, message: '请输入用户名称!' }]
-              }
-            ]"
-          />
-        </a-form-item>
+          <a-col :span="12">
+            <a-form-item label="用户昵称" hasFeedback>
+              <a-input
+                placeholder="请入用户昵称"
+                v-decorator="[
+                  'nickname',
+                  {
+                    rules: [{ required: true, message: '请输入用户名称!' }]
+                  }
+                ]"
+              />
+            </a-form-item>
+          </a-col>
 
-        <a-form-item label="归属部门" hasFeedback>
-          <a-tree-select
-            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-            :treeData="depts"
-            placeholder="请选择角色"
-            treeDefaultExpandAll
-            @select="onSelect"
-            v-decorator="[
-              'dept_id',
-              {
-                rules: [{ required: true, message: '请选择归属部门!' }]
-              }
-            ]"
-          />
-        </a-form-item>
+          <a-col :span="12">
+            <a-form-item label="归属部门" hasFeedback>
+              <a-tree-select
+                :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+                :treeData="depts"
+                style="min-width:171px"
+                placeholder="请选择角色"
+                treeDefaultExpandAll
+                @select="onSelect"
+                v-decorator="[
+                  'dept_id',
+                  {
+                    rules: [{ required: true, message: '请选择归属部门!' }]
+                  }
+                ]"
+              />
+            </a-form-item>
+          </a-col>
 
-        <a-form-item label="选择角色" hasFeedback>
-          <a-tree-select
-            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-            :treeData="roles"
-            placeholder="请选择角色"
-            treeDefaultExpandAll
-            multiple
-            v-decorator="[
-              'roles',
-              {
-                rules: [{ required: true, message: '请选择角色!' }]
-              }
-            ]"
-          />
-        </a-form-item>
+          <a-col :span="12">
+            <a-form-item label="选择角色" hasFeedback>
+              <a-tree-select
+                style="min-width:171px"
+                :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+                :treeData="roles"
+                placeholder="请选择角色"
+                treeDefaultExpandAll
+                multiple
+                v-decorator="[
+                  'roles',
+                  {
+                    rules: [{ required: true, message: '请选择角色!' }]
+                  }
+                ]"
+              />
+            </a-form-item>
+          </a-col>
 
-        <a-form-item label="状态" hasFeedback>
-          <a-select
-            v-decorator="[
-              'status',
-              {
-                rules: [{ required: true, message: '请选择状态!' }]
-              }
-            ]"
-            placeholder="请选择"
-          >
-            <a-select-option :value="1">
-              正常
-            </a-select-option>
-            <a-select-option :value="0">
-              禁用
-            </a-select-option>
-          </a-select>
-        </a-form-item>
+          <a-col :span="12">
+            <a-form-item label="状态" hasFeedback>
+              <a-select
+                style="min-width:171px"
+                v-decorator="[
+                  'status',
+                  {
+                    rules: [{ required: true, message: '请选择状态!' }]
+                  }
+                ]"
+                placeholder="请选择"
+              >
+                <a-select-option :value="1">
+                  正常
+                </a-select-option>
+                <a-select-option :value="0">
+                  禁用
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :span="12">
+            <a-form-item label="岗位" hasFeedback>
+              <a-select
+                style="min-width:171px"
+                mode="multiple"
+                placeholder="请选择"
+                @change="handleChange"
+                v-decorator="[
+                  'posts',
+                  {
+                    rules: [{ required: true, message: '请选择岗位!' }]
+                  }
+                ]"
+              >
+                <a-select-option v-for="post in posts" :key="post.postId">
+                  {{ post.postName }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
       </a-form>
     </a-modal>
 
@@ -179,6 +217,13 @@
               <a-tag color="purple">{{ row.dept_name }}</a-tag>
             </template>
 
+            <template slot="post" slot-scope="row">
+              <span v-if="row.posts.length">
+                <a-tag color="purple" v-for="post in row.posts" :key="post.postId">{{ post.postName }}</a-tag>
+              </span>
+              <span v-else>-</span>
+            </template>
+
             <template slot="status" slot-scope="row">
               <template v-if="row.status === 1">正常</template>
               <template v-else>禁用</template>
@@ -230,6 +275,10 @@ const columns = [
     scopedSlots: { customRender: 'dept' }
   },
   {
+    title: '岗位',
+    scopedSlots: { customRender: 'post' }
+  },
+  {
     title: '状态',
     scopedSlots: { customRender: 'status' }
   },
@@ -250,6 +299,7 @@ export default {
       rules: [],
       roles: [],
       depts: [],
+      posts: [],
       expandedKeys: [],
       autoExpandParent: true,
       checkedKeys: [],
@@ -261,10 +311,11 @@ export default {
       loadData: parameter => {
         return fetchAccount(Object.assign(parameter, this.queryParam)).then(res => {
           res = res.result
-          const { users, roles, rules, depts } = res
+          const { users, roles, rules, depts, posts } = res
           this.rules = rules
           this.roles = roles
           this.depts = depts
+          this.posts = posts
 
           // 展开组织架构
           this.expandedDept(depts)
@@ -288,6 +339,7 @@ export default {
           nickname: row.nickname,
           status: row.status,
           dept_id: row.dept_id,
+          posts: row.posts.map(item => item.postId),
           roles: row.roles.map(item => {
             return item.id.toString()
           })
