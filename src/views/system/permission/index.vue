@@ -120,7 +120,7 @@
           </a-col>
 
           <a-col :span="24">
-            <a-col :span="8">
+            <a-col :span="12">
               <a-form-item label="菜单状态">
                 <a-radio-group
                   v-decorator="[
@@ -136,7 +136,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :span="8">
+            <a-col :span="12">
               <a-form-item label="菜单缓存" v-show="form.getFieldValue('type') !== 'action'">
                 <a-radio-group
                   v-decorator="[
@@ -152,7 +152,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :span="8">
+            <a-col :span="12">
               <a-form-item label="菜单可见" v-show="form.getFieldValue('type') !== 'action'">
                 <a-radio-group
                   v-decorator="[
@@ -167,9 +167,24 @@
                 </a-radio-group>
               </a-form-item>
             </a-col>
+            <a-col :span="12">
+              <a-form-item label="隐藏子菜单" v-show="form.getFieldValue('type') !== 'action'">
+                <a-radio-group
+                  v-decorator="[
+                    'hideChildrenInMenu',
+                    {
+                      rules: [{ required: true, message: '请选择隐藏子菜单!' }],
+                      initialValue: 0
+                    }
+                  ]"
+                >
+                  <a-radio-button :key="key" :value="type.value" v-for="(type, key) in status">{{ type.label }}</a-radio-button>
+                </a-radio-group>
+              </a-form-item>
+            </a-col>
           </a-col>
 
-          <a-col :span="24">
+          <a-col :span="12">
             <a-form-item v-show="form.getFieldValue('type') !== 'action'" label="查看权限">
               <a-select
                 style="min-width: 171px"
@@ -183,7 +198,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :span="24">
+          <a-col :span="12">
             <a-form-item v-show="form.getFieldValue('type') !== 'action'" label="菜单图标">
               <a-input
                 slot="default"
@@ -438,9 +453,9 @@ export default {
       this.visible = true
       this.selected = row.id
       this.$nextTick(() => {
-        const { name, title, pid, type, status, path, redirect, component, icon, permission, keepAlive, hidden } = row
         this.form.setFieldsValue({
-          name, title, pid, type, status, path, redirect, component, icon, keepAlive, hidden, permission: permission ? permission.split(',') : []
+          ...row,
+          permission: row.permission ? row.permission.split(',') : []
         })
       })
     },
