@@ -14,4 +14,10 @@ RUN apk upgrade --update \
     && echo ${TZ} > /etc/timezone \
     && rm -rf /var/cache/apk/*
 
-COPY dist/ /usr/share/nginx/html/tant/vue
+RUN rm -rf /etc/nginx/conf.d/default.conf
+
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+COPY dist/ /usr/share/nginx/html
+
+WORKDIR /usr/share/nginx/html
