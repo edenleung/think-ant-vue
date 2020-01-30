@@ -40,9 +40,13 @@ function hasRole(roles, route) {
 }
 
 function filterAsyncRouter (routerMap, roles) {
+  let components = {}
+  for (const type in Components) {
+    components = { ...Components[type], ...components }
+  }
   const accessedRouters = routerMap.filter(route => {
     if (hasPermission(roles.permissionList, route)) {
-      route.component = Components[route.component]
+      route.component = components[route.component]
       if (route.children && route.children.length) {
         route.children = filterAsyncRouter(route.children, roles)
       }

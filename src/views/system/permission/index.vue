@@ -49,6 +49,7 @@
             <a-form-item label="菜单标题" hasFeedback>
               <a-input
                 placeholder="菜单标题"
+                :readonly="form.getFieldValue('type') === 'action'"
                 v-decorator="[
                   'title',
                   {
@@ -86,7 +87,9 @@
                     }
                   ]">
                   >
-                  <a-select-option :value="name" v-for="(component, name) in Components" :key="name">{{ name }}</a-select-option>
+                  <a-select-opt-group v-for="(list, type) in Components" :key="type" :label="type">
+                    <a-select-option :value="name" v-for="(item, name) in list" :key="name">{{ name }}</a-select-option>
+                  </a-select-opt-group>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -163,7 +166,8 @@
                     }
                   ]"
                 >
-                  <a-radio-button :key="key" :value="type.value" v-for="(type, key) in status">{{ type.label }}</a-radio-button>
+                  <a-radio-button :key="key" :value="type.value" v-for="(type, key) in status">
+                    {{ type.label }}</a-radio-button>
                 </a-radio-group>
               </a-form-item>
             </a-col>
@@ -274,6 +278,10 @@
           </template>
         </template>
 
+        <template slot="icon" slot-scope="row">
+          <a-icon :type="row.icon" v-if="row.icon"/> {{ row.icon }}
+        </template>
+
         <template slot="type" slot-scope="row">
           <a-tag :color="row.type | typeColorFilter">{{ row.type | typeTextFilter }}</a-tag>
         </template>
@@ -366,12 +374,16 @@ const typeMap = {
 
 const columns = [
   {
+    title: '菜单名称',
+    dataIndex: 'title'
+  },
+  {
     title: '唯一识别码',
     dataIndex: 'name'
   },
   {
-    title: '菜单名称',
-    dataIndex: 'title'
+    title: '菜单 ICON',
+    scopedSlots: { customRender: 'icon' }
   },
   {
     title: '可操作权限',
@@ -433,7 +445,15 @@ export default {
       Components
     }
   },
+  computed: {
+    actions () {
+      return this.$enum()
+    }
+  },
   components: { STable },
+  mounted () {
+    console.log('$enum', this.$enum())
+  },
   filters: {
     statusFilter (type) {
       return statusMap[type].text
@@ -525,6 +545,12 @@ export default {
         if (item.children !== undefined) {
           this.expandedRow(item.children)
         }
+      })
+    },
+    onActionChange (action) {
+      this.form.setFieldsValue({
+        title: this.actions[action].label,
+        name: this.actions[action].key
       })
     }
   }

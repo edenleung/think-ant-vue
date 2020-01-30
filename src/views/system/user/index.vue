@@ -116,7 +116,7 @@
                 v-decorator="[
                   'posts',
                   {
-                    rules: [{ required: true, message: '请选择岗位!' }]
+                    rules: [{ required: false, message: '请选择岗位!' }]
                   }
                 ]"
               >

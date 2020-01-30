@@ -3,11 +3,11 @@
     <a-modal
       title="详情"
       :width="650"
-      :visible="visible"
-      @ok="handleSubmit"
+      :visible="roleVisible"
+      @ok="handleRoleSubmit"
       :confirmLoading="confirmLoading"
-      @cancel="handleCancel">
-      <a-form :form="form" layout="horizontal">
+      @cancel="handleRoleCancel">
+      <a-form :form="roleForm">
         <a-form-item label="唯一识别码" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input
             placeholder="请入唯一识别码（英文即可）"
@@ -26,7 +26,7 @@
             placeholder="选择上级管理员"
             allowClear
             treeDefaultExpandAll
-            @change="handleTreeChange"
+            @change="filterRuleAction"
             :treeData="roleTree"
             v-decorator="[
               'pid',
@@ -69,22 +69,23 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="拥有权限" v-if="form.getFieldValue('pid')" hasFeedback :label-col="{span: 4}" :wrapper-col="{span: 20}">
+        <a-divider v-if="roleForm.getFieldValue('pid')">拥有权限</a-divider>
+        <a-form-item label="" :label-col="{span: 24}" :wrapper-col="{span: 24}" v-show="roleForm.getFieldValue('pid')">
           <a-row v-for="(item, index) in rules" :key="index">
-            <a-col :xl="5">
-              {{ item.title }}：
-            </a-col>
-            <a-col :xl="19">
-              <a-checkbox
-                v-if="item.actions.length > 0"
-                :indeterminate="item.indeterminate"
-                :checked="item.checkedAll"
-                @change="onCheckAllChange($event, item)"
-              >
-                全选
-              </a-checkbox>
-              <a-checkbox-group :options="item.actions" v-model="item.selected" @change="onChange(item)" />
-            </a-col>
+            <a-checkbox
+              :indeterminate="item.indeterminate"
+              :checked="item.checkedAll"
+              @change="onCheckAllActionChange($event, item)"
+            >
+              全选
+            </a-checkbox>
+            <a-checkbox-group
+              @change="onChangeAction(item)"
+              v-model="item.selected"
+            >
+              <a-checkbox :value="item.id" :disabled="item.disabled">{{ item.title }}</a-checkbox>
+              <a-checkbox :value="action.id" :disabled="action.disabled" v-for="(action, i) in item.actions" :key="i">{{ action.title }}</a-checkbox>
+            </a-checkbox-group>
           </a-row>
         </a-form-item>
       </a-form>
@@ -93,11 +94,11 @@
     <a-modal
       title="分配数据权限"
       :width="500"
-      :visible="dataVisible"
-      @ok="handleDataSubmit"
+      :visible="dataAccessVisable"
+      @ok="handleDataAccessSubmit"
       :confirmLoading="confirmLoading"
-      @cancel="handleCancel">
-      <a-form :form="dataForm">
+      @cancel="handleDataAccessCancel">
+      <a-form :form="dataAccessForm">
         <a-form-item label="唯一识别码" hasFeedback>
           <a-input
             readonly
@@ -116,9 +117,8 @@
           />
         </a-form-item>
 
-        <a-form-item label="数据范围" hasFeedback>
+        <a-form-item label="数据范围">
           <a-select
-            @change="handleSelectChange"
             v-decorator="[
               'mode',
               {
@@ -133,19 +133,17 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item v-show="dataForm.getFieldValue('mode') === 2" label="数据权限" hasFeedback>
+        <a-form-item label="数据权限" v-show="dataAccessForm.getFieldValue('mode') === 2">
           <a-tree
             checkable
-            @expand="onExpand"
-            v-model="checkedKeys"
+            :treeData="deptTree"
             :autoExpandParent="true"
-            @select="onSelect"
-            :treeData="deptTreeData"
             :showLine="true"
-            :expandedKeys="expandedKeys"
+            :defaultExpandedKeys="dataAccessDefaultExpandedKeys"
             v-decorator="[
               'deptIds',
               {
+                valuePropName: 'deptIds', trigger: 'check', validateTrigger: 'check',
                 rules: [{ required: true, message: '请选择数据权限!' }]
               }
             ]"
@@ -159,7 +157,7 @@
         <div class="ant-pro-table-toolbar-title">角色列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:RoleAdd type="primary" icon="plus" @click="visible = true">新建</a-button>
+            <a-button v-action:RoleAdd type="primary" icon="plus" @click="roleVisible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -191,9 +189,7 @@
         :data="loadData"
         :alert="true"
         :expandRowByClick="true"
-        :expandIcon="expandIcon"
         :showPagination="false"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <template slot="status" slot-scope="row">
           <a-badge :status="row.status | statusTypeFilter" :text="row.status | statusFilter" />
@@ -222,11 +218,11 @@
         </p>
 
         <template slot="tools" slot-scope="row">
-          <a v-action:RoleUpdate @click="openInfoModal(row)">编辑</a>
+          <a v-action:RoleUpdate @click="openRoleModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:RoleUpdate @click="openDataInfoModal(row)">数据权限</a>
+          <a v-action:RoleUpdate @click="openDataAccessModal(row)">数据权限</a>
           <a-divider type="vertical" />
-          <a v-action:RoleDelete @click="showDeleteConfirm(row.id)">删除</a>
+          <a v-action:RoleDelete @click="handleRoleDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
     </a-card>
@@ -234,6 +230,7 @@
 </template>
 <script>
 import { STable } from '@/components'
+// eslint-disable-next-line no-unused-vars
 import { fetchRole, addRole, updateRole, deleteRole, updateMode } from '@/api/role'
 const statusMap = {
   0: {
@@ -267,53 +264,43 @@ const columns = [
 export default {
   data () {
     return {
-      expandedKeys: [],
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
-      selectedKeys: [],
-      checkedKeys: [],
-      description:
-        '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
-      loading: false,
+      description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
       confirmLoading: false,
-      visible: false,
-      dataVisible: false,
-      customDataVisable: false,
-      form: this.$form.createForm(this, { name: 'role' }),
-      dataForm: this.$form.createForm(this, { name: 'dept' }),
-      rules: [],
-      allActionIds: [],
-      selected: 0,
       info: {},
-      data: [],
-      columns,
+      rules: [],
+      roleVisible: false,
+      roleForm: this.$form.createForm(this, { name: 'role' }),
+      roles: [],
+      dataAccessVisable: false,
+      dataAccessForm: this.$form.createForm(this, { name: 'dept' }),
+      dataAccessDefaultExpandedKeys: [],
+      selectedId: 0,
       roleTree: [],
-      deptTreeData: [],
+      deptTree: [],
       queryParam: {},
       loadData: parameter => {
         return fetchRole(Object.assign(parameter, this.queryParam)).then(res => {
+          // eslint-disable-next-line no-unused-vars
           const { rules, roles, depts } = res.result
           const { data, tree } = roles
-          this.data = data
+          this.roles = data
+          this.rules = rules
           this.roleTree = tree
-          this.deptTreeData = depts
+          this.deptTree = depts
 
           this.rulesSelectedInit(rules)
           return roles
         })
       },
-      selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      allActionIds: [],
+      columns
     }
   },
   components: { STable },
-  watch: {
-    checkedKeys (v) {
-      this.dataForm.setFieldsValue({
-        deptIds: v
-      })
-    }
-  },
+  watch: {},
   filters: {
     statusFilter (type) {
       return statusMap[type].text
@@ -323,38 +310,51 @@ export default {
     }
   },
   methods: {
-    handleDataSubmit () {
-      this.dataForm.validateFields((err, values) => {
-        if (!err) {
-          updateMode(this.selected, values).then(res => {
-            this.$notification['success']({
-              message: '成功通知',
-              description: '更新成功！'
-            })
-            this.handleCancel()
-            this.refreshTable()
-          })
-        }
+    openRoleModal (row) {
+      this.roleVisible = true
+      this.selectedId = row.id
+      this.info = row
+      this.filterRuleAction(row.pid.toString())
+      this.$nextTick(() => {
+        this.roleForm.setFieldsValue({
+          ...row,
+          pid: row.pid.toString()
+        })
       })
     },
-    handleSubmit () {
-      this.form.validateFields((err, values) => {
+    handleRoleCancel () {
+      this.roleVisible = false
+      this.roleForm.resetFields()
+      this.selectedId = 0
+      this.rules.map(rule => {
+        rule.selected = []
+        rule.indeterminate = false
+        rule.checkedAll = false
+        rule.disabled = false
+        rule.actions.map(action => {
+          action.disabled = false
+        })
+      })
+    },
+    handleRoleSubmit () {
+      this.roleForm.validateFields((err, values) => {
         if (!err) {
           const checkedList = []
-          this.rules.map(item => {
+          const { selectedId, rules } = this
+          rules.map(item => {
             item.selected.map(s => {
               checkedList.push(s)
             })
           })
           values.rules = checkedList
-          const promise = this.selected === 0 ? addRole(values) : updateRole(this.selected, values)
+          const promise = selectedId === 0 ? addRole(values) : updateRole(selectedId, values)
           this.confirmLoading = true
           promise.then(res => {
             this.$notification['success']({
               message: '成功通知',
-              description: this.selected === 0 ? '添加成功！' : '更新成功！'
+              description: this.selectedId === 0 ? '添加成功！' : '更新成功！'
             })
-            this.handleCancel()
+            this.handleRoleCancel()
             this.refreshTable()
           }).finally(() => {
             this.confirmLoading = false
@@ -362,108 +362,7 @@ export default {
         }
       })
     },
-    handleCancel () {
-      this.visible = false
-      this.dataVisible = false
-      this.form.resetFields()
-      this.selected = 0
-      this.loading = false
-
-      this.rules.map(rule => {
-        rule.selected = []
-        rule.indeterminate = false
-        rule.checkedAll = false
-        rule.actions.map(action => {
-          action.disabled = false
-        })
-      })
-    },
-    filterRuleAction (selectRoleId = '1') {
-      // 更新时 自动勾选已选择的权限
-      if (this.selected > 0) {
-        const { info: { pid } } = this
-        selectRoleId = pid.toString()
-      }
-      const { data, rules } = this
-      let allPermissionActionsIds = []
-      if (selectRoleId !== '1') {
-        const parentRole = data.find(item => {
-          if (item.id.toString() === selectRoleId) {
-            return item
-          }
-        })
-        allPermissionActionsIds = parentRole.permissions
-      } else {
-        allPermissionActionsIds = this.allActionIds
-      }
-      // 更新时 自动勾选已选择的权限
-      if (this.selected > 0) {
-        const { info: { permissions } } = this
-        rules.map(rule => {
-          // 记录当前菜单可选操作数量
-          let ruleSelectCount = 0
-          rule.actions.map(action => {
-            if (permissions.indexOf(action.id) !== -1) {
-              rule.selected.push(action.id)
-            }
-
-            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
-            if (action.disabled === false) {
-              ruleSelectCount = ruleSelectCount + 1
-            }
-          })
-
-          rule.indeterminate = !!rule.selected.length && (rule.selected.length < ruleSelectCount.length)
-          rule.checkedAll = rule.selected.length === ruleSelectCount
-        })
-      } else {
-        // 创建时
-        rules.map(rule => {
-          rule.actions.map(action => {
-            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
-          })
-        })
-      }
-    },
-    openInfoModal (row) {
-      this.selected = row.id
-      this.info = row
-      this.visible = true
-      this.filterRuleAction(row.pid.toString())
-      this.$nextTick(() => {
-        this.form.setFieldsValue({
-          title: row.title,
-          name: row.name,
-          status: row.status,
-          pid: row.pid.toString()
-        })
-      })
-    },
-    openDataInfoModal (row) {
-      this.dataVisible = true
-      this.selected = row.id
-      const deptIds = row.deptIds.map(item => item.toString())
-      this.checkedKeys = deptIds
-      // 展开组织架构
-      this.expandedDept(this.deptTreeData)
-      this.$nextTick(() => {
-        this.dataForm.setFieldsValue({
-          title: row.title,
-          name: row.name,
-          mode: row.mode,
-          deptIds: deptIds
-        })
-      })
-    },
-    expandedDept (depts) {
-      depts.map(dept => {
-        this.expandedKeys.push(dept.value)
-        if (dept.children !== undefined) {
-          this.expandedDept(dept.children)
-        }
-      })
-    },
-    showDeleteConfirm (id) {
+    handleRoleDeleteConfirm (id) {
       this.$confirm({
         title: '确定删除此角色吗?',
         content: '',
@@ -484,16 +383,75 @@ export default {
         }
       })
     },
-    onChange (permission) {
-      permission.indeterminate = !!permission.selected.length && (permission.selected.length < permission.actions.length)
-      permission.checkedAll = permission.selected.length === permission.actions.length
+    openDataAccessModal (row) {
+      this.dataAccessVisable = true
+      this.selectedId = row.id
+      const deptIds = row.deptIds.map(item => item.toString())
+      // 展开组织架构
+      this.dataAccessDefaultExpandedKeys = this.expandedDept(this.deptTree)
+      this.$nextTick(() => {
+        this.dataAccessForm.setFieldsValue({
+          title: row.title,
+          name: row.name,
+          mode: row.mode,
+          deptIds: deptIds
+        })
+      })
     },
-    onCheckAllChange (e, permission) {
-      // 记录有权限的操作
-      const hasPermissionAction = []
+    expandedDept (depts) {
+      const expandedKeys = []
+      depts.map(dept => {
+        expandedKeys.push(dept.value)
+        if (dept.children !== undefined) {
+          expandedKeys.push(...this.expandedDept(dept.children))
+        }
+      })
+
+      return expandedKeys
+    },
+    handleDataAccessCancel () {
+      this.dataAccessForm.resetFields()
+      this.dataAccessVisable = this.confirmLoading = false
+      this.dataAccessDefaultExpandedKeys = []
+    },
+    handleDataAccessSubmit () {
+      this.dataAccessForm.validateFields((err, values) => {
+        if (!err) {
+          this.confirmLoading = true
+          updateMode(this.selectedId, values).then(res => {
+            this.$notification['success']({
+              message: '成功通知',
+              description: '更新成功！'
+            })
+            this.handleDataAccessCancel()
+            this.refreshTable()
+          })
+        }
+      })
+    },
+    onChangeAction (permission) {
+      console.log(permission)
+      let notDisabledLen = 0
+      if (permission.disabled === false) {
+        notDisabledLen = notDisabledLen + 1
+      }
       permission.actions.map(action => {
         if (action.disabled === false) {
-          hasPermissionAction.push(action.value)
+          notDisabledLen = notDisabledLen + 1
+        }
+      })
+      permission.indeterminate = !!permission.selected.length && (permission.selected.length < notDisabledLen)
+      permission.checkedAll = permission.selected.length === notDisabledLen
+    },
+    onCheckAllActionChange (e, permission) {
+      // 记录有权限的操作
+      const hasPermissionAction = []
+      if (permission.disabled === false) {
+        hasPermissionAction.push(permission.id)
+      }
+      permission.actions.map(action => {
+        if (action.disabled === false) {
+          hasPermissionAction.push(action.id)
         }
       })
       Object.assign(permission, {
@@ -502,15 +460,69 @@ export default {
         checkedAll: e.target.checked
       })
     },
+    refreshTable () {
+      this.$refs.table.refresh()
+    },
+    filterRuleAction (parentId = '1') {
+      const { roles, rules } = this
+      let allPermissionActionsIds = []
+      if (parentId !== '1') {
+        const parentRole = roles.find(item => {
+          if (item.id.toString() === parentId) {
+            return item
+          }
+        })
+        // 获取父级所有可选权限
+        allPermissionActionsIds = parentRole.permissions
+      } else {
+        // 当选中顶级时，获取所有可选权限
+        allPermissionActionsIds = this.allActionIds
+      }
+      // 更新时 自动勾选已选择的权限
+      if (this.selectedId > 0) {
+        const { info: { permissions } } = this
+        rules.map(rule => {
+          rule.selected = []
+          // 记录当前菜单可选操作数量
+          let ruleSelectCount = 0
+          if (permissions.indexOf(rule.id) !== -1) {
+            ruleSelectCount = ruleSelectCount + 1
+            rule.selected.push(rule.id)
+          }
+
+          rule.actions.map(action => {
+            if (permissions.indexOf(action.id) !== -1) {
+              rule.selected.push(action.id)
+            }
+            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
+            if (action.disabled === false) {
+              ruleSelectCount = ruleSelectCount + 1
+            }
+          })
+
+          rule.indeterminate = !!rule.selected.length && (rule.selected.length < ruleSelectCount)
+          if (rule.selected.length) {
+            rule.checkedAll = rule.selected.length === ruleSelectCount
+          }
+        })
+      } else {
+        // 创建时
+        rules.map(rule => {
+          rule.actions.map(action => {
+            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
+          })
+        })
+      }
+    },
     rulesSelectedInit (rules) {
       const allActionIds = []
       this.rules = rules.map(item => {
         Object.assign(item, {
           selected: [],
           indeterminate: false,
-          checkedAll: false
+          checkedAll: false,
+          disabled: false
         })
-
         // 初始化状态
         item.actions.map(action => {
           allActionIds.push(action.id)
@@ -518,43 +530,7 @@ export default {
         })
         return item
       })
-
       this.allActionIds = allActionIds
-    },
-    handleTreeChange (v) {
-      this.filterRuleAction(v)
-    },
-    refreshTable () {
-      this.$refs.table.refresh()
-    },
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    handleMenuClick () {},
-    expandIcon ({ expanded }) {
-      if (expanded === true) {
-        return <a-icon type='down' />
-      }
-      return <a-icon type='right' />
-    },
-    handleSelectChange (v) {
-      this.customDataVisable = v === 2
-    },
-    onExpand (expandedKeys) {
-      console.log('onExpand', expandedKeys)
-      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-      // or, you can remove all expanded children keys.
-      this.expandedKeys = expandedKeys
-      this.autoExpandParent = false
-    },
-    onCheck (checkedKeys) {
-      console.log('onCheck', checkedKeys)
-      this.checkedKeys = checkedKeys
-    },
-    onSelect (selectedKeys, info) {
-      console.log('onSelect', info)
-      this.selectedKeys = selectedKeys
     }
   }
 }

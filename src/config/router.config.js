@@ -1,9 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-// 自定义图标
-// import { bxAnaalyse } from '@/core/icons'
-
-export const asyncRouterMap = []
+import { UserLayout, RouteView, BlankLayout } from '@/layouts'
 
 /**
  * 基础路由
