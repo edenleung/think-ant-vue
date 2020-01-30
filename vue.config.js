@@ -48,7 +48,7 @@ const vueConfig = {
     ],
     resolve: {
       alias: {
-        '@ant-design/icons/lib/dist$': resolve('./src/core/antd/icons.js')
+        // '@ant-design/icons/lib/dist$': resolve('./src/core/antd/icons.js')
       }
     },
     // if prod, add externals
