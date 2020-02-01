@@ -53,6 +53,10 @@ import { fetchDbLog, deleteDbLog } from '@/api/log'
 import { STable } from '@/components'
 const columns = [
   {
+    title: '用户',
+    dataIndex: 'nickname'
+  },
+  {
     title: 'Model',
     dataIndex: 'model'
   },
