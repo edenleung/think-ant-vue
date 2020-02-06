@@ -1,157 +1,5 @@
 <template>
   <div class="page-header-index-wide">
-    <a-modal
-      title="详情"
-      :width="650"
-      :visible="roleVisible"
-      @ok="handleRoleSubmit"
-      :confirmLoading="confirmLoading"
-      @cancel="handleRoleCancel">
-      <a-form :form="roleForm">
-        <a-form-item label="唯一识别码" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input
-            placeholder="请入唯一识别码（英文即可）"
-            v-decorator="[
-              'name',
-              {
-                rules: [{ required: true, message: '请输入唯一识别码!' }]
-              }
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="上级管理员" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-tree-select
-            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-            placeholder="选择上级管理员"
-            allowClear
-            treeDefaultExpandAll
-            @change="filterRuleAction"
-            :treeData="roleTree"
-            v-decorator="[
-              'pid',
-              {
-                rules: [{ required: true, message: '请选择上级管理员!' }]
-              }
-            ]"
-          >
-          </a-tree-select>
-        </a-form-item>
-
-        <a-form-item label="角色名称" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input
-            placeholder="请入角色名称"
-            v-decorator="[
-              'title',
-              {
-                rules: [{ required: true, message: '请输入角色名称!' }]
-              }
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="状态" hasFeedback :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-select
-            v-decorator="[
-              'status',
-              {
-                rules: [{ required: true, message: '请选择状态!' }]
-              }
-            ]"
-            placeholder="请选择"
-          >
-            <a-select-option :value="1">
-              启用
-            </a-select-option>
-            <a-select-option :value="0">
-              禁用
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <a-divider v-if="roleForm.getFieldValue('pid')">拥有权限</a-divider>
-        <a-form-item label="" :label-col="{span: 24}" :wrapper-col="{span: 24}" v-show="roleForm.getFieldValue('pid')">
-          <a-row v-for="(item, index) in rules" :key="index">
-            <a-checkbox
-              :indeterminate="item.indeterminate"
-              :checked="item.checkedAll"
-              @change="onCheckAllActionChange($event, item)"
-            >
-              全选
-            </a-checkbox>
-            <a-checkbox-group
-              @change="onChangeAction(item)"
-              v-model="item.selected"
-            >
-              <a-checkbox :value="item.id" :disabled="item.disabled">{{ item.title }}</a-checkbox>
-              <a-checkbox :value="action.id" :disabled="action.disabled" v-for="(action, i) in item.actions" :key="i">{{ action.title }}</a-checkbox>
-            </a-checkbox-group>
-          </a-row>
-        </a-form-item>
-      </a-form>
-    </a-modal>
-
-    <a-modal
-      title="分配数据权限"
-      :width="500"
-      :visible="dataAccessVisable"
-      @ok="handleDataAccessSubmit"
-      :confirmLoading="confirmLoading"
-      @cancel="handleDataAccessCancel">
-      <a-form :form="dataAccessForm">
-        <a-form-item label="唯一识别码" hasFeedback>
-          <a-input
-            readonly
-            v-decorator="[
-              'name'
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="角色名称" hasFeedback>
-          <a-input
-            readonly
-            v-decorator="[
-              'title'
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="数据范围">
-          <a-select
-            v-decorator="[
-              'mode',
-              {
-                rules: [{ required: true, message: '请输入角色名称!' }]
-              }
-            ]">
-            <a-select-option :value="1">全部数据权限</a-select-option>
-            <a-select-option :value="2">自定义数据权限</a-select-option>
-            <a-select-option :value="3">本部门数据权限</a-select-option>
-            <a-select-option :value="4">本部门及以下数据权限</a-select-option>
-            <a-select-option :value="5">仅本人数据权限</a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <a-form-item label="数据权限" v-show="dataAccessForm.getFieldValue('mode') === 2">
-          <a-tree
-            checkable
-            :treeData="deptTree"
-            :autoExpandParent="true"
-            :showLine="true"
-            :defaultExpandedKeys="dataAccessDefaultExpandedKeys"
-            v-decorator="[
-              'deptIds',
-              {
-                valuePropName: 'deptIds', trigger: 'check', validateTrigger: 'check',
-                rules: [{ required: true, message: '请选择数据权限!' }]
-              }
-            ]"
-          />
-        </a-form-item>
-      </a-form>
-    </a-modal>
-
     <a-card :body-style="{ padding: 0 }">
       <div class="ant-pro-table-toolbar">
         <div class="ant-pro-table-toolbar-title">角色列表</div>
@@ -218,19 +66,43 @@
         </p>
 
         <template slot="tools" slot-scope="row">
-          <a v-action:RoleUpdate @click="openRoleModal(row)">编辑</a>
+          <a v-action:RoleUpdate @click="showRoleModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:RoleUpdate @click="openDataAccessModal(row)">数据权限</a>
+          <a v-action:RoleUpdate @click="showDataAccessModal(row)">数据权限</a>
           <a-divider type="vertical" />
           <a v-action:RoleDelete @click="handleRoleDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
     </a-card>
+
+    <RoleForm
+      ref="roleForm"
+      :rules="rules"
+      :treeData="roleTree"
+      :visible="roleVisible"
+      :confirmLoading="confirmLoading"
+      @changeRole="filterRuleAction"
+      @checkAllActionChange="onCheckAllActionChange"
+      @changeAction="onChangeAction"
+      @submit="handleRoleSubmit"
+      @cancel="handleRoleCancel"
+    />
+
+    <DataAccessForm
+      ref="dataAccessForm"
+      :treeData="deptTree"
+      :defaultExpandedKeys="dataAccessDefaultExpandedKeys"
+      :visible="dataAccessVisable"
+      :confirmLoading="confirmLoading"
+      @submit="handleDataAccessSubmit"
+      @cancel="handleDataAccessCancel"
+    />
   </div>
 </template>
 <script>
 import { STable } from '@/components'
-// eslint-disable-next-line no-unused-vars
+import RoleForm from './components/RoleForm'
+import DataAccessForm from './components/DataAccessForm'
 import { fetchRole, addRole, updateRole, deleteRole, updateMode } from '@/api/role'
 const statusMap = {
   0: {
@@ -264,17 +136,13 @@ const columns = [
 export default {
   data () {
     return {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
       description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
       confirmLoading: false,
       info: {},
       rules: [],
       roleVisible: false,
-      roleForm: this.$form.createForm(this, { name: 'role' }),
       roles: [],
       dataAccessVisable: false,
-      dataAccessForm: this.$form.createForm(this, { name: 'dept' }),
       dataAccessDefaultExpandedKeys: [],
       selectedId: 0,
       roleTree: [],
@@ -282,7 +150,6 @@ export default {
       queryParam: {},
       loadData: parameter => {
         return fetchRole(Object.assign(parameter, this.queryParam)).then(res => {
-          // eslint-disable-next-line no-unused-vars
           const { rules, roles, depts } = res.result
           const { data, tree } = roles
           this.roles = data
@@ -299,7 +166,7 @@ export default {
       columns
     }
   },
-  components: { STable },
+  components: { STable, RoleForm, DataAccessForm },
   watch: {},
   filters: {
     statusFilter (type) {
@@ -310,13 +177,13 @@ export default {
     }
   },
   methods: {
-    openRoleModal (row) {
+    showRoleModal (row) {
       this.roleVisible = true
       this.selectedId = row.id
       this.info = row
       this.filterRuleAction(row.pid.toString())
       this.$nextTick(() => {
-        this.roleForm.setFieldsValue({
+        this.$refs.roleForm.form.setFieldsValue({
           ...row,
           pid: row.pid.toString()
         })
@@ -324,7 +191,7 @@ export default {
     },
     handleRoleCancel () {
       this.roleVisible = false
-      this.roleForm.resetFields()
+      this.$refs.roleForm.form.resetFields()
       this.selectedId = 0
       this.rules.map(rule => {
         rule.selected = []
@@ -337,7 +204,7 @@ export default {
       })
     },
     handleRoleSubmit () {
-      this.roleForm.validateFields((err, values) => {
+      this.$refs.roleForm.form.validateFields((err, values) => {
         if (!err) {
           const checkedList = []
           const { selectedId, rules } = this
@@ -383,14 +250,14 @@ export default {
         }
       })
     },
-    openDataAccessModal (row) {
+    showDataAccessModal (row) {
       this.dataAccessVisable = true
       this.selectedId = row.id
       const deptIds = row.deptIds.map(item => item.toString())
       // 展开组织架构
       this.dataAccessDefaultExpandedKeys = this.expandedDept(this.deptTree)
       this.$nextTick(() => {
-        this.dataAccessForm.setFieldsValue({
+        this.$refs.dataAccessForm.form.setFieldsValue({
           title: row.title,
           name: row.name,
           mode: row.mode,
@@ -410,12 +277,12 @@ export default {
       return expandedKeys
     },
     handleDataAccessCancel () {
-      this.dataAccessForm.resetFields()
+      this.$refs.dataAccessForm.form.resetFields()
       this.dataAccessVisable = this.confirmLoading = false
       this.dataAccessDefaultExpandedKeys = []
     },
     handleDataAccessSubmit () {
-      this.dataAccessForm.validateFields((err, values) => {
+      this.$refs.dataAccessForm.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
           updateMode(this.selectedId, values).then(res => {
@@ -463,7 +330,7 @@ export default {
     refreshTable () {
       this.$refs.table.refresh()
     },
-    filterRuleAction (parentId = '1') {
+    filterRuleAction (parentId) {
       const { roles, rules } = this
       let allPermissionActionsIds = []
       if (parentId !== '1') {

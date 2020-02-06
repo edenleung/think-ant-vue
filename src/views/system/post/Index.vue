@@ -2,7 +2,7 @@
   <div class="page-header-index-wide">
     <a-card :body-style="{ padding: 0 }">
       <div class="ant-pro-table-toolbar">
-        <div class="ant-pro-table-toolbar-title">岗位列表</div>
+        <div class="ant-pro-table-toolbar-title"></div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
             <a-button v-action:PostAdd type="primary" icon="plus" :loading="loading" @click="visible = true">新建</a-button>
@@ -42,78 +42,19 @@
         </template>
 
         <template slot="tools" slot-scope="row">
-          <a v-action:PostUpdate @click="openInfoModal(row)">编辑</a>
+          <a v-action:PostUpdate @click="showModal(row)">编辑</a>
           <a-divider type="vertical" />
           <a v-action:PostDelete @click="showDeleteConfirm(row.postId)">删除</a>
         </template>
       </s-table>
+
+      <PostForm ref="postFrom" :visible="visible" :confirmLoading="confirmLoading" @cancel="handleCancel" @submit="handleSubmit"/>
     </a-card>
-
-    <a-modal
-      title="详情"
-      :visible="visible"
-      :width="500"
-      @ok="handleSubmit"
-      :confirmLoading="confirmLoading"
-      @cancel="handleCancel">
-      <a-form :form="form">
-        <a-form-item label="名称" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-          <a-input
-            placeholder="岗位名称"
-            v-decorator="[
-              'postName',
-              {
-                rules: [{ required: true, message: '请输入岗位名称!' }]
-              }
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="标识" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-          <a-input
-            placeholder="岗位标识"
-            v-decorator="[
-              'postCode',
-              {
-                rules: [{ required: true, message: '请输入岗位标识!' }]
-              }
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="排序" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-          <a-input
-            placeholder="排序"
-            v-decorator="[
-              'postSort',
-              {
-                rules: [{ required: true, message: '请输入排序!' }]
-              }
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-          <a-select
-            v-decorator="[
-              'status',
-              {
-                rules: [{ required: true, message: '请选择状态!' }]
-              }
-            ]"
-            placeholder="请选择"
-          >
-            <a-select-option :value="1">正常</a-select-option>
-            <a-select-option :value="0">禁用</a-select-option>
-          </a-select>
-        </a-form-item>
-      </a-form>
-    </a-modal>
-
   </div>
 </template>
 <script>
 import { STable } from '@/components'
+import PostForm from './components/PostForm'
 import { fetchPost, createPost, updatePost, deletePost } from '@/api/post'
 const columns = [
   {
@@ -150,15 +91,6 @@ export default {
       confirmLoading: false,
       selected: 0,
       columns,
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 }
-      },
-      form: this.$form.createForm(this),
       queryParam: {},
       loadData: parameter => {
         return fetchPost(Object.assign(parameter, this.queryParam)).then(res => {
@@ -170,13 +102,14 @@ export default {
       selectedRows: []
     }
   },
-  components: { STable },
+  components: { STable, PostForm },
   methods: {
-    openInfoModal (row) {
+    showModal (row) {
       this.visible = true
       this.selected = row.postId
+      const form = this.$refs.postFrom.form
       this.$nextTick(() => {
-        this.form.setFieldsValue({ ...row })
+        form.setFieldsValue({ ...row })
       })
     },
     onSelectChange (selectedRowKeys, selectedRows) {
@@ -185,7 +118,8 @@ export default {
     },
     handleMenuClick () {},
     handleSubmit () {
-      this.form.validateFields((err, values) => {
+      const form = this.$refs.PostForm.form
+      form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
           const promise = this.selected === 0 ? createPost(values) : updatePost(this.selected, values)
@@ -208,7 +142,7 @@ export default {
     handleCancel () {
       this.visible = false
       this.selected = 0
-      this.form.resetFields()
+      this.$refs.PostForm.form.resetFields()
     },
     showDeleteConfirm (id) {
       this.$confirm({

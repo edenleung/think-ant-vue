@@ -44,7 +44,7 @@
 
         <template slot="tools" slot-scope="row">
           <span v-if="row.dept_pid">
-            <a v-action:DeptUpdate @click="openDeptModal(row)">编辑</a>
+            <a v-action:DeptUpdate @click="showModal(row)">编辑</a>
             <a-divider type="vertical" />
             <a v-action:DeptDelete @click="showDeleteConfirm(row.dept_id)">删除</a>
           </span>
@@ -52,62 +52,19 @@
       </s-table>
     </a-card>
 
-    <a-modal
-      title="详情"
+    <DeptForm
+      ref="deptForm"
       :visible="visible"
-      :width="500"
-      @ok="handleSubmit"
+      :treeData="tree"
       :confirmLoading="confirmLoading"
-      @cancel="handleCancel">
-      <a-form :form="form">
-        <a-form-item label="名称" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-          <a-input
-            placeholder="公司/部门名称"
-            v-decorator="[
-              'dept_name',
-              {
-                rules: [{ required: true, message: '请输入公司/部门名称!' }]
-              }
-            ]"
-          />
-        </a-form-item>
-
-        <a-form-item label="所属上级" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-          <a-tree-select
-            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-            :treeData="tree"
-            placeholder="选择所属上级"
-            treeDefaultExpandAll
-            v-decorator="[
-              'dept_pid',
-              {
-                rules: [{ required: true, message: '请选择所属上级!' }]
-              }
-            ]"
-          >
-          </a-tree-select>
-        </a-form-item>
-        <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-          <a-select
-            v-decorator="[
-              'dept_status',
-              {
-                rules: [{ required: true, message: '请选择状态!' }]
-              }
-            ]"
-            placeholder="请选择"
-          >
-            <a-select-option :value="1">正常</a-select-option>
-            <a-select-option :value="0">禁用</a-select-option>
-          </a-select>
-        </a-form-item>
-      </a-form>
-    </a-modal>
-
+      @submit="handleSubmit"
+      @cancel="handleCancel"
+    />
   </div>
 </template>
 <script>
 import { STable } from '@/components'
+import DeptForm from './components/DeptForm'
 import { fetchDept, addDept, updateDept, deleteDept } from '@/api/dept'
 const columns = [
   {
@@ -129,20 +86,10 @@ export default {
       description: '',
       loading: false,
       visible: false,
-      value: '',
       tree: [],
       confirmLoading: false,
       selected: 0,
       columns,
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 }
-      },
-      form: this.$form.createForm(this),
       expandedKeys: [],
       queryParam: {},
       loadData: parameter => {
@@ -157,15 +104,15 @@ export default {
       selectedRows: []
     }
   },
-  components: { STable },
+  components: { STable, DeptForm },
   methods: {
-    openDeptModal (row) {
+    showModal (row) {
       this.visible = true
       this.selected = row.dept_id
       const data = row
       data.dept_pid = data.dept_pid.toString()
       this.$nextTick(() => {
-        this.form.setFieldsValue({ ...data })
+        this.$refs.deptForm.form.setFieldsValue({ ...data })
       })
     },
     onSelectChange (selectedRowKeys, selectedRows) {
@@ -180,7 +127,7 @@ export default {
       return <a-icon type='right' />
     },
     handleSubmit () {
-      this.form.validateFields((err, values) => {
+      this.$refs.deptForm.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
           const promise = this.selected === 0 ? addDept(values) : updateDept(this.selected, values)
@@ -203,7 +150,7 @@ export default {
     handleCancel () {
       this.visible = false
       this.selected = 0
-      this.form.resetFields()
+      this.$refs.deptForm.form.resetFields()
     },
     showDeleteConfirm (id) {
       this.$confirm({

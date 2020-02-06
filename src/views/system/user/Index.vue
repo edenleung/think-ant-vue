@@ -1,135 +1,5 @@
 <template>
   <div class="page-header-index-wide">
-    <a-modal title="详情" :visible="visible" @ok="handleSubmit" :confirmLoading="confirmLoading" @cancel="handleCancel">
-      <a-form :form="form" layout="inline">
-        <a-row :gutter="0">
-          <a-col :span="12">
-            <a-form-item label="登录账号" hasFeedback>
-              <a-input
-                :readonly="this.selected !== 0"
-                placeholder="请入登录账号"
-                v-decorator="[
-                  'name',
-                  {
-                    rules: [{ required: true, message: '请输入登录账号!' }]
-                  }
-                ]"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="12">
-            <a-form-item label="登录密码" hasFeedback>
-              <a-input
-                :placeholder="this.selected === 0 ? '请入登录密码' : '如需修改密码请输入新密码'"
-                v-decorator="[
-                  'password',
-                  {
-                    rules: [{ required: this.selected === 0, message: '请输入登录密码!' }]
-                  }
-                ]"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="12">
-            <a-form-item label="用户昵称" hasFeedback>
-              <a-input
-                placeholder="请入用户昵称"
-                v-decorator="[
-                  'nickname',
-                  {
-                    rules: [{ required: true, message: '请输入用户名称!' }]
-                  }
-                ]"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="12">
-            <a-form-item label="归属部门" hasFeedback>
-              <a-tree-select
-                :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-                :treeData="depts"
-                style="min-width:171px"
-                placeholder="请选择角色"
-                treeDefaultExpandAll
-                @select="onSelect"
-                v-decorator="[
-                  'dept_id',
-                  {
-                    rules: [{ required: true, message: '请选择归属部门!' }]
-                  }
-                ]"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="12">
-            <a-form-item label="选择角色" hasFeedback>
-              <a-tree-select
-                style="min-width:171px"
-                :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-                :treeData="roles"
-                placeholder="请选择角色"
-                treeDefaultExpandAll
-                multiple
-                v-decorator="[
-                  'roles',
-                  {
-                    rules: [{ required: true, message: '请选择角色!' }]
-                  }
-                ]"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="12">
-            <a-form-item label="状态" hasFeedback>
-              <a-select
-                style="min-width:171px"
-                v-decorator="[
-                  'status',
-                  {
-                    rules: [{ required: true, message: '请选择状态!' }]
-                  }
-                ]"
-                placeholder="请选择"
-              >
-                <a-select-option :value="1">
-                  正常
-                </a-select-option>
-                <a-select-option :value="0">
-                  禁用
-                </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="12">
-            <a-form-item label="岗位" hasFeedback>
-              <a-select
-                style="min-width:171px"
-                mode="multiple"
-                placeholder="请选择"
-                @change="handleChange"
-                v-decorator="[
-                  'posts',
-                  {
-                    rules: [{ required: false, message: '请选择岗位!' }]
-                  }
-                ]"
-              >
-                <a-select-option v-for="post in posts" :key="post.postId">
-                  {{ post.postName }}
-                </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form>
-    </a-modal>
-
     <a-row :gutter="16">
       <a-col :xs="{span: 24}" :lg="4">
         <a-card :body-style="{ padding: '0 24px' }">
@@ -177,7 +47,7 @@
             <div class="ant-pro-table-toolbar-title"></div>
             <div class="ant-pro-table-toolbar-option">
               <div class="ant-pro-table-toolbar-item">
-                <a-button type="primary" icon="plus" :loading="loading" @click="visible = true">新建</a-button>
+                <a-button type="primary" icon="plus" @click="visible = true">新建</a-button>
               </div>
               <template v-if="selectedRows.length">
                 <div class="ant-pro-table-toolbar-item">
@@ -248,7 +118,7 @@
             </template>
 
             <template slot="tools" slot-scope="row">
-              <a v-action:AccountUpdate @click="openInfoModal(row)">编辑</a>
+              <a v-action:AccountUpdate @click="showModal(row)">编辑</a>
               <a-divider type="vertical" />
               <a v-action:AccountDelete @click="showDeleteConfirm(row.id)">删除</a>
             </template>
@@ -256,10 +126,23 @@
         </a-card>
       </a-col>
     </a-row>
+
+    <UserForm
+      ref="userForm"
+      :visible="visible"
+      :selecteId="selecteId"
+      :deptTree="depts"
+      :roleTree="roles"
+      :posts="posts"
+      :confirmLoading="confirmLoading"
+      @submit="handleSubmit"
+      @cancel="handleCancel"
+    />
   </div>
 </template>
 <script>
 import { STable } from '@/components'
+import UserForm from './components/UserForm'
 import { fetchAccount, addAccount, updateAccount, deleteAccount } from '@/api/account'
 const columns = [
   {
@@ -292,10 +175,8 @@ export default {
     return {
       description: '',
       visible: false,
-      loading: false,
       confirmLoading: false,
       pagination: {},
-      data: [],
       rules: [],
       roles: [],
       depts: [],
@@ -304,9 +185,8 @@ export default {
       autoExpandParent: true,
       checkedKeys: [],
       selectedKeys: [],
-      form: this.$form.createForm(this),
       columns,
-      selected: 0,
+      selecteId: 0,
       queryParam: {},
       loadData: parameter => {
         return fetchAccount(Object.assign(parameter, this.queryParam)).then(res => {
@@ -326,15 +206,13 @@ export default {
       selectedRows: []
     }
   },
-  components: { STable },
-  mounted () {
-  },
+  components: { STable, UserForm },
   methods: {
-    openInfoModal (row) {
+    showModal (row) {
       this.visible = true
-      this.selected = row.id
+      this.selecteId = row.id
       this.$nextTick(() => {
-        this.form.setFieldsValue({
+        this.$refs.userForm.form.setFieldsValue({
           name: row.name,
           nickname: row.nickname,
           status: row.status,
@@ -347,14 +225,14 @@ export default {
       })
     },
     handleSubmit () {
-      this.form.validateFields((err, values) => {
+      this.$refs.userForm.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
-          const promise = this.selected === 0 ? addAccount(values) : updateAccount(this.selected, values)
+          const promise = this.selecteId === 0 ? addAccount(values) : updateAccount(this.selecteId, values)
           promise.then(res => {
             this.$notification['success']({
               message: '成功通知',
-              description: this.selected === 0 ? '添加成功！' : '更新成功！'
+              description: this.selecteId === 0 ? '添加成功！' : '更新成功！'
             })
             this.refreshTable()
             this.handleCancel()
@@ -369,8 +247,8 @@ export default {
     },
     handleCancel () {
       this.visible = false
-      this.form.resetFields()
-      this.selected = 0
+      this.$refs.userForm.form.resetFields()
+      this.selecteId = 0
     },
     showDeleteConfirm (id) {
       this.$confirm({
