@@ -1,8 +1,3 @@
-FROM --platform=$BUILDPLATFORM node:alpine AS build
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
-
 FROM nginx:1.17.7-alpine
 
 ARG TZ="Asia/Shanghai"
