@@ -508,6 +508,7 @@ export default {
       } else {
         // 创建时
         rules.map(rule => {
+          rule.disabled = allPermissionActionsIds.indexOf(rule.id) === -1
           rule.actions.map(action => {
             action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
           })
