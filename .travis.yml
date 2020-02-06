@@ -20,9 +20,10 @@ before_deploy:
   - docker build -t xiaodi93/ant-design:latest .
   - docker push xiaodi93/ant-design:latest
   - ssh -i ~/.ssh/travis root@47.56.158.125 "cd server;docker pull xiaodi93/ant-design:latest;docker-compose -f app.yaml up -d"
-
 deploy:
   provider: releases
+  api_key:
+    secure: bTibLp5iRNbwoYkVYqaTBn8m9FEHd875fF83r75Msc6BLp6UDHfHLG+oc5v0Ioko28tOVeSVeP+Xu5geirYyyZJhclYb4qVYM9M4EGU94OaO03OlpB6CgyJW28xue7QTHxxj39rUrkU+kIP7fE+Fhq7qDFHi+QqPZJZy8ex/PeUZN6pmSbs207tMUXdVBDEk0jaJBCmTGv7UQUXQGnpBEh7n9ggN/V/RqX1QPsGAE+pIJTwYNBLQdmd0Z55u21mBVESotF05mlLUNstPUOr357NHVXshhP63xa1bLBIk3d75bk+cO+esXxCG14J2eX5ACMPPUThBPxHENvJDY9gWkmkNnnMUB5xDdT81CBwR9+QENmCjhphrsd7lRO4HJNtl1ddlcsYdQWudJPGjv4Bo92h3xhDafhLT3Qa7JITvp3MBTu8QQtINQkmQkXawjwR8cNv78zUdE8KndxG6C0VkuaqfHazvALS0Csr+pCAsHsbc8V7s3mbLLWANTMmOFVisHsln6qnD7A1IMYOI2JSBfonKJYCMxrOIYE/iPXCW2CkpJh8N4lhNsBuKUWgyqj5ZAOZQ0rsGd/HbETR/v89rtml22bwX+gzTYfocmdo7rUY5rlXtvXH/QULQXSh1WEzIP05ykoKqkq+cycBUzcUuMqpftZBXqClEaEyVv/LMrSc=
+  file: ''
   on:
     repo: edenleung/think-ant-vue
-    tags: true
