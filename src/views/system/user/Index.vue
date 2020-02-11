@@ -20,7 +20,7 @@
             <a-form layout="inline">
               <a-row :gutter="48">
                 <a-col :md="8" :sm="24">
-                  <a-form-item label="角色ID">
+                  <a-form-item label="角色  ID">
                     <a-input placeholder="请输入"/>
                   </a-form-item>
                 </a-col>
@@ -216,7 +216,7 @@ export default {
           name: row.name,
           nickname: row.nickname,
           status: row.status,
-          dept_id: row.dept_id,
+          dept_id: row.dept_id.toString(),
           posts: row.posts.map(item => item.postId),
           roles: row.roles.map(item => {
             return item.id.toString()

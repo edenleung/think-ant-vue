@@ -107,7 +107,7 @@
           </a-col>
         </a-col>
         <a-col :span="24">
-          <a-form-item v-if="form.getFieldValue('type') === 'path'" label="Redirect">
+          <a-form-item v-show="form.getFieldValue('type') === 'path'" label="Redirect">
             <a-input
               v-decorator="[
                 'redirect',
@@ -258,7 +258,7 @@ export default {
       Components
     }
   },
-  beforeCreate () {
+  created () {
     this.form = this.$form.createForm(this, { name: 'permission_from' })
   }
 }

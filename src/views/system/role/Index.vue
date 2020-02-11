@@ -184,8 +184,10 @@ export default {
       this.filterRuleAction(row.pid.toString())
       this.$nextTick(() => {
         this.$refs.roleForm.form.setFieldsValue({
-          ...row,
-          pid: row.pid.toString()
+          name: row.name,
+          pid: row.pid.toString(),
+          title: row.title,
+          status: row.status
         })
       })
     },

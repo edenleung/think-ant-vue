@@ -110,9 +110,12 @@ export default {
       this.visible = true
       this.selected = row.dept_id
       const data = row
-      data.dept_pid = data.dept_pid.toString()
       this.$nextTick(() => {
-        this.$refs.deptForm.form.setFieldsValue({ ...data })
+        this.$refs.deptForm.form.setFieldsValue({
+          dept_name: data.dept_name,
+          dept_pid: data.dept_pid.toString(),
+          dept_status: data.dept_status
+        })
       })
     },
     onSelectChange (selectedRowKeys, selectedRows) {

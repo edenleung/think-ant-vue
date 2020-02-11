@@ -206,8 +206,16 @@ export default {
       this.selected = row.id
       this.$nextTick(() => {
         this.$refs.permissionForm.form.setFieldsValue({
-          ...row,
+          type: row.type,
+          title: row.title,
+          name: row.name,
+          component: row.component,
+          path: row.path,
           pid: row.pid.toString(),
+          redirect: row.redirect,
+          status: row.status,
+          visable: row.visable,
+          icon: row.icon,
           permission: row.permission ? row.permission.split(',') : []
         })
       })

@@ -32,7 +32,7 @@
           <a-select-option :value="5">仅本人数据权限</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="数据权限" v-if="form.getFieldValue('mode') === 2">
+      <a-form-item label="数据权限" v-show="form.getFieldValue('mode') === 2">
         <a-tree
           checkable
           :treeData="treeData"
@@ -77,7 +77,7 @@ export default {
       default: false
     }
   },
-  beforeCreate () {
+  created () {
     this.form = this.$form.createForm(this, { name: 'data_access_form' })
   }
 }

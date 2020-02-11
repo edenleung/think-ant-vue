@@ -48,7 +48,7 @@
         </template>
       </s-table>
 
-      <PostForm ref="postFrom" :visible="visible" :confirmLoading="confirmLoading" @cancel="handleCancel" @submit="handleSubmit"/>
+      <PostForm ref="postForm" :visible="visible" :confirmLoading="confirmLoading" @cancel="handleCancel" @submit="handleSubmit"/>
     </a-card>
   </div>
 </template>
@@ -107,9 +107,14 @@ export default {
     showModal (row) {
       this.visible = true
       this.selected = row.postId
-      const form = this.$refs.postFrom.form
+      const form = this.$refs.postForm.form
       this.$nextTick(() => {
-        form.setFieldsValue({ ...row })
+        form.setFieldsValue({
+          postName: row.postName,
+          postCode: row.postCode,
+          postSort: row.postSort,
+          status: row.status
+        })
       })
     },
     onSelectChange (selectedRowKeys, selectedRows) {
@@ -118,7 +123,7 @@ export default {
     },
     handleMenuClick () {},
     handleSubmit () {
-      const form = this.$refs.PostForm.form
+      const form = this.$refs.postForm.form
       form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
@@ -142,7 +147,7 @@ export default {
     handleCancel () {
       this.visible = false
       this.selected = 0
-      this.$refs.PostForm.form.resetFields()
+      this.$refs.postForm.form.resetFields()
     },
     showDeleteConfirm (id) {
       this.$confirm({
