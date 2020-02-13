@@ -299,7 +299,6 @@ export default {
       })
     },
     onChangeAction (permission) {
-      console.log(permission)
       let notDisabledLen = 0
       if (permission.disabled === false) {
         notDisabledLen = notDisabledLen + 1
@@ -311,6 +310,7 @@ export default {
       })
       permission.indeterminate = !!permission.selected.length && (permission.selected.length < notDisabledLen)
       permission.checkedAll = permission.selected.length === notDisabledLen
+      this.rules = [ ...this.rules ]
     },
     onCheckAllActionChange (e, permission) {
       // 记录有权限的操作
@@ -382,6 +382,7 @@ export default {
             action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
           })
         })
+        this.rules = [ ...rules ]
       }
     },
     rulesSelectedInit (rules) {
@@ -394,6 +395,7 @@ export default {
           disabled: false
         })
         // 初始化状态
+        allActionIds.push(item.id)
         item.actions.map(action => {
           allActionIds.push(action.id)
           action.disabled = false
