@@ -154,13 +154,13 @@
           </a-col>
 
           <a-col :span="12" v-if="form.getFieldValue('type') !== 'action'">
-            <a-form-item label="菜单可见">
+            <a-form-item label="菜单隐藏">
               <a-radio-group
                 v-decorator="[
-                  'visable',
+                  'hidden',
                   {
                     rules: [{ required: true, message: '请选择菜单可见!' }],
-                    initialValue: 1
+                    initialValue: 0
                   }
                 ]"
               >
