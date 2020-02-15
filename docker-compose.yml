@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  
+  ant-design-vue:
+    container_name: ant-design-vue
+    hostname: ant-design-vue
+    image: xiaodi93/ant-design:latest
+    restart: always
+
+networks:
+  default:
+    external:
+      name: server
