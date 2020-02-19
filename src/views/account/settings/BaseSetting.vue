@@ -16,7 +16,7 @@
           <a-input v-decorator="['nickname', { rules: [{ required: true, message: '请输入您的昵称!' }] }]"/>
         </a-form-item>
         <a-form-item>
-          <a-button type="primary" html-type="submit" :loading="updating">更新基本信息</a-button>
+          <a-button type="primary" html-type="submit" :loading="updating" v-action:SaveProfile>更新基本信息</a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -37,7 +37,7 @@
         @change="handleChange"
       >
         <div class="account-settings-info-view-button_view">
-          <a-button icon="upload">
+          <a-button icon="upload" v-action:SaveAvatar>
             {{ uploading ? '上传中' : '更换头像' }}
           </a-button>
         </div>

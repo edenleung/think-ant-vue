@@ -54,7 +54,7 @@
           </span>
         </a-list-item-meta>
         <template v-if="item.actions">
-          <a slot="actions" @click="item.actions.callback">{{ item.actions.title }}</a>
+          <a v-if="$auth(item.permission)" slot="actions" @click="item.actions.callback">{{ item.actions.title }}</a>
         </template>
       </a-list-item>
     </a-list>
@@ -69,11 +69,11 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this, { name: 'resetPassword' }),
       data: [
-        { title: '账户密码', description: '当前密码强度', value: '强', actions: { title: '修改', callback: () => { this.upadtePassword() } } },
-        { title: '密保手机', description: '已绑定手机', value: '138****8293', actions: { title: '修改', callback: () => { this.$message.warning('未开发功能') } } },
-        { title: '密保问题', description: '未设置密保问题，密保问题可有效保护账户安全', value: '', actions: { title: '设置', callback: () => { this.$message.warning('未开发功能') } } },
-        { title: '备用邮箱', description: '已绑定邮箱', value: 'ant***sign.com', actions: { title: '修改', callback: () => { this.$message.warning('未开发功能') } } },
-        { title: 'MFA 设备', description: '未绑定 MFA 设备，绑定后，可以进行二次确认', value: '', actions: { title: '绑定', callback: () => { this.$message.warning('未开发功能') } } }
+        { title: '账户密码', description: '当前密码强度', value: '强', 'permission': 'SecuritySettings.UpdateSecurityPassword', actions: { title: '修改', callback: () => { this.upadtePassword() } } },
+        { title: '密保手机', description: '已绑定手机', value: '138****8293', 'permission': 'SecuritySettings.BindPhone', actions: { title: '修改', callback: () => { this.$message.warning('未开发功能') } } },
+        { title: '密保问题', description: '未设置密保问题，密保问题可有效保护账户安全', value: '', 'permission': 'SecuritySettings.BindSecurityQuestion', actions: { title: '设置', callback: () => { this.$message.warning('未开发功能') } } },
+        { title: '备用邮箱', description: '已绑定邮箱', value: 'ant***sign.com', 'permission': 'SecuritySettings.BindEmail', actions: { title: '修改', callback: () => { this.$message.warning('未开发功能') } } },
+        { title: 'MFA 设备', description: '未绑定 MFA 设备，绑定后，可以进行二次确认', value: '', 'permission': 'SecuritySettings.BindMFA', actions: { title: '绑定', callback: () => { this.$message.warning('未开发功能') } } }
       ]
     }
   },
