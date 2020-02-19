@@ -71,21 +71,29 @@
 
       <a-divider v-if="form.getFieldValue('pid')">拥有权限</a-divider>
       <a-form-item label="" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }" v-show="form.getFieldValue('pid')">
-        <a-row v-for="(item, index) in rules" :key="index">
-          <a-checkbox
-            :indeterminate="item.indeterminate"
-            :checked="item.checkedAll"
-            @change="$emit('checkAllActionChange', $event, item)"
-          >
-            全选
-          </a-checkbox>
-          <a-checkbox-group @change="$emit('changeAction', item)" v-model="item.selected">
-            <a-checkbox :value="item.id" :disabled="item.disabled">{{ item.title }}</a-checkbox>
-            <a-checkbox :value="action.id" :disabled="action.disabled" v-for="(action, i) in item.actions" :key="i">{{
-              action.title
-            }}</a-checkbox>
-          </a-checkbox-group>
-        </a-row>
+
+        <template v-for="(item, index) in rules">
+          <a-row :key="index" v-if="item.actions.length">
+            <a-col :xl="4" :lg="24">
+              {{ item.title }}：
+            </a-col>
+            <a-col :xl="20" :lg="24">
+              <a-checkbox
+                :indeterminate="item.indeterminate"
+                :checked="item.checkedAll"
+                @change="$emit('checkAllActionChange', $event, item)"
+              >
+                全选
+              </a-checkbox>
+
+              <a-checkbox-group @change="$emit('changeAction', item)" v-model="item.selected">
+                <a-checkbox :value="action.id" :disabled="action.disabled" v-for="(action, i) in item.actions" :key="i">{{
+                  action.title
+                }}</a-checkbox>
+              </a-checkbox-group>
+            </a-col>
+          </a-row>
+        </template>
       </a-form-item>
     </a-form>
   </a-modal>

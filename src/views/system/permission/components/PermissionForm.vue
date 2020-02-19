@@ -26,7 +26,7 @@
         <a-col :span="12">
           <a-form-item label="上级类目" hasFeedback>
             <a-tree-select
-              style="min-width:171px"
+              style="min-width:184px"
               :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
               placeholder="请选择所属组别"
               allowClear
@@ -77,7 +77,7 @@
           <a-col :span="12">
             <a-form-item v-if="form.getFieldValue('type') !== 'action'" label="组件地址">
               <a-select
-                style="width: 171px"
+                style="width: 184px"
                 v-decorator="[
                   'component',
                   {
@@ -189,7 +189,7 @@
         <a-col :span="12" v-if="form.getFieldValue('type') !== 'action'" >
           <a-form-item label="查看权限">
             <a-select
-              style="min-width: 171px"
+              style="min-width: 184px"
               mode="tags"
               placeholder="选择查看权限"
               v-decorator="[
@@ -204,7 +204,7 @@
           <a-form-item label="菜单图标">
             <a-input
               slot="default"
-              style="width: 171px;"
+              style="width: 184px;"
               v-decorator="[
                 'icon'
               ]">

@@ -300,9 +300,6 @@ export default {
     },
     onChangeAction (permission) {
       let notDisabledLen = 0
-      if (permission.disabled === false) {
-        notDisabledLen = notDisabledLen + 1
-      }
       permission.actions.map(action => {
         if (action.disabled === false) {
           notDisabledLen = notDisabledLen + 1
@@ -315,9 +312,6 @@ export default {
     onCheckAllActionChange (e, permission) {
       // 记录有权限的操作
       const hasPermissionAction = []
-      if (permission.disabled === false) {
-        hasPermissionAction.push(permission.id)
-      }
       permission.actions.map(action => {
         if (action.disabled === false) {
           hasPermissionAction.push(action.id)
@@ -328,6 +322,7 @@ export default {
         indeterminate: false,
         checkedAll: e.target.checked
       })
+      this.rules = [ ...this.rules ]
     },
     refreshTable () {
       this.$refs.table.refresh()
@@ -354,10 +349,6 @@ export default {
           rule.selected = []
           // 记录当前菜单可选操作数量
           let ruleSelectCount = 0
-          if (permissions.indexOf(rule.id) !== -1) {
-            ruleSelectCount = ruleSelectCount + 1
-            rule.selected.push(rule.id)
-          }
 
           rule.actions.map(action => {
             if (permissions.indexOf(action.id) !== -1) {
@@ -377,7 +368,6 @@ export default {
       } else {
         // 创建时
         rules.map(rule => {
-          rule.disabled = allPermissionActionsIds.indexOf(rule.id) === -1
           rule.actions.map(action => {
             action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
           })
@@ -395,7 +385,6 @@ export default {
           disabled: false
         })
         // 初始化状态
-        allActionIds.push(item.id)
         item.actions.map(action => {
           allActionIds.push(action.id)
           action.disabled = false
