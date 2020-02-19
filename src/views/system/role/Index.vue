@@ -218,14 +218,13 @@ export default {
           values.rules = checkedList
           const promise = selectedId === 0 ? addRole(values) : updateRole(selectedId, values)
           this.confirmLoading = true
+          const hide = this.$message.loading('执行中..', 0)
           promise.then(res => {
-            this.$notification['success']({
-              message: '成功通知',
-              description: this.selectedId === 0 ? '添加成功！' : '更新成功！'
-            })
+            this.$message.success(this.selectedId === 0 ? '添加成功！' : '更新成功！')
             this.handleRoleCancel()
             this.refreshTable()
           }).finally(() => {
+            hide()
             this.confirmLoading = false
           })
         }
@@ -241,10 +240,7 @@ export default {
         onOk: () => {
           const hide = this.$message.loading('删除中..', 0)
           deleteRole(id).then(res => {
-            this.$notification['success']({
-              message: '成功通知',
-              description: '删除成功！'
-            })
+            this.$message.success('删除成功！')
             this.refreshTable()
           }).finally(r => {
             hide()
@@ -287,13 +283,13 @@ export default {
       this.$refs.dataAccessForm.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
+          const hide = this.$message.loading('执行中..', 0)
           updateMode(this.selectedId, values).then(res => {
-            this.$notification['success']({
-              message: '成功通知',
-              description: '更新成功！'
-            })
+            this.$$message.success('更新成功！')
             this.handleDataAccessCancel()
             this.refreshTable()
+          }).finally(() => {
+            hide()
           })
         }
       })

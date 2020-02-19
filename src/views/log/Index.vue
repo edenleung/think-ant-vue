@@ -118,12 +118,13 @@ export default {
         cancelText: '取消',
         onOk: () => {
           this.loading = true
+          const hide = this.$message.loading('删除中..', 0)
           deleteLog({ id: ids }).then(res => {
-            this.$notification['success']({
-              message: '成功通知',
-              description: '删除成功！'
-            })
+            this.$message.success('删除成功')
             this.refreshTable()
+          }).finally(() => {
+            hide()
+            this.loading = false
           })
         }
       })
