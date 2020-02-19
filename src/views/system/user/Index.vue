@@ -89,7 +89,7 @@
 
             <template slot="post" slot-scope="row">
               <span v-if="row.posts.length">
-                <a-tag color="purple" v-for="post in row.posts" :key="post.postId">{{ post.postName }}</a-tag>
+                <a-tag color="purple" v-for="post in row.posts" :key="post.postId">{{ post.post_name }}</a-tag>
               </span>
               <span v-else>-</span>
             </template>

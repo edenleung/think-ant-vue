@@ -59,15 +59,15 @@ import { fetchPost, createPost, updatePost, deletePost } from '@/api/post'
 const columns = [
   {
     title: '岗位标识',
-    dataIndex: 'postCode'
+    dataIndex: 'post_code'
   },
   {
     title: '岗位名称',
-    dataIndex: 'postName'
+    dataIndex: 'post_name'
   },
   {
     title: '岗位排序',
-    dataIndex: 'postSort'
+    dataIndex: 'post_sort'
   },
   {
     title: '状态',
@@ -75,7 +75,7 @@ const columns = [
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime'
+    dataIndex: 'create_time'
   },
   {
     title: '操作',
@@ -110,9 +110,9 @@ export default {
       const form = this.$refs.postForm.form
       this.$nextTick(() => {
         form.setFieldsValue({
-          postName: row.postName,
-          postCode: row.postCode,
-          postSort: row.postSort,
+          post_name: row.post_name,
+          post_code: row.post_code,
+          post_sort: row.post_sort,
           status: row.status
         })
       })
