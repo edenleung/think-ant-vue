@@ -73,6 +73,11 @@ const permission = {
       return new Promise(resolve => {
         const { roles, menus } = data
         const accessedRouters = filterAsyncRouter(menus, roles)
+        const notFoundRouter = {
+          path: '*', redirect: '/404', hidden: true
+        }
+
+        accessedRouters.push(notFoundRouter)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })
