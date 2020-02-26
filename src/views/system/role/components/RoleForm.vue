@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="详情"
-    :width="650"
+    :width="800"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="$emit('submit')"
@@ -71,35 +71,44 @@
 
       <a-divider v-if="form.getFieldValue('pid')">拥有权限</a-divider>
       <a-form-item label="" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }" v-show="form.getFieldValue('pid')">
+        <a-table :columns="columns" :dataSource="rules" :pagination="false">
+          <span slot="permission" slot-scope="row">
+            <a-checkbox-group @change="$emit('changeAction', row)" v-model="row.selected">
+              <a-checkbox :value="action.id" :disabled="action.disabled" v-for="(action, i) in row.actions" :key="i">{{
+                action.title
+              }}</a-checkbox>
+            </a-checkbox-group>
+          </span>
 
-        <template v-for="(item, index) in rules">
-          <a-row :key="index" v-if="item.actions.length">
-            <a-col :xl="4" :lg="24">
-              {{ item.title }}：
-            </a-col>
-            <a-col :xl="20" :lg="24">
-              <a-checkbox
-                :indeterminate="item.indeterminate"
-                :checked="item.checkedAll"
-                @change="$emit('checkAllActionChange', $event, item)"
-              >
-                全选
-              </a-checkbox>
-
-              <a-checkbox-group @change="$emit('changeAction', item)" v-model="item.selected">
-                <a-checkbox :value="action.id" :disabled="action.disabled" v-for="(action, i) in item.actions" :key="i">{{
-                  action.title
-                }}</a-checkbox>
-              </a-checkbox-group>
-            </a-col>
-          </a-row>
-        </template>
+          <span slot="checkAll" slot-scope="row">
+            <a-checkbox
+              :indeterminate="row.indeterminate"
+              :checked="row.checkedAll"
+              @change="$emit('checkAllActionChange', $event, row)"
+            ></a-checkbox>
+          </span>
+        </a-table>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script>
+const columns = [
+  {
+    title: '操作对象',
+    dataIndex: 'title'
+  },
+  {
+    title: '权限',
+    scopedSlots: { customRender: 'permission' }
+  },
+  {
+    title: '全选',
+    scopedSlots: { customRender: 'checkAll' }
+  }
+]
+
 export default {
   props: {
     rules: {
@@ -126,7 +135,8 @@ export default {
   data () {
     return {
       labelCol: { span: 4 },
-      wrapperCol: { span: 20 }
+      wrapperCol: { span: 20 },
+      columns
     }
   },
   beforeCreate () {
