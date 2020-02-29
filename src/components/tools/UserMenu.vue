@@ -8,6 +8,11 @@
         </span>
       </a>
       <notice-icon class="action"/>
+      <a href="https://github.com/edenleung/think-admin" target="_blank">
+        <span class="action">
+          <a-icon type="github"/>
+        </span>
+      </a>
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
           <a-avatar class="avatar" size="small" :src="avatar"/>
