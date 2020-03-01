@@ -1,5 +1,7 @@
 import { constantRouterMap } from '@/config/router.config'
 import { Components } from '@/config/componentConfigs'
+import router, { resetRouter } from '@/router'
+import message from 'ant-design-vue/es/message'
 
 /**
  * 过滤账户是否拥有某一个权限，并将菜单从加载列表移除
@@ -80,6 +82,19 @@ const permission = {
         accessedRouters.push(notFoundRouter)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
+      })
+    },
+    ReloadRouters (store) {
+      const hide = message.loading('正在刷新路由...')
+      store.dispatch('GetInfo').then(res => {
+        const roles = res.result && res.result.role
+        const menus = res.result && res.result.menus
+        store.dispatch('GenerateRoutes', { roles, menus }).then(() => {
+          console.log('addRouters')
+          resetRouter()
+          router.addRoutes(store.getters.addRouters)
+          hide()
+        })
       })
     }
   }
