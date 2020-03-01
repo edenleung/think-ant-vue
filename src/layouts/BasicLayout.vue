@@ -84,8 +84,7 @@ export default {
   data () {
     return {
       production: config.production,
-      collapsed: false,
-      menus: []
+      collapsed: false
     }
   },
   computed: {
@@ -101,6 +100,9 @@ export default {
         return '256px'
       }
       return '80px'
+    },
+    menus () {
+      return this.mainMenu.find((item) => item.path === '/').children
     }
   },
   watch: {
@@ -109,7 +111,6 @@ export default {
     }
   },
   created () {
-    this.menus = this.mainMenu.find((item) => item.path === '/').children
     this.collapsed = !this.sidebarOpened
   },
   mounted () {

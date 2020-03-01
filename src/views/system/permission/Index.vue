@@ -230,6 +230,7 @@ export default {
             this.$message.success(this.selected === 0 ? '添加成功！' : '更新成功！')
             this.refreshTable()
             this.handleCancel()
+            this.$store.dispatch('ReloadRouters')
           }).finally(() => {
             hide()
             this.confirmLoading = false
@@ -254,6 +255,7 @@ export default {
           deletePermission(id).then(res => {
             this.$message.success('删除成功！')
             this.refreshTable()
+            this.$store.dispatch('ReloadRouters')
           }).finally(() => {
             hide()
             this.updating = false
