@@ -60,7 +60,7 @@
     "vue-svg-icon-loader": "^2.1.1",
     "vue-template-compiler": "^2.6.10",
     "webpack-theme-color-replacer": "^1.2.17",
-    "yarn": "^1.19.2"
+    "yarn": "^1.22.0"
   },
   "collective": {
     "type": "opencollective",
