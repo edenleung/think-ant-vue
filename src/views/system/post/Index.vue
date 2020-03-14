@@ -35,6 +35,7 @@
         :rowKey="(record) => record.postId"
         :columns="columns"
         :data="loadData"
+        :showPagination="false"
       >
         <template slot="status" slot-scope="row">
           <template v-if="row.status === 1">正常</template>
