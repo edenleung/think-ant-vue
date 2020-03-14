@@ -45,7 +45,7 @@
         <template slot="tools" slot-scope="row">
           <a v-action:PostUpdate @click="showModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:PostDelete @click="showDeleteConfirm(row.postId)">删除</a>
+          <a v-action:PostDelete @click="showDeleteConfirm(row.post_id)">删除</a>
         </template>
       </s-table>
 
