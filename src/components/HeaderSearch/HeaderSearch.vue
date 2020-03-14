@@ -9,7 +9,7 @@
       v-model="value"
       :defaultActiveFirstOption="defaultActiveFirstOption"
       :dataSource="dataSource"
-      class="headerSearch input"
+      class="input"
       :class="{ show: searchMode }"
       @select="onSelect"
       @search="handleSearch"
