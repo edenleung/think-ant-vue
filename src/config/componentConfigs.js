@@ -20,6 +20,7 @@ export const Components = {
     'LogAccount': () => import('@/views/log/Index'),
     'LogDb': () => import('@/views/log/Db'),
     'WangEditor': () => import('@/views/editor/Wangeditor'),
+    'Quill': () => import('@/views/editor/Quill'),
     'Post': () => import('@/views/system/post/Index'),
     'Center': () => import('@/views/account/center/Index'),
     'Settings': () => import('@/views/account/settings/Index'),

@@ -36,6 +36,7 @@
         :columns="columns"
         :data="loadData"
         :defaultExpandedRowKeys="expandedKeys"
+        :showPagination="false"
       >
         <template slot="status" slot-scope="row">
           <template v-if="row.dept_status === 1">正常</template>

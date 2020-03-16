@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <quill-editor
-      v-model="content"
+      v-model="value"
       ref="myQuillEditor"
       :options="editorOption"
       @blur="onEditorBlur($event)"
@@ -38,7 +38,6 @@ export default {
   },
   data () {
     return {
-      content: null,
       editorOption: {
         // some quill options
       }
@@ -67,7 +66,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import url('../index.less');
 
 /* 覆盖 quill 默认边框圆角为 ant 默认圆角，用于统一 ant 组件风格 */
@@ -77,6 +76,15 @@ export default {
   }
   /deep/ .ql-container.ql-snow {
     border-radius: 0 0 @border-radius-base @border-radius-base;
+  }
+
+  .ql-toolbar.ql-snow {
+    border: none;
+    border-bottom: 1px solid #e8eaec;
+  }
+
+  .ql-container.ql-snow {
+      border: none;
   }
 }
 </style>
