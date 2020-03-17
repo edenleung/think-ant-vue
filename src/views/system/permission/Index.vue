@@ -214,7 +214,9 @@ export default {
           pid: row.pid.toString(),
           redirect: row.redirect,
           status: row.status,
-          visable: row.visable,
+          keepAlive: row.keepAlive,
+          hidden: row.hidden,
+          hideChildrenInMenu: row.hideChildrenInMenu,
           icon: row.icon,
           permission: row.permission ? row.permission.split(',') : []
         })
