@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <quill-editor
-      v-model="value"
+      :value="value"
       ref="myQuillEditor"
       :options="editorOption"
       @blur="onEditorBlur($event)"
@@ -9,7 +9,6 @@
       @ready="onEditorReady($event)"
       @change="onEditorChange($event)">
     </quill-editor>
-
   </div>
 </template>
 
@@ -38,7 +37,22 @@ export default {
   },
   data () {
     return {
+      content: '',
       editorOption: {
+        placeholder: '',
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'header': [1, 2, 3, 4, 5, 6] }],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'font': [] }],
+            [{ 'align': [] }],
+            ['code'],
+            ['link', 'image'],
+            ['clear']
+          ]
+        }
         // some quill options
       }
     }
@@ -55,12 +69,16 @@ export default {
     },
     onEditorChange ({ quill, html, text }) {
       console.log('editor change!', quill, html, text)
+      // this.content = html
       this.$emit('change', html)
     }
   },
   watch: {
     value (val) {
-      this.content = val
+      console.log('watch', val)
+      if (val !== this.content) {
+        this.content = val
+      }
     }
   }
 }
@@ -85,6 +103,15 @@ export default {
 
   .ql-container.ql-snow {
       border: none;
+  }
+
+  .ql-editor {
+    min-height: 400px;
+  }
+
+  .ql-picker-label {
+    // display: flex;
+    // align-items: center;
   }
 }
 </style>

@@ -14,9 +14,9 @@ export default {
       type: String,
       default: 'ant-editor-wang'
     },
+    // eslint-disable-next-line vue/require-default-prop
     value: {
-      type: String,
-      default: ''
+      type: String
     },
     customConfig: {
       type: Object,

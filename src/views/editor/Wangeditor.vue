@@ -25,7 +25,7 @@
           </a-select>
         </a-form-item>
         <a-form-item label="文章内容" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-          <we
+          <WangEditor
             :customConfig="customConfig"
             v-decorator="[
               'content',
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import we from '@/components/Editor/WangEditor'
+import WangEditor from '@/components/Editor/WangEditor'
 export default {
   data () {
     return {
@@ -68,7 +68,7 @@ export default {
       }
     }
   },
-  components: { we },
+  components: { WangEditor },
   methods: {
     handleSubmit (e) {
       e.preventDefault()
