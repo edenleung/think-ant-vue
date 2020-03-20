@@ -1,8 +1,10 @@
 import { axios } from '@/utils/request'
 
+import api from './index'
+
 export function fetchDept (params) {
   return axios({
-    url: '/system/dept',
+    url: api.Dept,
     method: 'get',
     params
   })
@@ -10,7 +12,7 @@ export function fetchDept (params) {
 
 export function addDept (data) {
   return axios({
-    url: '/system/dept',
+    url: api.Dept,
     method: 'post',
     data
   })
@@ -18,7 +20,7 @@ export function addDept (data) {
 
 export function updateDept (id, data) {
   return axios({
-    url: `/system/dept/${id}`,
+    url: `${api.Dept}/${id}`,
     method: 'put',
     data
   })
@@ -26,7 +28,7 @@ export function updateDept (id, data) {
 
 export function deleteDept (id) {
   return axios({
-    url: `/system/dept/${id}`,
+    url: `${api.Dept}/${id}`,
     method: 'delete'
   })
 }

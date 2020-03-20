@@ -29,11 +29,7 @@ const user = {
       if (avatar === null) {
         avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
       }
-      avatar = process.env.VUE_APP_API_BASE_HOST + '/' + avatar
-
-      // 兼容coding.net上的后端（可删除此行代码）
-      avatar = avatar.replace('/index.php', '')
-      state.avatar = avatar
+      state.avatar = process.env.VUE_APP_API_BASE_URL + '/' + avatar
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
