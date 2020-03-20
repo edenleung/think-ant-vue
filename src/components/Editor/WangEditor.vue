@@ -23,22 +23,17 @@ export default {
       default: () => {
         return {}
       }
-    },
-    timeout: {
-      type: Number,
-      default: 200
     }
   },
   data () {
     return {
       editor: null,
-      editorContent: null
+      content: ''
     }
   },
   watch: {
     value (value) {
-      if (value !== this.editor.txt.html()) {
-        this.editorContent = value
+      if (value !== this.content) {
         this.editor.txt.html(value)
       }
     }
@@ -53,8 +48,8 @@ export default {
       this.editor.onchangeTimeout = this.timeout
       this.editor.customConfig = { ...this.customConfig }
       this.editor.customConfig.onchange = (html) => {
-        this.editorContent = html
-        this.$emit('change', this.editorContent)
+        this.content = html
+        this.$emit('change', html)
       }
       this.editor.create()
     }
