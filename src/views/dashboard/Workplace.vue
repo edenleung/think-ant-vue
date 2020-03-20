@@ -199,14 +199,14 @@ export default {
   },
   methods: {
     getProjects () {
-      this.$http.get('/mock/list/search/projects')
+      this.$http.get('/admin/mock/list/search/projects')
         .then(res => {
           this.projects = res.result && res.result.data
           this.loading = false
         })
     },
     getActivity () {
-      this.$http.get('/mock/workplace/activity')
+      this.$http.get('/admin/mock/workplace/activity')
         .then(res => {
           this.activities = res.result
           this.activities.map(activitie => {
@@ -225,14 +225,14 @@ export default {
         })
     },
     getTeams () {
-      this.$http.get('/mock/workplace/teams')
+      this.$http.get('/admin/mock/workplace/teams')
         .then(res => {
           this.teams = res.result
         })
     },
     initRadar () {
       this.radarLoading = true
-      this.$http.get('/mock/workplace/radar')
+      this.$http.get('/admin/mock/workplace/radar')
         .then(res => {
           console.log(res.result)
           const dv = new DataSet.View().source(res.result)
