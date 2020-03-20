@@ -6,7 +6,6 @@
 ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统  
 
 后端: https://github.com/xiaodit/think-admin  
-前端: https://github.com/sendya/ant-design-pro-vue
 
 预览地址: https://preview.wfunc.com  
 开发文档：https://doc.wfunc.com
@@ -20,18 +19,31 @@ Ant Design Vue Pro 文档: https://pro.loacg.com/docs/getting-started
 #### 安装
 ```
 npm install
+
+or
+
+yarn
 ```
 #### 预览
 ```
 npm run serve
+
+or
+
+yarn serve
 ```
 #### 打包
+打包后的文件位于 `/dist/`
 ```
 npm run build
 ```
 #### 刷新404问题
 ```nginx
-try_files $uri $uri/ /index.html last;
+
+location / {
+  try_files $uri $uri/ /index.html last;
+}
+
 ```
 #### 后端API配置
 [本地测试-修改此处](https://github.com/edenleung/think-ant-vue/blob/master/.env.development#L3)
