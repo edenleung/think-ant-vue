@@ -105,13 +105,12 @@ export default {
       border: none;
   }
 
-  .ql-editor {
-    min-height: 400px;
+  .ql-snow .ql-picker {
+    line-height: 24px;
   }
 
-  .ql-picker-label {
-    // display: flex;
-    // align-items: center;
+  .ql-editor {
+    min-height: 400px;
   }
 }
 </style>
