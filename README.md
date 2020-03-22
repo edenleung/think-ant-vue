@@ -12,24 +12,16 @@ ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统
 
 Ant Design Vue Pro 文档: https://pro.loacg.com/docs/getting-started
 
-### 账号
+### 预览账号
 * 超级管理员 `admin, 1234`
 
 ### 前端部署
 #### 安装
 ```
-npm install
-
-or
-
 yarn
 ```
 #### 预览
 ```
-npm run serve
-
-or
-
 yarn serve
 ```
 #### 打包
