@@ -45,7 +45,8 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.result
-          Vue.ls.set(ACCESS_TOKEN, result.token, 24 * 7 * 6400 * 1000)
+          // 缓存到刷新时间内
+          Vue.ls.set(ACCESS_TOKEN, result.token, result.refresh_in * 1000)
           commit('SET_TOKEN', result.token)
           resolve()
         }).catch(error => {

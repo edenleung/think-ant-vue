@@ -42,38 +42,37 @@ const err = (error) => {
     const errorText = codeMessage[response.status] || response.statusText
 
     if (status === 401) {
-      const { code } = response.data
+      const { code, message: content } = response.data
       if (error.response) {
         // const data = error.response.data
         // const token = Vue.ls.get(ACCESS_TOKEN)
         switch (code) {
-          // Token 已在其它终端登录
-          case 50401: {
+          // Token 已过期异常
+          case 50001: {
             modal.confirm({
               title: 'Notification',
-              content: '已在其它终端登录，请重新登录',
-              onOk () {
-                const hide = message.loading('正在退出登录..', 0)
-                store.dispatch('Logout').then(() => {
-                  hide()
-                  router.push({ path: '/user/login', query: { redirect: router.history.current.fullPath } })
-                })
-              }
-            })
-            break
-          }
-
-          // Token 已过期
-          case 50402: {
-            modal.confirm({
-              title: 'Notification',
-              content: 'Token已过期，你暂不能操作任何操作，是否续期(10秒后需重新登录)？',
+              content: 'Token 已过期，你暂不能操作任何操作，是否续期？',
               onOk () {
                 store.dispatch('RefreshToken').then(() => {
                   message.success('登录已续期')
                   setTimeout(() => {
                     window.location.reload()
                   }, 1500)
+                })
+              }
+            })
+            break
+          }
+          // 重新登录异常
+          case 50002: {
+            modal.confirm({
+              title: 'Notification',
+              content: content,
+              onOk () {
+                const hide = message.loading('正在退出登录..', 0)
+                store.dispatch('Logout').then(() => {
+                  hide()
+                  router.push({ path: '/user/login', query: { redirect: router.history.current.fullPath } })
                 })
               }
             })
