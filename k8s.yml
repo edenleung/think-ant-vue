@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ant-design-vue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ant-design-vue
+  template:
+    metadata:
+      labels:
+        app: ant-design-vue
+    spec:
+      containers:
+      - image: xiaodi93/ant-design
+        name: ant-design-vue
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ant-design-vue
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  type: ClusterIP  
+  ports:
+  - name: "ant-design-vue"
+    port: 80
+  selector:
+    app: ant-design-vue
