@@ -9,6 +9,7 @@
       <div class="desc">{{ config[type].desc }}</div>
       <div class="actions">
         <a-button type="primary" @click="handleToHome">返回首页</a-button>
+        <a-button @click="$router.back(-1)">返回上页</a-button>
       </div>
     </div>
   </div>
