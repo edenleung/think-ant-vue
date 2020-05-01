@@ -47,7 +47,7 @@
             <div class="ant-pro-table-toolbar-title"></div>
             <div class="ant-pro-table-toolbar-option">
               <div class="ant-pro-table-toolbar-item">
-                <a-button type="primary" icon="plus" @click="visible = true">新建</a-button>
+                <a-button type="primary" icon="plus" @click="$router.push({ name: 'AccountCreate' })">新建</a-button>
               </div>
               <template v-if="selectedRows.length">
                 <div class="ant-pro-table-toolbar-item">

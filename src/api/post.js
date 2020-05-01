@@ -1,7 +1,7 @@
 import { axios } from '@/utils/request'
 import api from './index'
 
-export function fetchPost (params) {
+export function fetchAllPost (params) {
   return axios({
     url: api.Post,
     method: 'get',

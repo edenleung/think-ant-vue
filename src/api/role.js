@@ -9,6 +9,13 @@ export function fetchRole (params) {
   })
 }
 
+export function fetchAllRole (params) {
+  return axios({
+    url: `${api.Role}/all`,
+    method: 'get'
+  })
+}
+
 export function addRole (data) {
   return axios({
     url: api.Role,
