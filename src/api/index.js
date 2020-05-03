@@ -21,6 +21,8 @@ const api = {
   Log: {
     Acount: '/admin/log/acount',
     Db: '/admin/log/db'
-  }
+  },
+  ArticleCategory: '/admin/article/category',
+  Article: '/admin/article'
 }
 export default api
