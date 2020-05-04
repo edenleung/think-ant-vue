@@ -33,7 +33,7 @@ export const Components = {
     // 权限测试
     'TestNotAjax': () => import('@/views/test/NotAjax'),
     'Form': () => import('@/views/test/Form'),
-    'CreateForm': () => import('@/views/test/components/CreateForm',
+    'CreateForm': () => import('@/views/test/components/CreateForm'),
 
     'Article': () => import('@/views/article/Index'),
     'ArticleForm': () => import('@/views/article/components/Article'),
