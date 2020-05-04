@@ -1,6 +1,6 @@
 <template>
   <a-card :body-style="{padding: '24px 32px'}" :bordered="false">
-    <a-skeleton :loading="selected ? loading : false">
+    <a-skeleton :loading="id ? loading : false">
       <a-form :form="form">
         <a-form-item
           label="登录账号"
@@ -9,7 +9,7 @@
           :wrapperCol="{lg: {span: 11}, sm: {span: 17} }"
         >
           <a-input
-            :readonly="selecteId !== 0"
+            :readonly="id !== null"
             placeholder="请入登录账号"
             v-decorator="[
               'name',
@@ -26,11 +26,11 @@
           :wrapperCol="{lg: {span: 11}, sm: {span: 17} }"
         >
           <a-input
-            :placeholder="selecteId ? '请入登录密码' : '如需修改密码请输入新密码'"
+            :placeholder="id ? '请入登录密码' : '如需修改密码请输入新密码'"
             v-decorator="[
               'password',
               {
-                rules: [{ required: selecteId === 0, message: '请输入登录密码!' }]
+                rules: [{ required: id === null, message: '请输入登录密码!' }]
               }
             ]"
           />
@@ -60,11 +60,10 @@
         >
           <a-tree-select
             :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-            :treeData="deptTree"
-            style="min-width:171px"
+            :treeData="depts"
             placeholder="请选择角色"
             treeDefaultExpandAll
-            @select="$emit('deptSelect')"
+            @select="changeDeptTree"
             v-decorator="[
               'dept_id',
               {
@@ -80,20 +79,42 @@
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 11}, sm: {span: 17} }"
         >
-          <a-tree-select
-            style="min-width:171px"
-            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-            :treeData="roleTree"
+          <a-select
+            mode="multiple"
             placeholder="请选择角色"
-            treeDefaultExpandAll
-            multiple
             v-decorator="[
               'roles',
               {
                 rules: [{ required: true, message: '请选择角色!' }]
               }
             ]"
-          />
+          >
+            <template v-for="role in roles">
+              <a-select-option v-if="role.pid !== 0" :value="role.id" :key="role.id">{{ role.title }}</a-select-option>
+            </template>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item
+          label="岗位"
+          hasFeedback
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 11}, sm: {span: 17} }"
+        >
+          <a-select
+            style="min-width:171px"
+            placeholder="请选择"
+            v-decorator="[
+              'posts',
+              {
+                rules: [{ required: false, message: '请选择岗位!' }]
+              }
+            ]"
+          >
+            <a-select-option v-for="post in posts" :key="post.post_id">
+              {{ post.post_name }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
 
         <a-form-item
@@ -122,26 +143,11 @@
         </a-form-item>
 
         <a-form-item
-          label="岗位"
-          hasFeedback
-          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
-          :wrapperCol="{lg: {span: 11}, sm: {span: 17} }"
+          :wrapperCol="{ span: 24 }"
+          style="text-align: center"
         >
-          <a-select
-            style="min-width:171px"
-            mode="multiple"
-            placeholder="请选择"
-            v-decorator="[
-              'posts',
-              {
-                rules: [{ required: false, message: '请选择岗位!' }]
-              }
-            ]"
-          >
-            <a-select-option v-for="post in posts" :key="post.post_id">
-              {{ post.post_name }}
-            </a-select-option>
-          </a-select>
+          <a-button @click="handleSubmit" type="primary">提交</a-button>
+          <a-button style="margin-left: 8px" @click="$router.go(-1)">返回</a-button>
         </a-form-item>
       </a-form>
     </a-skeleton>
@@ -149,49 +155,98 @@
 </template>
 
 <script>
-import { getAccount } from '@/api/account'
-import { fetchAllPost } from '@/api/post'
-import { fetchAllRole } from '@/api/role'
+import { getAccount, fetchData, createAccount, updateAccount } from '@/api/account'
 
 export default {
   data () {
     return {
+      loading: false,
+      roles: [],
+      posts: [],
+      depts: []
     }
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'AccountForm' })
   },
   mounted () {
-    if (this.id) {
-      this.getInfo(this.id)
-    }
-
-    fetchAllPost().then(res => {
-      console.log(res)
-    })
-    fetchAllRole().then(res => {
-      console.log(res)
+    this.loading = true
+    fetchData().then((res) => {
+      const { depts, posts, roles } = res.result
+      this.depts = depts
+      this.posts = posts
+      this.roles = roles
+      if (this.id) {
+        this.getInfo(this.id)
+      } else {
+        this.loading = false
+      }
     })
   },
   computed: {
-    id: function () {
-      if (this.$route.param === undefined) {
+    id () {
+      if (this.$route.params === undefined) {
         return null
       }
-      const { id } = this.$route.param
+      const { id } = this.$route.params
       return id
     }
   },
   methods: {
+    changeTree (value, node, extra) {
+      if (node.dataRef.children.length > 0) {
+        this.$message.info('不能选择父节点')
+        return false
+      }
+
+      return true
+    },
+    changeDeptTree (value, node, extra) {
+      if (!this.changeTree(value, node, extra)) {
+        this.$nextTick(() => {
+          this.form.setFieldsValue({
+            dept_id: null
+          })
+        })
+      }
+    },
+    changeRoleTree (value, node, extra) {
+      if (!this.changeTree(value, node, extra)) {
+        this.$nextTick(() => {
+          this.form.setFieldsValue({
+            roles: null
+          })
+        })
+      }
+    },
     getInfo (id) {
       getAccount(id).then(res => {
         const { result } = res
         this.loading = false
         this.$nextTick(() => {
           this.form.setFieldsValue({
-            ...result
+            name: result.name,
+            nickname: result.nickname,
+            dept_id: result.dept_id,
+            roles: result.roles.map(item => item.id),
+            posts: result.posts[0].post_id,
+            status: result.status
           })
         })
+      })
+    },
+    handleSubmit (e) {
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          const promise = this.selected === undefined ? createAccount(values) : updateAccount(this.id, values)
+          const hide = this.$message.loading('执行中..', 0)
+          promise.then(res => {
+            this.$message.success(this.selected === 0 ? '添加成功！' : '更新成功！')
+            this.$router.back(-1)
+          }).finally(() => {
+            hide()
+          })
+        }
       })
     }
   }
