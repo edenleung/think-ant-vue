@@ -117,6 +117,12 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
+  if (response.headers['automatic-renewal-token'] !== undefined) {
+    const token = response.headers['automatic-renewal-token']
+    const refreshAt = response.headers['automatic-renewal-token-refreshat']
+    store.dispatch('ResetToken', { token, refreshAt })
+  }
+
   const res = response.data
   if (res.code !== 20000) {
     message.warning(res.message)

@@ -114,6 +114,12 @@ const user = {
           reject(error)
         })
       })
+    },
+
+    // 重置 Token
+    ResetToken ({ commit, state }, data) {
+      Vue.ls.set(ACCESS_TOKEN, data.token, data.refreshAt * 1000)
+      commit('SET_TOKEN', data.token)
     }
   }
 }
