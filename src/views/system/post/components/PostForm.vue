@@ -12,7 +12,7 @@
         <a-input
           placeholder="岗位名称"
           v-decorator="[
-            'post_name',
+            'name',
             {
               rules: [{ required: true, message: '请输入岗位名称!' }]
             }
@@ -24,7 +24,7 @@
         <a-input
           placeholder="岗位标识"
           v-decorator="[
-            'post_code',
+            'code',
             {
               rules: [{ required: true, message: '请输入岗位标识!' }]
             }
@@ -36,7 +36,7 @@
         <a-input
           placeholder="排序"
           v-decorator="[
-            'post_sort',
+            'sort',
             {
               rules: [{ required: true, message: '请输入排序!' }]
             }

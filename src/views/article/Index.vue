@@ -40,8 +40,9 @@
         :defaultExpandedRowKeys="expandedKeys"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
-        <template slot="exp" slot-scope="row">
-          {{ row.contract_id > 0 ? `${row.exp_start_date} 至 ${row.exp_end_date}` : '/' }}
+        <template slot="image" slot-scope="image">
+          <img :src="baseUrl + '/' + image" class="article-image" v-if="image" />
+          <span v-else>/</span>
         </template>
         <template slot="tools" slot-scope="row">
           <a @click="$router.push({ name: 'UpdateArticle', params: { id: row.id } })">编辑</a>
@@ -60,6 +61,11 @@ const columns = [
   {
     title: '文章标题',
     dataIndex: 'title'
+  },
+  {
+    title: '封面图',
+    dataIndex: 'image',
+    scopedSlots: { customRender: 'image' }
   },
   {
     title: '分类名称',
@@ -94,7 +100,8 @@ export default {
       roleTree: [],
       selected: 0,
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      baseUrl: process.env.VUE_APP_API_BASE_URL
     }
   },
   components: { STable },
@@ -125,3 +132,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.article-image {
+  max-width: 25px;
+  max-height: 25px;
+}
+</style>

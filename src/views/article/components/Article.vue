@@ -19,6 +19,26 @@
             <a-select-option :disabled="category.pid === 0" :value="category.id" v-for="category in categorys" :key="category.id"><span v-html="category.fulltitle" /></a-select-option>
           </a-select>
         </a-form-item>
+        <a-form-item label="封面图片" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+          <a-upload
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="false"
+            :action="baseUrl + '/api/upload/file'"
+            :headers="headers"
+            :before-upload="beforeUpload"
+            @change="handleChange"
+            v-decorator="[
+              'image',
+              { rules: [{ required: true, message: '请上传封面图!' }] },
+            ]"
+          >
+            <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+            <div v-else>
+              <a-icon :type="uploading ? 'loading' : 'plus'" />
+            </div>
+          </a-upload>
+        </a-form-item>
         <a-form-item label="文章内容" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
           <WangEditor
             :customConfig="customConfig"
@@ -39,8 +59,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import WangEditor from '@/components/Editor/WangEditor'
 import { fetchArticleCategory, createArticle, updateArticle, getArticle } from '@/api/article'
+function getBase64 (img, callback) {
+  const reader = new FileReader()
+  reader.addEventListener('load', () => callback(reader.result))
+  reader.readAsDataURL(img)
+}
+
 export default {
   data () {
     return {
@@ -53,10 +80,19 @@ export default {
         zIndex: 1
       },
       categorys: [],
-      loading: false
+      loading: false,
+      baseUrl: process.env.VUE_APP_API_BASE_URL,
+      headers: {
+        authorization: ''
+      },
+      imageUrl: '',
+      uploading: false
     }
   },
   components: { WangEditor },
+  created () {
+    this.headers.authorization = 'Bearer ' + this.token
+  },
   mounted () {
     fetchArticleCategory().then(res => {
       this.categorys = res.result
@@ -72,15 +108,46 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['token']),
     id () {
       if (this.$route.params && this.$route.params.id) {
         return this.$route.params.id
       }
 
-      return 0
+      return false
     }
   },
   methods: {
+    handleChange (info) {
+      if (info.file.status === 'uploading') {
+        this.uploading = true
+        this.imageUrl = ''
+        return
+      }
+      if (info.file.status === 'done') {
+        getBase64(info.file.originFileObj, imageUrl => {
+          this.imageUrl = imageUrl
+          this.uploading = false
+        })
+
+        this.$nextTick(() => {
+          this.form.setFieldsValue({
+            image: info.file.response.result.path
+          })
+        })
+      }
+    },
+    beforeUpload (file) {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+      if (!isJpgOrPng) {
+        this.$message.error('你只能上传JPG、PNG图片!')
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('不能上传超过2MB!')
+      }
+      return isJpgOrPng && isLt2M
+    },
     handleSubmit (e) {
       e.preventDefault()
       this.form.validateFields((err, values) => {
@@ -104,3 +171,8 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.avatar-uploader img {
+  max-width: 100%
+}
+</style>

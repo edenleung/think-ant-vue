@@ -32,7 +32,7 @@
       <s-table
         ref="table"
         size="default"
-        :rowKey="(record) => record.postId"
+        :rowKey="(record) => record.id"
         :columns="columns"
         :data="loadData"
         :showPagination="false"
@@ -45,7 +45,7 @@
         <template slot="tools" slot-scope="row">
           <a v-action:PostUpdate @click="showModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:PostDelete @click="showDeleteConfirm(row.post_id)">删除</a>
+          <a v-action:PostDelete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
 
@@ -56,19 +56,19 @@
 <script>
 import { STable } from '@/components'
 import PostForm from './components/PostForm'
-import { fetchPost, createPost, updatePost, deletePost } from '@/api/post'
+import { fetchAllPost, createPost, updatePost, deletePost } from '@/api/post'
 const columns = [
   {
     title: '岗位标识',
-    dataIndex: 'post_code'
+    dataIndex: 'code'
   },
   {
     title: '岗位名称',
-    dataIndex: 'post_name'
+    dataIndex: 'name'
   },
   {
     title: '岗位排序',
-    dataIndex: 'post_sort'
+    dataIndex: 'sort'
   },
   {
     title: '状态',
@@ -94,13 +94,14 @@ export default {
       columns,
       queryParam: {},
       loadData: parameter => {
-        return fetchPost(Object.assign(parameter, this.queryParam)).then(res => {
-          this.tree = res.result.data
-          return res.result
+        return fetchAllPost(Object.assign(parameter, this.queryParam)).then(res => {
+          this.tree = res.result
+          return { data: res.result }
         })
       },
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      posts: []
     }
   },
   components: { STable, PostForm },
@@ -111,9 +112,9 @@ export default {
       const form = this.$refs.postForm.form
       this.$nextTick(() => {
         form.setFieldsValue({
-          post_name: row.post_name,
-          post_code: row.post_code,
-          post_sort: row.post_sort,
+          name: row.name,
+          code: row.code,
+          sort: row.sort,
           status: row.status
         })
       })

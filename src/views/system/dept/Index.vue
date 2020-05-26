@@ -2,7 +2,7 @@
   <div class="page-header-index-wide">
     <a-card :body-style="{ padding: 0 }">
       <div class="ant-pro-table-toolbar">
-        <div class="ant-pro-table-toolbar-title">部门列表</div>
+        <div class="ant-pro-table-toolbar-title"></div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
             <a-button type="primary" icon="plus" :loading="loading" @click="visible = true">新建</a-button>
@@ -95,10 +95,10 @@ export default {
       queryParam: {},
       loadData: parameter => {
         return fetchDept(Object.assign(parameter, this.queryParam)).then(res => {
-          this.tree = res.result.data
+          this.tree = res.result
           // 展开所有行
-          this.expandedRow(res.result.data)
-          return res.result
+          this.expandedRow(res.result)
+          return { data: res.result }
         })
       },
       selectedRowKeys: [],

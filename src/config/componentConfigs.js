@@ -16,6 +16,7 @@ export const Components = {
     'Permission': () => import('@/views/system/permission/Index'),
     'Role': () => import('@/views/system/role/Index'),
     'Account': () => import('@/views/system/user/Index'),
+    'AccountForm': () => import('@/views/system/user/components/User'),
     'Dept': () => import('@/views/system/dept/Index'),
     'LogAccount': () => import('@/views/log/Index'),
     'LogDb': () => import('@/views/log/Db'),

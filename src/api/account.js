@@ -9,6 +9,13 @@ export function fetchAccount (params) {
   })
 }
 
+export function getAccount (id) {
+  return axios({
+    url: `${api.User}/${id}`,
+    method: 'get'
+  })
+}
+
 export function addAccount (data) {
   return axios({
     url: api.User,
