@@ -32,22 +32,22 @@
       <s-table
         ref="table"
         size="default"
-        :rowKey="(record) => record.dept_id"
+        :rowKey="(record) => record.id"
         :columns="columns"
         :data="loadData"
         :defaultExpandedRowKeys="expandedKeys"
         :showPagination="false"
       >
         <template slot="status" slot-scope="row">
-          <template v-if="row.dept_status === 1">正常</template>
+          <template v-if="row.status === 1">正常</template>
           <template v-else>禁用</template>
         </template>
 
         <template slot="tools" slot-scope="row">
-          <span v-if="row.dept_pid">
+          <span v-if="row.pid">
             <a v-action:DeptUpdate @click="showModal(row)">编辑</a>
             <a-divider type="vertical" />
-            <a v-action:DeptDelete @click="showDeleteConfirm(row.dept_id)">删除</a>
+            <a v-action:DeptDelete @click="showDeleteConfirm(row.id)">删除</a>
           </span>
         </template>
       </s-table>
@@ -70,7 +70,7 @@ import { fetchDept, addDept, updateDept, deleteDept } from '@/api/dept'
 const columns = [
   {
     title: '部门名称',
-    dataIndex: 'dept_name'
+    dataIndex: 'name'
   },
   {
     title: '状态',
@@ -109,13 +109,13 @@ export default {
   methods: {
     showModal (row) {
       this.visible = true
-      this.selected = row.dept_id
+      this.selected = row.id
       const data = row
       this.$nextTick(() => {
         this.$refs.deptForm.form.setFieldsValue({
-          dept_name: data.dept_name,
-          dept_pid: data.dept_pid.toString(),
-          dept_status: data.dept_status
+          name: data.name,
+          pid: data.pid.toString(),
+          status: data.status
         })
       })
     },
@@ -176,7 +176,7 @@ export default {
     expandedRow (data) {
       console.log(data)
       data.map(item => {
-        this.expandedKeys.push(item.dept_id)
+        this.expandedKeys.push(item.id)
         if (item.children !== undefined) {
           this.expandedRow(item.children)
         }
