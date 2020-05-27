@@ -5,7 +5,7 @@
         <div class="ant-pro-table-toolbar-title"></div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button type="primary" icon="plus" @click="$router.push({ name: 'CreateArticle' })">新建文章</a-button>
+            <a-button type="primary" icon="plus" @click="$router.push({ name: 'CreateArticle' })">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -36,13 +36,22 @@
         :columns="columns"
         :data="loadData"
         :alert="true"
-        :showPagination="false"
+        :showPagination="true"
         :defaultExpandedRowKeys="expandedKeys"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
+        <template slot="title" slot-scope="row">
+          <span v-if="row.top === 1" style="color:red">
+            [置顶]
+          </span>
+          {{ row.title }}
+        </template>
         <template slot="image" slot-scope="image">
           <img :src="baseUrl + '/' + image" class="article-image" v-if="image" />
           <span v-else>/</span>
+        </template>
+        <template slot="disable" slot-scope="row">
+          {{ row.disable ? '隐藏' : '正常' }}
         </template>
         <template slot="tools" slot-scope="row">
           <a @click="$router.push({ name: 'UpdateArticle', params: { id: row.id } })">编辑</a>
@@ -60,7 +69,7 @@ import { fetchArticle, deleteArticle } from '@/api/article'
 const columns = [
   {
     title: '文章标题',
-    dataIndex: 'title'
+    scopedSlots: { customRender: 'title' }
   },
   {
     title: '封面图',
@@ -74,6 +83,14 @@ const columns = [
   {
     title: '状态',
     scopedSlots: { customRender: 'disable' }
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'create_time'
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'update_time'
   },
   {
     title: '操作',
@@ -105,6 +122,8 @@ export default {
     }
   },
   components: { STable },
+  mounted () {
+  },
   methods: {
     onSelectChange () {
     },
@@ -113,7 +132,7 @@ export default {
     },
     showDeleteConfirm (id) {
       this.$confirm({
-        title: '确定删除此客户吗?',
+        title: '确定删除此文章吗?',
         content: '',
         okText: '确定',
         okType: 'danger',
@@ -132,6 +151,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .article-image {
   max-width: 25px;

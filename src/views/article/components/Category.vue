@@ -20,9 +20,7 @@
       </a-form-item>
 
       <a-form-item label="所属上级" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
-        <a-tree-select
-          :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-          :treeData="treeData"
+        <a-select
           placeholder="选择所属上级"
           treeDefaultExpandAll
           v-decorator="[
@@ -32,7 +30,10 @@
             }
           ]"
         >
-        </a-tree-select>
+          <a-select-option :value="category.id" v-for="category in treeData" :key="category.id">
+            <span v-html="category.fulltitle"></span>
+          </a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol" hasFeedback>
         <a-select

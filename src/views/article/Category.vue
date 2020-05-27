@@ -28,7 +28,6 @@
           </span>
         </div>
       </div>
-
       <a-table
         ref="table"
         size="default"
@@ -47,7 +46,7 @@
         </template>
 
         <template slot="tools" slot-scope="row">
-          <template  v-if="row.pid !== 0">
+          <template v-if="row.pid !== 0">
             <a @click="showModal(row)">编辑</a>
             <a-divider type="vertical" />
             <a @click="showDeleteConfirm(row.id)" :disabled="row.pid === 0">删除</a>
@@ -151,7 +150,8 @@ export default {
     },
     handleCancel () {
       this.visible = false
-      this.form.resetFields()
+      this.$refs.category.form.resetFields()
+      this.selected = 0
     },
     refreshTable () {
       this.fetch()

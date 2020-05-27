@@ -8,7 +8,7 @@
             placeholder="填写文章标题"
           />
         </a-form-item>
-        <a-form-item label="栏目" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+        <a-form-item label="文章分类" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
           <a-select
             v-decorator="[
               'category_id',
@@ -17,6 +17,18 @@
             placeholder="选择文章栏目"
           >
             <a-select-option :disabled="category.pid === 0" :value="category.id" v-for="category in categorys" :key="category.id"><span v-html="category.fulltitle" /></a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="是否置顶" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+          <a-select
+            v-decorator="[
+              'top',
+              { rules: [{ required: true, message: '请选择是否置顶!' }] },
+            ]"
+            placeholder="选择是否置顶"
+          >
+            <a-select-option :value="1">是</a-select-option>
+            <a-select-option :value="0">否</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="封面图片" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
@@ -39,7 +51,7 @@
             </div>
           </a-upload>
         </a-form-item>
-        <a-form-item label="文章内容" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+        <a-form-item label="文章内容" :label-col="{ span: 5 }" :wrapper-col="{ span: 17 }">
           <WangEditor
             :customConfig="customConfig"
             v-decorator="[
@@ -98,12 +110,15 @@ export default {
       this.categorys = res.result
     })
 
-    if (this.id !== undefined) {
+    if (this.id) {
       this.loading = true
       getArticle(this.id).then(res => {
         this.loading = false
-        this.form.setFieldsValue({ ...res.result })
         console.log(res.result)
+        this.$nextTick(() => {
+          this.form.setFieldsValue({ ...res.result })
+        })
+        this.imageUrl = this.baseUrl + '/' + res.result.image
       })
     }
   },
@@ -152,10 +167,10 @@ export default {
       e.preventDefault()
       this.form.validateFields((err, values) => {
         if (!err) {
-          const promise = this.id === 0 ? createArticle(values) : updateArticle(this.id, values)
+          const promise = !this.id ? createArticle(values) : updateArticle(this.id, values)
           const hide = this.$message.loading('执行中..', 0)
           promise.then(res => {
-            this.$message.success(this.id === 0 ? '添加成功！' : '更新成功！')
+            this.$message.success(!this.id ? '添加成功！' : '更新成功！')
             this.$router.back(-1)
           }).finally(() => {
             hide()
@@ -171,6 +186,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
 .avatar-uploader img {
   max-width: 100%
