@@ -9,7 +9,6 @@
           :wrapperCol="{lg: {span: 11}, sm: {span: 17} }"
         >
           <a-input
-            :readonly="id !== null"
             placeholder="请入登录账号"
             v-decorator="[
               'name',
@@ -30,7 +29,7 @@
             v-decorator="[
               'password',
               {
-                rules: [{ required: id === null, message: '请输入登录密码!' }]
+                rules: [{ required: !id ? true : false, message: '请输入登录密码!' }]
               }
             ]"
           />
@@ -186,10 +185,9 @@ export default {
   computed: {
     id () {
       if (this.$route.params === undefined) {
-        return null
+        return false
       }
-      const { id } = this.$route.params
-      return id
+      return this.$route.params.id
     }
   },
   methods: {
@@ -229,7 +227,7 @@ export default {
             nickname: result.nickname,
             dept_id: result.dept_id,
             roles: result.roles.map(item => item.id),
-            posts: result.posts[0].post_id,
+            posts: result.posts[0] ? result.posts[0].id : '',
             status: result.status
           })
         })
@@ -238,7 +236,7 @@ export default {
     handleSubmit (e) {
       this.form.validateFields((err, values) => {
         if (!err) {
-          const promise = this.selected === undefined ? createAccount(values) : updateAccount(this.id, values)
+          const promise = !this.id ? createAccount(values) : updateAccount(this.id, values)
           const hide = this.$message.loading('执行中..', 0)
           promise.then(res => {
             this.$message.success(this.selected === 0 ? '添加成功！' : '更新成功！')

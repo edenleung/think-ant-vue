@@ -9,6 +9,13 @@ export function fetchAccount (params) {
   })
 }
 
+export function fetchData () {
+  return axios({
+    url: `${api.User}/data`,
+    method: 'get'
+  })
+}
+
 export function getAccount (id) {
   return axios({
     url: `${api.User}/${id}`,
@@ -16,7 +23,7 @@ export function getAccount (id) {
   })
 }
 
-export function addAccount (data) {
+export function createAccount (data) {
   return axios({
     url: api.User,
     method: 'post',

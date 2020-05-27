@@ -360,6 +360,7 @@ export default {
           if (rule.selected.length) {
             rule.checkedAll = rule.selected.length === ruleSelectCount
           }
+          console.log(rule)
         })
       } else {
         // 创建时

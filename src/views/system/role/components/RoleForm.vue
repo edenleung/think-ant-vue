@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="详情"
-    :width="800"
+    :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="$emit('submit')"

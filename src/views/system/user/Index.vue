@@ -43,7 +43,7 @@
             <div class="ant-pro-table-toolbar-item">
               <a-button type="primary" icon="plus" @click="$router.push({ name: 'CreateAccount' })">新建</a-button>
             </div>
-            <template v-if="selectedRows.length">
+            <!-- <template v-if="selectedRows.length">
               <div class="ant-pro-table-toolbar-item">
                 <a-dropdown>
                   <a-menu slot="overlay" @click="handleMenuClick">
@@ -52,7 +52,7 @@
                   <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
                 </a-dropdown>
               </div>
-            </template>
+            </template> -->
             <a-divider type="vertical" />
             <span class="ant-pro-table-toolbar-item-icon">
               <a-tooltip placement="top">
@@ -119,18 +119,6 @@
         </s-table>
       </a-col>
     </a-row>
-
-    <UserForm
-      ref="userForm"
-      :visible="visible"
-      :selecteId="selecteId"
-      :deptTree="depts"
-      :roleTree="roles"
-      :posts="posts"
-      :confirmLoading="confirmLoading"
-      @submit="handleSubmit"
-      @cancel="handleCancel"
-    />
   </a-card>
 </template>
 <script>
