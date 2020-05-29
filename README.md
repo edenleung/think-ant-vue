@@ -11,7 +11,7 @@ ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统
  * http://ant.wfunc.com
  * ~~https://ant-design-vue-edenleung.cloud.okteto.net~~
  
-开发文档：https://tant-doc-edenleung.cloud.okteto.net
+开发文档：http://doc.wfunc.com
 
 Ant Design Vue Pro 文档: https://pro.loacg.com/docs/getting-started
 
