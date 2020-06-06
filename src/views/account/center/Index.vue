@@ -153,7 +153,7 @@ export default {
       })
     },
     getTeams () {
-      this.$http.get('/mock/workplace/teams').then(res => {
+      this.$http.get('/admin/mock/workplace/teams').then(res => {
         this.teams = res.result
         this.teamSpinning = false
       })
