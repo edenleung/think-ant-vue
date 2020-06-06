@@ -75,7 +75,7 @@
         <template slot="tools" slot-scope="row">
           <a v-action:PermissionUpdate @click="showActionModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:PermissionDelete @click="showDeleteConfirm(row.id)">删除</a>
+          <a v-action:PermissionDelete @click="showDeleteConfirm(row.id)" :disabled="row.name === 'Index'">删除</a>
         </template>
       </s-table>
     </a-card>
