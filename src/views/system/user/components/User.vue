@@ -110,8 +110,8 @@
               }
             ]"
           >
-            <a-select-option v-for="post in posts" :key="post.post_id">
-              {{ post.post_name }}
+            <a-select-option v-for="post in posts" :key="post.id">
+              {{ post.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
