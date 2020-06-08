@@ -108,7 +108,7 @@ export default {
   methods: {
     showModal (row) {
       this.visible = true
-      this.selected = row.row.id
+      this.selected = row.id
       const form = this.$refs.postForm.form
       this.$nextTick(() => {
         form.setFieldsValue({
