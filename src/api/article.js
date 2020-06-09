@@ -31,10 +31,11 @@ export function deleteArticleCategory (id) {
   })
 }
 
-export function fetchArticle () {
+export function fetchArticle (params) {
   return axios({
     url: `${api.Article}`,
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
