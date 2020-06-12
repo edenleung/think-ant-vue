@@ -181,6 +181,7 @@ export default {
       this.roleVisible = true
       this.selectedId = row.id
       this.info = row
+      this.rules = [ ...this.rules ]
       this.filterRuleAction(row.pid.toString())
       this.$nextTick(() => {
         this.$refs.roleForm.form.setFieldsValue({
