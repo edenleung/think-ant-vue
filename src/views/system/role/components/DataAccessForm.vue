@@ -44,7 +44,7 @@
               valuePropName: 'deptIds',
               trigger: 'check',
               validateTrigger: 'check',
-              rules: [{ required: true, message: '请选择数据权限!' }]
+              rules: [{ required: false, message: '请选择数据权限!' }]
             }
           ]"
         />
