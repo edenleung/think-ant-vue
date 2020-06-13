@@ -9,11 +9,11 @@
   >
     <a-form :form="form">
       <a-form-item label="唯一识别码" hasFeedback>
-        <a-input readonly v-decorator="['name']" />
+        <a-input read-only v-decorator="['name']" />
       </a-form-item>
 
       <a-form-item label="角色名称" hasFeedback>
-        <a-input readonly v-decorator="['title']" />
+        <a-input read-only v-decorator="['title']" />
       </a-form-item>
 
       <a-form-item label="数据范围">
@@ -44,7 +44,7 @@
               valuePropName: 'deptIds',
               trigger: 'check',
               validateTrigger: 'check',
-              rules: [{ required: true, message: '请选择数据权限!' }]
+              rules: [{ required: false, message: '请选择数据权限!' }]
             }
           ]"
         />

@@ -285,7 +285,7 @@ export default {
           this.confirmLoading = true
           const hide = this.$message.loading('执行中..', 0)
           updateMode(this.selectedId, values).then(res => {
-            this.$$message.success('更新成功！')
+            this.$message.success('更新成功！')
             this.handleDataAccessCancel()
             this.refreshTable()
           }).finally(() => {
@@ -369,8 +369,8 @@ export default {
             action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
           })
         })
-        this.rules = [ ...rules ]
       }
+      this.rules = [ ...rules ]
     },
     rulesSelectedInit (rules) {
       const allActionIds = []
