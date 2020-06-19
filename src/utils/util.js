@@ -83,4 +83,3 @@ export function download (fileName, data) {
     window.URL.revokeObjectURL(url)
   }
 }
-
