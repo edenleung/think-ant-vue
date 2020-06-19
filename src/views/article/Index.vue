@@ -1,5 +1,74 @@
 <template>
   <div class="page-header-index-wide">
+    <div class="ant-pro-table-search">
+      <a-form :form="searchForm" @submit="handleSearch">
+        <a-row type="flex" justify="start">
+          <a-col
+            :xl="8"
+            :sm="12"
+            :md="12"
+            :lg="8"
+            :xxl="8"
+            style="padding-left: 8px;padding-right:8px;"
+          >
+            <a-form-item label="文章名称">
+              <a-input
+                v-decorator="[
+                  `title`
+                ]"
+                placeholder="搜索文章"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col
+            :xl="5"
+            :sm="12"
+            :md="12"
+            :lg="5"
+            :xxl="5"
+            style="padding-left: 8px;padding-right:8px;"
+          >
+            <a-form-item label="状态">
+              <a-select
+                placeholder="筛选状态"
+                v-decorator="[
+                  `status`
+                ]"
+              >
+                <a-select-option :value="index" v-for="(item, index) in type" :key="index">
+                  {{ item.label }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col
+            :sm="12"
+            :md="12"
+            :lg="8"
+            :xl="8"
+            :xxl="8"
+            class="ant-pro-table-search-option"
+          >
+            <a-form-item label="">
+              <div class="ant-space ant-space-horizontal ant-space-align-center">
+                <div class="ant-space ant-space-horizontal ant-space-align-center">
+                  <div class="ant-space-item">
+                    <a-button icon="search" type="primary" html-type="submit">
+                      搜索
+                    </a-button>
+                  </div>
+                  <div class="ant-space-item">
+                    <a-button :style="{ marginLeft: '8px' }" @click="handleSearchReset">
+                      重置
+                    </a-button>
+                  </div>
+                </div>
+              </div>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
     <a-card :body-style="{ padding: 0 }">
       <div class="ant-pro-table-toolbar">
         <div class="ant-pro-table-toolbar-title"></div>
@@ -50,8 +119,8 @@
           <img :src="baseUrl + '/' + image" class="article-image" v-if="image" />
           <span v-else>/</span>
         </template>
-        <template slot="disable" slot-scope="row">
-          {{ row.disable ? '隐藏' : '正常' }}
+        <template slot="status" slot-scope="text">
+          <a-badge :status="type[text].status" :text="type[text].label" />
         </template>
         <template slot="tools" slot-scope="row">
           <a @click="$router.push({ name: 'UpdateArticle', params: { id: row.id } })">编辑</a>
@@ -66,6 +135,16 @@
 <script>
 import { STable } from '@/components'
 import { fetchArticle, deleteArticle } from '@/api/article'
+const type = {
+  0: {
+    label: '隐藏',
+    status: 'error'
+  },
+  1: {
+    label: '正常',
+    status: 'success'
+  }
+}
 const columns = [
   {
     title: '文章标题',
@@ -82,7 +161,8 @@ const columns = [
   },
   {
     title: '状态',
-    scopedSlots: { customRender: 'disable' }
+    dataIndex: 'status',
+    scopedSlots: { customRender: 'status' }
   },
   {
     title: '创建时间',
@@ -102,7 +182,7 @@ export default {
   data () {
     return {
       columns,
-      status,
+      type,
       expandedKeys: [],
       queryParam: {},
       loadData: parameter => {
@@ -118,13 +198,25 @@ export default {
       selected: 0,
       selectedRowKeys: [],
       selectedRows: [],
-      baseUrl: process.env.VUE_APP_API_BASE_URL
+      baseUrl: process.env.VUE_APP_API_BASE_URL,
+      searchForm: this.$form.createForm(this, { name: 'search' })
     }
   },
   components: { STable },
-  mounted () {
-  },
   methods: {
+    handleSearch (e) {
+      e.preventDefault()
+      this.searchForm.validateFields((error, values) => {
+        console.log('error', error)
+        this.queryParam = { ...values }
+        this.refreshTable()
+      })
+    },
+    handleSearchReset () {
+      this.searchForm.resetFields()
+      this.queryParam = {}
+      this.refreshTable()
+    },
     onSelectChange () {
     },
     refreshTable () {

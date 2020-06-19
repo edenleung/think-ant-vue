@@ -68,4 +68,40 @@ export default {
   .ant-table-wrapper .anticon {
     font-size: 12px;
   }
+  .ant-pro-table-search {
+    margin-bottom: 16px;
+    padding: 24px 24px 0;
+    background: #fff;
+  }
+  .ant-pro-table-search .ant-form-item {
+    display: flex;
+    flex: 1 1
+  }
+  .ant-pro-table-search .ant-form-item-control-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1;
+  }
+  .ant-pro-table-search .ant-space-align-center {
+    align-items: center;
+  }
+  .ant-pro-table-search .ant-pro-table-search-option .ant-form-item-control {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: right;
+  }
+  .ant-pro-table-search .ant-space {
+    display: inline-flex;
+  }
+  .ant-pro-table-search .ant-form-item-control-input-content {
+    flex: auto;
+    max-width: 100%;
+  }
+  .antd-pro-pages-profile-basic-style-title {
+    margin-bottom: 16px;
+    color: rgba(0,0,0,.85);
+    font-weight: 500;
+    font-size: 16px;
+  }
 </style>
