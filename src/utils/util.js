@@ -63,3 +63,24 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
     document.body.removeChild(document.getElementById(id))
   }, timeout)
 }
+
+/**
+ * 下载
+ * @param {*} fileName 文件名
+ * @param {*} data 文件流
+ */
+export function download (fileName, data) {
+  const blob = new Blob([data])
+  if ('download' in document.createElement('a')) {
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.style.display = 'none'
+    link.href = url
+    link.setAttribute('download', fileName)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  }
+}
+
