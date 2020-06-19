@@ -117,6 +117,11 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
+  const { config } = response
+  // 响应二进制流
+  if (config.responseType !== undefined && config.responseType === 'blob') {
+    return response.data
+  }
   if (response.headers['automatic-renewal-token'] !== undefined) {
     const token = response.headers['automatic-renewal-token']
     const refreshAt = response.headers['automatic-renewal-token-refreshat']
