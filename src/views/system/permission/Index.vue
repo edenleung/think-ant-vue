@@ -218,7 +218,9 @@ export default {
           hidden: row.hidden,
           hideChildrenInMenu: row.hideChildrenInMenu,
           icon: row.icon,
-          permission: row.permission ? row.permission.split(',') : []
+          permission: row.permission ? row.permission.split(',') : [],
+          action_type: row.action_type,
+          button_type: row.button_type
         })
       })
     },

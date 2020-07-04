@@ -1,13 +1,15 @@
 const PERMISSION_ENUM = {
-  'add': { key: 'add', label: '新增' },
-  'delete': { key: 'delete', label: '删除' },
-  'edit': { key: 'edit', label: '修改' },
-  'query': { key: 'query', label: '查询' },
-  'get': { key: 'get', label: '详情' },
-  'enable': { key: 'enable', label: '启用' },
-  'disable': { key: 'disable', label: '禁用' },
-  'import': { key: 'import', label: '导入' },
-  'export': { key: 'export', label: '导出' }
+  'Create': { key: 'Create', label: '新增' },
+  'Delete': { key: 'Delete', label: '删除' },
+  'Update': { key: 'Update', label: '修改' },
+  'Save': { key: 'Save', label: '保存' },
+  'Query': { key: 'Query', label: '查询' },
+  'Info': { key: 'Info', label: '详情' },
+  'Fetch': { key: 'List', label: '列表' },
+  'Enable': { key: 'Enable', label: '启用' },
+  'Disable': { key: 'Disable', label: '禁用' },
+  'Import': { key: 'Import', label: '导入' },
+  'Export': { key: 'Export', label: '导出' }
 }
 
 function plugin (Vue) {

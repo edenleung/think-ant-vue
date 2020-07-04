@@ -43,8 +43,42 @@
             </a-tree-select>
           </a-form-item>
         </a-col>
-
-        <a-col :span="12">
+        <a-col :span="12" v-show="form.getFieldValue('pid') && form.getFieldValue('type') == 'action'">
+          <a-form-item label="按钮配置">
+            <a-radio-group
+              v-decorator="[
+                'action_type',
+                {
+                  rules: [{ required: form.getFieldValue('type') == 'action', message: '请选择按钮配置!' }],
+                  initialValue: 0
+                }
+              ]"
+            >
+              <a-radio-button :value="1">默认配置</a-radio-button>
+              <a-radio-button :value="2">自定义</a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12" v-show="form.getFieldValue('action_type') == 1 && form.getFieldValue('pid') && form.getFieldValue('type') === 'action'">
+          <a-form-item label="按钮类型">
+            <a-select
+              style="min-width: 184px"
+              placeholder="选择按钮类型"
+              @change="handleButtonTypeChange"
+              v-decorator="[
+                'button_type',
+                {
+                  rules: [{ required: true, message: '请选择按钮类型!' }]
+                }
+              ]"
+            >
+              <a-select-option :value="item.key" v-for="(item, key) in $enum()" :key="key">
+                {{ item.label }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12" v-show="form.getFieldValue('pid')">
           <a-form-item label="菜单标题" hasFeedback>
             <a-input
               placeholder="菜单标题"
@@ -58,11 +92,10 @@
           </a-form-item>
         </a-col>
 
-        <a-col :span="12">
+        <a-col :span="12" v-show="form.getFieldValue('pid')">
           <a-form-item label="权限标识" hasFeedback>
             <a-input
               placeholder="唯一识别码"
-              :disabled="this.selected !== 0"
               v-decorator="[
                 'name',
                 {
@@ -73,7 +106,7 @@
           </a-form-item>
         </a-col>
 
-        <a-col :span="24">
+        <a-col :span="24" v-show="form.getFieldValue('pid')">
           <a-col :span="12">
             <a-form-item v-if="form.getFieldValue('type') !== 'action'" label="组件地址">
               <a-select
@@ -120,7 +153,7 @@
           </a-form-item>
         </a-col>
 
-        <a-col :span="24">
+        <a-col :span="24" v-show="form.getFieldValue('pid')">
           <a-col :span="12">
             <a-form-item label="菜单状态">
               <a-radio-group
@@ -187,11 +220,11 @@
         </a-col>
 
         <a-col :span="12" v-if="form.getFieldValue('type') !== 'action'" >
-          <a-form-item label="查看权限">
+          <a-form-item label="Permission">
             <a-select
               style="min-width: 184px"
               mode="tags"
-              placeholder="选择查看权限"
+              placeholder="Permission"
               v-decorator="[
                 'permission'
               ]"
@@ -260,6 +293,30 @@ export default {
   },
   created () {
     this.form = this.$form.createForm(this, { name: 'permission_from' })
+  },
+  methods: {
+    handleButtonTypeChange (v) {
+      const pid = this.form.getFieldValue('pid')
+      const temp = (data, target) => {
+        let result = null
+        for (const i in data) {
+          if (data[i].id.toString() === target) {
+            result = data[i]
+            break
+          }
+          if (result === null && data[i].children) {
+            result = temp(data[i].children, target)
+          }
+        }
+
+        return result
+      }
+      const t = temp(this.treeData, pid)
+      this.form.setFieldsValue({
+        title: this.$enum()[v].label,
+        name: v + t.name
+      })
+    }
   }
 }
 </script>
