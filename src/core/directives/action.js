@@ -17,6 +17,7 @@ import store from '@/store'
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
     const actionName = binding.arg
+    const actions = actionName.split('|')
     const roles = store.getters.roles
     const elVal = vnode.context.$route.meta.permission
     const permissionId = (elVal instanceof Array && elVal) || (elVal instanceof String && [elVal]) || []
@@ -26,8 +27,12 @@ const action = Vue.directive('action', {
         return
       }
 
-      if (p.actionList && p.actionList.includes(actionName)) {
-        flag = true
+      for (const i in actions) {
+        const actionName = actions[i]
+        if (p.actionList && p.actionList.includes(actionName)) {
+          flag = true
+          break
+        }
       }
     })
 
