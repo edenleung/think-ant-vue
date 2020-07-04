@@ -92,7 +92,7 @@ const err = (error) => {
         description: errorText
       })
 
-      if ([403, 404, 500].indexOf(status) !== -1) {
+      if ([403, 404].indexOf(status) !== -1) {
         router.push({ path: `/exception/${status}` })
       }
       // store
