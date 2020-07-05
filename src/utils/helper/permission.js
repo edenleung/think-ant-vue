@@ -5,7 +5,7 @@ const PERMISSION_ENUM = {
   'Save': { key: 'Save', label: '保存' },
   'Query': { key: 'Query', label: '查询' },
   'Info': { key: 'Info', label: '详情' },
-  'Fetch': { key: 'List', label: '列表' },
+  'Fetch': { key: 'Fetch', label: '列表' },
   'Enable': { key: 'Enable', label: '启用' },
   'Disable': { key: 'Disable', label: '禁用' },
   'Import': { key: 'Import', label: '导入' },

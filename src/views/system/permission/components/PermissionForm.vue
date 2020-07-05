@@ -68,7 +68,7 @@
               v-decorator="[
                 'button_type',
                 {
-                  rules: [{ required: true, message: '请选择按钮类型!' }]
+                  rules: [{ required: form.getFieldValue('type') === 'action' && form.getFieldValue('action_type') == 1, message: '请选择按钮类型!' }]
                 }
               ]"
             >

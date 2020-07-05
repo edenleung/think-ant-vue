@@ -112,9 +112,9 @@
           </template>
 
           <template slot="tools" slot-scope="row">
-            <a v-action:AccountUpdate @click="$router.push({ name: 'UpdateAccount', params: { id: row.id } })">编辑</a>
+            <a v-action:UpdateAccount @click="$router.push({ name: 'UpdateAccount', params: { id: row.id } })">编辑</a>
             <a-divider type="vertical" />
-            <a v-action:AccountDelete @click="showDeleteConfirm(row.id)">删除</a>
+            <a v-action:DeleteAccount @click="showDeleteConfirm(row.id)">删除</a>
           </template>
         </s-table>
       </a-col>

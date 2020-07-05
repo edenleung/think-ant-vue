@@ -61,7 +61,7 @@
           />
         </a-form-item>
         <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-          <a-button type="primary" html-type="submit">
+          <a-button v-action:SaveUpdateArticleView|SaveCreateArticleView type="primary" html-type="submit">
             发布
           </a-button>
         </a-form-item>

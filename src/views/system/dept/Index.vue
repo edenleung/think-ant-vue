@@ -45,9 +45,9 @@
 
         <template slot="tools" slot-scope="row">
           <span v-if="row.pid">
-            <a v-action:DeptUpdate @click="showModal(row)">编辑</a>
+            <a v-action:UpdateDept @click="showModal(row)">编辑</a>
             <a-divider type="vertical" />
-            <a v-action:DeptDelete @click="showDeleteConfirm(row.id)">删除</a>
+            <a v-action:DeleteDept @click="showDeleteConfirm(row.id)">删除</a>
           </span>
         </template>
       </s-table>
