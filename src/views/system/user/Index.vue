@@ -41,7 +41,7 @@
           <div class="ant-pro-table-toolbar-title"></div>
           <div class="ant-pro-table-toolbar-option">
             <div class="ant-pro-table-toolbar-item">
-              <a-button type="primary" icon="plus" @click="$router.push({ name: 'CreateAccount' })">新建</a-button>
+              <a-button v-action:CreateAccount type="primary" icon="plus" @click="$router.push({ name: 'CreateAccountView' })">新建</a-button>
             </div>
             <!-- <template v-if="selectedRows.length">
               <div class="ant-pro-table-toolbar-item">
@@ -112,7 +112,7 @@
           </template>
 
           <template slot="tools" slot-scope="row">
-            <a v-action:UpdateAccount @click="$router.push({ name: 'UpdateAccount', params: { id: row.id } })">编辑</a>
+            <a v-action:UpdateAccount @click="$router.push({ name: 'UpdateAccountView', params: { id: row.id } })">编辑</a>
             <a-divider type="vertical" />
             <a v-action:DeleteAccount @click="showDeleteConfirm(row.id)">删除</a>
           </template>

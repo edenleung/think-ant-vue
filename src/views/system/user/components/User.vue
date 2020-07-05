@@ -145,7 +145,7 @@
           :wrapperCol="{ span: 24 }"
           style="text-align: center"
         >
-          <a-button v-action:SaveUpdateAccountView @click="handleSubmit" type="primary">提交</a-button>
+          <a-button v-action:SaveCreateAccountView|SaveUpdateAccountView @click="handleSubmit" type="primary">提交</a-button>
           <a-button style="margin-left: 8px" @click="$router.go(-1)">返回</a-button>
         </a-form-item>
       </a-form>
