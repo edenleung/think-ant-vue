@@ -1,12 +1,14 @@
 const path = require('path')
 const webpack = require('webpack')
+const CompressionWebpackPlugin = require("compression-webpack-plugin")
+const zopfli = require("@gfx/zopfli")
+const BrotliPlugin = require("brotli-webpack-plugin")
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
-
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
-const isProd = process.env.NODE_ENV === 'production'
+const IS_PROD = ["production", "prod"].includes(process.env.NODE_ENV);
 
 const assetsCDN = {
   // webpack build externals
@@ -42,15 +44,30 @@ const vueConfig = {
     // webpack plugins
     plugins: [
       // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      // Gzip
+      new CompressionWebpackPlugin({
+        algorithm(input, compressionOptions, callback) {
+          return zopfli.gzip(input, compressionOptions, callback);
+        },
+        compressionOptions: {
+          numiterations: 15
+        },
+        minRatio: 0.99,
+        test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i
+      }),
+      new BrotliPlugin({
+        test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i,
+        minRatio: 0.99
+      })
     ],
     resolve: {
       alias: {
-        // '@ant-design/icons/lib/dist$': resolve('./src/core/antd/icons.js')
+        '@ant-design/icons/lib/dist$': resolve('./src/core/antd/icons.js')
       }
     },
     // if prod, add externals
-    externals: isProd ? assetsCDN.externals : {}
+    externals: IS_PROD ? assetsCDN.externals : {}
   },
 
   chainWebpack: (config) => {
@@ -75,18 +92,16 @@ const vueConfig = {
 
     // if prod is on
     // assets require on cdn
-    if (isProd) {
+    if (IS_PROD) {
       config.plugin('html').tap(args => {
         args[0].cdn = assetsCDN
         return args
       })
 
-      if (process.env.npm_config_report) {
-        config
-          .plugin('webpack-bundle-analyzer')
-          .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
-          .end()
-      }
+      config
+        .plugin('webpack-bundle-analyzer')
+        .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+        .end()
     }
   },
 

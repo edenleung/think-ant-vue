@@ -91,3 +91,9 @@ export {
 export {
   default as CaretDownFill
 } from '@ant-design/icons/lib/fill/CaretDownFill'
+export {
+  default as SmileOutline
+} from '@ant-design/icons/lib/outline/SmileOutline'
+export {
+  default as PlusOutline
+} from '@ant-design/icons/lib/outline/PlusOutline'
