@@ -44,22 +44,7 @@ const vueConfig = {
     // webpack plugins
     plugins: [
       // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-      // Gzip
-      new CompressionWebpackPlugin({
-        algorithm(input, compressionOptions, callback) {
-          return zopfli.gzip(input, compressionOptions, callback);
-        },
-        compressionOptions: {
-          numiterations: 15
-        },
-        minRatio: 0.99,
-        test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i
-      }),
-      new BrotliPlugin({
-        test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i,
-        minRatio: 0.99
-      })
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     resolve: {
       alias: {
@@ -146,6 +131,26 @@ if (process.env.VUE_APP_PREVIEW === 'true') {
   console.log('VUE_APP_PREVIEW', true)
   // add `ThemeColorReplacer` plugin to webpack plugins
   vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
+}
+
+if (IS_PROD) {
+  vueConfig.configureWebpack.plugins.push(
+    // Gzip
+    new CompressionWebpackPlugin({
+      algorithm(input, compressionOptions, callback) {
+        return zopfli.gzip(input, compressionOptions, callback)
+      },
+      compressionOptions: {
+        numiterations: 15
+      },
+      minRatio: 0.99,
+      test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i
+    }),
+    new BrotliPlugin({
+      test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i,
+      minRatio: 0.99
+    })
+  )
 }
 
 module.exports = vueConfig
