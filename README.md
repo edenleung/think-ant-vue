@@ -45,3 +45,26 @@ location / {
 #### 后端API配置
 [本地测试-修改此处](https://github.com/edenleung/think-ant-vue/blob/master/.env.development#L3)
 [生产部署-修改此处](https://github.com/edenleung/think-ant-vue/blob/master/.env.production#L3)
+
+## VSCode
+如果使用此编辑器，建议你配置下以下信息
+
+### 格式化
+`setting.json`
+
+```json
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "octref.vetur"
+    }
+```
+
+### 处理缩进
+
+安装 `EditorConfig` 插件
+
+https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig
