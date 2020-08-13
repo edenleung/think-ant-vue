@@ -1,6 +1,4 @@
 import Vue from 'vue'
-import VueStorage from 'vue-ls'
-import config from '@/config/defaultSettings'
 
 // base library
 import Antd from 'ant-design-vue/es'
@@ -22,7 +20,8 @@ Vue.use(Antd)
 Vue.use(Viser)
 Vue.use(MultiTab)
 Vue.use(PageLoading)
-Vue.use(VueStorage, config.storageOptions)
 Vue.use(VueClipboard)
 Vue.use(PermissionHelper)
 // Vue.use(VueCropper)
+
+process.env.NODE_ENV !== 'production' && console.warn('[antd-pro] WARNING: Antd now use fulled imported.')

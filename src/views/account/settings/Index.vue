@@ -43,12 +43,14 @@
 </template>
 
 <script>
-import { PageView, RouteView } from '@/layouts'
+import { RouteView } from '@/layouts'
+import { baseMixin } from '@/store/app-mixin'
+
 export default {
   components: {
-    RouteView,
-    PageView
+    RouteView
   },
+  mixins: [baseMixin],
   data () {
     return {
       mode: 'inline',
@@ -56,12 +58,8 @@ export default {
       selectedKeys: []
     }
   },
-  created () {
-    this.updateMenu()
-  },
   mounted () {
-    window.addEventListener('resize', this.resize)
-    this.resize()
+    this.updateMenu()
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.resize)
