@@ -106,15 +106,31 @@
           </a-form-item>
         </a-col>
 
+        <a-col :span="12" v-show="form.getFieldValue('pid')">
+          <a-form-item label="外部链接">
+            <a-radio-group
+              v-decorator="[
+                'blank',
+                {
+                  rules: [{ required: true }],
+                  initialValue: 0
+                }
+              ]"
+            >
+              <a-radio-button :key="key" :value="type.value" v-for="(type, key) in status">{{ type.label }}</a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+
         <a-col :span="24" v-show="form.getFieldValue('pid')">
-          <a-col :span="12">
+          <a-col :span="12" v-if="!form.getFieldValue('blank')">
             <a-form-item v-if="form.getFieldValue('type') !== 'action'" label="组件地址">
               <a-select
                 style="width: 184px"
                 v-decorator="[
                   'component',
                   {
-                    rules: [{ required: form.getFieldValue('type') !== 'action', message: '请选择组件!' }]
+                    rules: [{ required: form.getFieldValue('type') !== 'action' && !form.getFieldValue('blank'), message: '请选择组件!' }]
                   }
                 ]">
                 >

@@ -220,7 +220,8 @@ export default {
           icon: row.icon,
           permission: row.permission ? row.permission.split(',') : [],
           action_type: row.action_type,
-          button_type: row.button_type
+          button_type: row.button_type,
+          blank: row.blank
         })
       })
     },
