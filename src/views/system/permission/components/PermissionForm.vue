@@ -92,10 +92,10 @@
           </a-form-item>
         </a-col>
 
-        <a-col :span="12" v-show="form.getFieldValue('pid')">
-          <a-form-item label="权限标识" hasFeedback>
+        <a-col :span="12" v-show="form.getFieldValue('type') && form.getFieldValue('pid')">
+          <a-form-item :label="form.getFieldValue('type') == 'action' ? '权限标识' : '路由名称'" hasFeedback>
             <a-input
-              placeholder="唯一识别码"
+             placeholder="Manager/Page 结尾"
               v-decorator="[
                 'name',
                 {
@@ -124,7 +124,7 @@
 
         <a-col :span="24" v-show="form.getFieldValue('pid')">
           <a-col :span="12" v-if="!form.getFieldValue('blank')">
-            <a-form-item v-if="form.getFieldValue('type') !== 'action'" label="组件地址">
+            <a-form-item v-if="form.getFieldValue('type') !== 'action'" label="组件地址" placeholder="选择组件">
               <a-select
                 style="width: 184px"
                 v-decorator="[
@@ -330,7 +330,7 @@ export default {
       const t = temp(this.treeData, pid)
       this.form.setFieldsValue({
         title: this.$enum()[v].label,
-        name: v + t.name
+        name: t.name + v
       })
     }
   }
