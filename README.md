@@ -4,8 +4,7 @@
 [![Build Status](https://travis-ci.org/edenleung/think-ant-vue.svg?branch=master)](https://travis-ci.org/edenleung/think-ant-vue)
 
 ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统  
-
-后端: https://github.com/xiaodit/think-admin  
+基于 Ant Design Vue Pro
 
 预览地址: 
  * http://ant.wfunc.com
@@ -13,7 +12,9 @@ ThinkPHP 6.0 与 Ant Design Pro Vue 基础权限系统
  
 开发文档：http://doc.wfunc.com
 
-Ant Design Vue Pro 文档: https://pro.loacg.com/docs/getting-started
+Ant Design Vue Pro 文档: https://github.com/vueComponent/ant-design-vue-pro
+
+后端: https://github.com/xiaodit/think-admin
 
 ~~服务器提供：[okteto](https://okteto.com)~~
 
