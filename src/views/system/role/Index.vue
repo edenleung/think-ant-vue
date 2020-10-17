@@ -47,9 +47,9 @@
           <span v-html="row.title"></span>
         </template>
 
-        <p slot="expandedRowRender" slot-scope="row">
+        <!-- <p slot="expandedRowRender" slot-scope="row">
           <a-row>
-            <a-col class="rule-list" span="12" v-for="(item, index) in rules" :key="index">
+            <a-col class="rule-list" span="12" v-for="(item, index) in rules[0].children" :key="index">
               <a-row>
                 <a-col span="4">{{ item.title }}：</a-col>
                 <a-col span="20">
@@ -63,7 +63,7 @@
               </a-row>
             </a-col>
           </a-row>
-        </p>
+        </p> -->
 
         <template slot="tools" slot-scope="row">
           <a v-action:UpdateRole @click="showRoleModal(row)">编辑</a>
@@ -195,27 +195,29 @@ export default {
       this.roleVisible = false
       this.$refs.roleForm.form.resetFields()
       this.selectedId = 0
-      this.rules.map(rule => {
-        rule.selected = []
-        rule.indeterminate = false
-        rule.checkedAll = false
-        rule.disabled = false
-        rule.actions.map(action => {
-          action.disabled = false
-        })
-      })
+      this.rulesSelectedInit(this.rules)
     },
     handleRoleSubmit () {
       this.$refs.roleForm.form.validateFields((err, values) => {
         if (!err) {
-          const checkedList = []
           const { selectedId, rules } = this
-          rules.map(item => {
-            item.selected.map(s => {
-              checkedList.push(s)
+          const tree = (data, selected = []) => {
+            let temp = []
+            data.map(item => {
+              if (item.type === 'menu' && item.selected.length) {
+                temp = [...temp, ...item.selected]
+              }
+              if (item.children !== undefined && item.children.length && item.type !== 'action') {
+                const result = tree(item.children)
+                if (result.length) {
+                  temp = [...temp, ...result]
+                }
+              }
             })
-          })
-          values.rules = checkedList
+
+            return temp
+          }
+          values.rules = tree(rules)
           const promise = selectedId === 0 ? addRole(values) : updateRole(selectedId, values)
           this.confirmLoading = true
           const hide = this.$message.loading('执行中..', 0)
@@ -341,27 +343,7 @@ export default {
       // 更新时 自动勾选已选择的权限
       if (this.selectedId > 0) {
         const { info: { permissions } } = this
-        rules.map(rule => {
-          rule.selected = []
-          // 记录当前菜单可选操作数量
-          let ruleSelectCount = 0
-
-          rule.actions.map(action => {
-            if (permissions.indexOf(action.id) !== -1) {
-              rule.selected.push(action.id)
-            }
-            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
-            if (action.disabled === false) {
-              ruleSelectCount = ruleSelectCount + 1
-            }
-          })
-
-          rule.indeterminate = !!rule.selected.length && (rule.selected.length < ruleSelectCount)
-          if (rule.selected.length) {
-            rule.checkedAll = rule.selected.length === ruleSelectCount
-          }
-          console.log(rule)
-        })
+        this.updateRole(this.rules, permissions, allPermissionActionsIds)
       } else {
         // 创建时
         rules.map(rule => {
@@ -372,22 +354,54 @@ export default {
       }
       this.rules = [ ...rules ]
     },
-    rulesSelectedInit (rules) {
-      const allActionIds = []
-      this.rules = rules.map(item => {
-        Object.assign(item, {
+    updateRole (rules, permissions, allPermissionActionsIds) {
+      console.log(allPermissionActionsIds)
+      for (const i in rules) {
+        if (rules[i].type === 'menu') {
+          rules[i].selected = []
+          // 记录当前菜单可选操作数量
+          let ruleSelectCount = 0
+          rules[i].actions.map(action => {
+            if (permissions.indexOf(action.id) !== -1) {
+              rules[i].selected.push(action.id)
+            }
+            action.disabled = allPermissionActionsIds.indexOf(action.id) === -1
+            if (action.disabled === false) {
+              ruleSelectCount = ruleSelectCount + 1
+            }
+          })
+
+          rules[i].indeterminate = !!rules[i].selected.length && (rules[i].selected.length < ruleSelectCount)
+          if (rules[i].selected.length) {
+            rules[i].checkedAll = rules[i].selected.length === ruleSelectCount
+          }
+        }
+        if (rules[i].children !== undefined && rules[i].children.length) {
+          this.updateRole(rules[i].children, permissions, allPermissionActionsIds)
+        }
+      }
+    },
+    rulesSelectedInit (rules, allActionIds = []) {
+      for (const i in rules) {
+        const item = Object.assign(rules[i], {
           selected: [],
           indeterminate: false,
           checkedAll: false,
           disabled: false
         })
-        // 初始化状态
-        item.actions.map(action => {
-          allActionIds.push(action.id)
-          action.disabled = false
-        })
-        return item
-      })
+        if (rules[i].type === 'menu') {
+          // 初始化状态
+          item.actions.map(action => {
+            allActionIds.push(action.id)
+            action.disabled = false
+            return action
+          })
+        }
+        if (rules[i].children && rules[i].type !== 'action') {
+          this.rulesSelectedInit(rules[i]['children'], allActionIds)
+        }
+      }
+      this.rules = rules
       this.allActionIds = allActionIds
     }
   }

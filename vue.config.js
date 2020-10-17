@@ -3,12 +3,23 @@ const webpack = require('webpack')
 const CompressionWebpackPlugin = require("compression-webpack-plugin")
 const zopfli = require("@gfx/zopfli")
 const BrotliPlugin = require("brotli-webpack-plugin")
+const GitRevisionPlugin = require('git-revision-webpack-plugin')
+const GitRevision = new GitRevisionPlugin()
+const buildDate = JSON.stringify(new Date().toLocaleString())
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
 const IS_PROD = ["production", "prod"].includes(process.env.NODE_ENV);
+
+// check Git
+function getGitHash () {
+  try {
+    return GitRevision.version()
+  } catch (e) {}
+  return 'unknown'
+}
 
 const assetsCDN = {
   // webpack build externals
@@ -44,7 +55,12 @@ const vueConfig = {
     // webpack plugins
     plugins: [
       // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.DefinePlugin({
+        APP_VERSION: `"${require('./package.json').version}"`,
+        GIT_HASH: JSON.stringify(getGitHash()),
+        BUILD_DATE: buildDate
+      })
     ],
     resolve: {
       alias: {
@@ -98,7 +114,7 @@ const vueConfig = {
 
           // 'primary-color': '#F5222D',
           // 'link-color': '#F5222D',
-          // 'border-radius-base': '4px'
+          'border-radius-base': '2px'
         },
         // DO NOT REMOVE THIS LINE
         javascriptEnabled: true

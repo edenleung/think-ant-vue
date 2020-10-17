@@ -1,12 +1,13 @@
 <template>
-  <div class="setting-drawer" ref="settingDrawer">
+  <div class="setting-drawer">
     <a-drawer
       width="300"
       placement="right"
       @close="onClose"
       :closable="false"
       :visible="visible"
-      :handle="handle"
+      :drawer-style="{ position: 'absolute' }"
+      style="position: absolute"
     >
       <div class="setting-drawer-index-content">
 
@@ -155,13 +156,13 @@
           >拷贝设置</a-button>
           <a-alert type="warning" :style="{ marginTop: '24px' }">
             <span slot="message">
-              配置栏只在开发环境用于预览，生产环境不会展现，请手动修改配置文件
+              配置栏只在开发环境用于预览，生产环境不会展现，请手动修改配置文件。修改配置文件后，需要清空本地缓存和LocalStorage
               <a href="https://github.com/sendya/ant-design-pro-vue/blob/master/src/config/defaultSettings.js" target="_blank">src/config/defaultSettings.js</a>
             </span>
           </a-alert>
         </div>
       </div>
-      <div class="setting-drawer-index-handle" @click="toggle">
+      <div class="setting-drawer-index-handle" @click="toggle" slot="handle">
         <a-icon type="setting" v-if="!visible"/>
         <a-icon type="close" v-else/>
       </div>
@@ -170,23 +171,19 @@
 </template>
 
 <script>
-import { DetailList } from '@/components'
 import SettingItem from './SettingItem'
 import config from '@/config/defaultSettings'
 import { updateTheme, updateColorWeak, colorList } from './settingConfig'
-import { mixin, mixinDevice } from '@/utils/mixin'
 
 export default {
   components: {
-    DetailList,
     SettingItem
   },
-  mixins: [mixin, mixinDevice],
+  mixins: [],
   data () {
     return {
       visible: false,
-      colorList,
-      handle: <div/>
+      colorList
     }
   },
   watch: {
@@ -230,13 +227,7 @@ export default {
   autoHideHeader: ${this.autoHideHeader}, //  auto hide header
   colorWeak: ${this.colorWeak},
   multiTab: ${this.multiTab},
-  production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true',
-  // vue-ls options
-  storageOptions: {
-    namespace: 'pro__',
-    name: 'ls',
-    storage: 'local',
-  }
+  production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true'
 }`
       this.$copyText(text).then(message => {
         console.log('copy', message)
