@@ -28,7 +28,7 @@ const assetsCDN = {
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
     axios: 'axios',
-    'ant-design-vue': 'Antd',
+    'ant-design-vue': 'antd',
     'wangeditor': 'wangEditor',
     'viser-vue': 'ViserVue',
     '@antv/data-set': 'DataSet'
