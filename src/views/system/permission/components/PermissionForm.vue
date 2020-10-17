@@ -95,7 +95,7 @@
         <a-col :span="12" v-show="form.getFieldValue('type') && form.getFieldValue('pid')">
           <a-form-item :label="form.getFieldValue('type') == 'action' ? '权限标识' : '路由名称'" hasFeedback>
             <a-input
-             placeholder="Manager/Page 结尾"
+              placeholder="Manager/Page 结尾"
               v-decorator="[
                 'name',
                 {
