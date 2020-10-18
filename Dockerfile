@@ -3,8 +3,8 @@ FROM nginx:1.17.7-alpine
 ARG TZ="Asia/Shanghai"
 ENV TZ ${TZ}
 
-// 国内机器构建镜像 建议开启
-// RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# 国内机器构建镜像 建议开启
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk upgrade --update \
     && apk add bash tzdata \
