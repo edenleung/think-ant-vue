@@ -72,8 +72,6 @@
           :columns="columns"
           :data="loadData"
           :alert="true"
-          :expandRowByClick="true"
-          :expandIcon="expandIcon"
           :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         >
 
@@ -91,24 +89,6 @@
           <template slot="status" slot-scope="row">
             <template v-if="row.status === 1">正常</template>
             <template v-else>禁用</template>
-          </template>
-
-          <template slot="expandedRowRender" slot-scope="row">
-            <a-row>
-              <a-col class="rule-list" span="12" v-for="(item, index) in rules" :key="index">
-                <a-row>
-                  <a-col span="4">{{ item.title }}：</a-col>
-                  <a-col span="20">
-                    <template v-if="!item.actions.length">-</template>
-                    <template v-for="(action, i) in item.actions">
-                      <a-tag :key="i" v-if="row.rules.indexOf(action.id) !== -1">
-                        {{ action.title }}
-                      </a-tag>
-                    </template>
-                  </a-col>
-                </a-row>
-              </a-col>
-            </a-row>
           </template>
 
           <template slot="tools" slot-scope="row">

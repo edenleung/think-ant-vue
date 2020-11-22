@@ -49,7 +49,7 @@ const errorHandler = (error) => {
         // const token = Vue.ls.get(ACCESS_TOKEN)
         switch (code) {
           // Token 已过期异常
-          case 50001: {
+          case 50002: {
             modal.confirm({
               title: 'Notification',
               content: 'Token 已过期，你暂不能操作任何操作，是否续期？',
@@ -65,7 +65,7 @@ const errorHandler = (error) => {
             break
           }
           // 重新登录异常
-          case 50002: {
+          case 50001: {
             modal.confirm({
               title: 'Notification',
               content: content,

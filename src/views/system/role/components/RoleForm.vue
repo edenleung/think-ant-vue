@@ -71,7 +71,7 @@
 
       <a-divider v-if="form.getFieldValue('pid')">拥有权限</a-divider>
       <a-form-item label="" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }" v-show="form.getFieldValue('pid')">
-        <a-table :columns="columns" :dataSource="rules" :pagination="false">
+        <a-table :columns="columns" :defaultExpandAllRows="true" :dataSource="rules" :pagination="false">
           <span slot="permission" slot-scope="row">
             <a-checkbox-group @change="$emit('changeAction', row)" v-model="row.selected">
               <a-checkbox :value="action.id" :disabled="action.disabled" v-for="(action, i) in row.actions" :key="i">{{
@@ -82,6 +82,7 @@
 
           <span slot="checkAll" slot-scope="row">
             <a-checkbox
+              v-if="row.type === 'menu'"
               :indeterminate="row.indeterminate"
               :checked="row.checkedAll"
               @change="$emit('checkAllActionChange', $event, row)"
@@ -136,7 +137,8 @@ export default {
     return {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
-      columns
+      columns,
+      expandedRowKeys: []
     }
   },
   beforeCreate () {
