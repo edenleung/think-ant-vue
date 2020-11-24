@@ -1,7 +1,9 @@
 import { constantRouterMap } from '@/config/router.config'
 import { Components } from '@/config/componentConfigs'
 import router, { resetRouter } from '@/router'
+import store from '@/store'
 import message from 'ant-design-vue/es/message'
+import ignore from '@/config/rootIgnore'
 
 /**
  * 过滤账户是否拥有某一个权限，并将菜单从加载列表移除
@@ -12,6 +14,10 @@ import message from 'ant-design-vue/es/message'
  */
 // eslint-disable-next-line no-unused-vars
 function hasPermission (permission, route) {
+  // 超管某些情况下不允许显示的菜单
+  if (store.getters.userInfo.id === 1 && ignore.routes.length && ignore.routes.indexOf(route.name) !== -1) {
+    return false
+  }
   if (route.meta && route.meta.permission) {
     let flag = false
     for (let i = 0, len = permission.length; i < len; i++) {

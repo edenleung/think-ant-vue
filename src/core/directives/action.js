@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import store from '@/store'
+import ignore from '@/config/rootIgnore'
 
 /**
  * Action 权限指令
@@ -35,6 +36,11 @@ const action = Vue.directive('action', {
         }
       }
     })
+
+    // 超管某些情况下不允许显示的按钮
+    if (store.getters.userInfo.id === 1 && ignore.actions.length && ignore.actions.indexOf(actionName) !== -1) {
+      flag = false
+    }
 
     if (flag === false) {
       el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
