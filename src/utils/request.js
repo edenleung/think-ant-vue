@@ -123,7 +123,7 @@ request.interceptors.response.use((response) => {
   const { config } = response
   // 响应二进制流
   if (config.responseType !== undefined && config.responseType === 'blob') {
-    return response.data
+    return response
   }
   if (response.headers['automatic-renewal-token'] !== undefined) {
     const token = response.headers['automatic-renewal-token']
