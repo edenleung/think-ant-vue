@@ -24,7 +24,7 @@
         </a-col>
 
         <a-col :span="12">
-          <a-form-item label="上级类目" hasFeedback>
+          <a-form-item label="所属上级" hasFeedback>
             <a-tree-select
               style="min-width:184px"
               :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
@@ -32,6 +32,7 @@
               allowClear
               treeDefaultExpandAll
               :treeData="treeData"
+              :replaceFields="{children:'children', title:'title', key:'id', value: 'id' }"
               @change="$emit('treeChange', $event)"
               v-decorator="[
                 'pid',
@@ -312,25 +313,9 @@ export default {
   },
   methods: {
     handleButtonTypeChange (v) {
-      const pid = this.form.getFieldValue('pid')
-      const temp = (data, target) => {
-        let result = null
-        for (const i in data) {
-          if (data[i].id.toString() === target) {
-            result = data[i]
-            break
-          }
-          if (result === null && data[i].children) {
-            result = temp(data[i].children, target)
-          }
-        }
-
-        return result
-      }
-      const t = temp(this.treeData, pid)
       this.form.setFieldsValue({
         title: this.$enum()[v].label,
-        name: t.name + v
+        name: v
       })
     }
   }

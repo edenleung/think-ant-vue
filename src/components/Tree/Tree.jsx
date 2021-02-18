@@ -48,7 +48,7 @@ export default {
     },
     renderMenuItem (item) {
       return (
-        <Item key={item.key}>
+        <Item key={item.id}>
           { this.renderIcon(item.icon) }
           { item.title }
           <a class="btn" style="width: 20px;z-index:1300" {...{ on: { click: () => this.handlePlus(item) } }}><a-icon type="plus"/></a>
@@ -64,7 +64,7 @@ export default {
       })
 
       return (
-        <ItemGroup key={item.key}>
+        <ItemGroup key={item.id}>
           <template slot="title">
             <span>{ item.title }</span>
             <a-dropdown>

@@ -4,7 +4,7 @@
       <a-col :span="5">
         <s-tree
           :dataSource="depts"
-          :openKeys="['1', '2', '3']"
+          :openKeys="expandedKeys"
           :search="true"
           @click="onSelects"
         />
@@ -41,7 +41,7 @@
           <div class="ant-pro-table-toolbar-title"></div>
           <div class="ant-pro-table-toolbar-option">
             <div class="ant-pro-table-toolbar-item">
-              <a-button v-action:CreateAccount type="primary" icon="plus" @click="$router.push({ name: 'CreateAccountView' })">新建</a-button>
+              <a-button type="primary" icon="plus" @click="$router.push({ name: 'CreateAccount' })">新建</a-button>
             </div>
             <!-- <template v-if="selectedRows.length">
               <div class="ant-pro-table-toolbar-item">
@@ -76,14 +76,7 @@
         >
 
           <template slot="dept" slot-scope="row">
-            <a-tag color="purple">{{ row.dept_name }}</a-tag>
-          </template>
-
-          <template slot="post" slot-scope="row">
-            <span v-if="row.posts.length">
-              <a-tag color="purple" v-for="post in row.posts" :key="post.postId">{{ post.post_name }}</a-tag>
-            </span>
-            <span v-else>-</span>
+            <a-tag color="purple">{{ row.dept.title }}</a-tag>
           </template>
 
           <template slot="status" slot-scope="row">
@@ -92,9 +85,9 @@
           </template>
 
           <template slot="tools" slot-scope="row">
-            <a v-action:UpdateAccount @click="$router.push({ name: 'UpdateAccountView', params: { id: row.id } })">编辑</a>
+            <a @click="$router.push({ name: 'UpdateAccount', params: { id: row.id } })">编辑</a>
             <a-divider type="vertical" />
-            <a v-action:DeleteAccount @click="showDeleteConfirm(row.id)">删除</a>
+            <a @click="showDeleteConfirm(row.id)">删除</a>
           </template>
         </s-table>
       </a-col>
@@ -104,7 +97,6 @@
 <script>
 import { STable } from '@/components'
 import STree from '@/components/Tree/Tree'
-import UserForm from './components/UserForm'
 import { fetchAccount, deleteAccount } from '@/api/account'
 const columns = [
   {
@@ -113,15 +105,11 @@ const columns = [
   },
   {
     title: '登录账号',
-    dataIndex: 'name'
+    dataIndex: 'username'
   },
   {
     title: '部门',
     scopedSlots: { customRender: 'dept' }
-  },
-  {
-    title: '岗位',
-    scopedSlots: { customRender: 'post' }
   },
   {
     title: '状态',
@@ -153,22 +141,19 @@ export default {
       loadData: parameter => {
         return fetchAccount(Object.assign(parameter, this.queryParam)).then(res => {
           res = res.result
-          const { users, roles, rules, depts, posts } = res
-          this.rules = rules
-          this.roles = roles
+          const { data, depts } = res
           this.depts = depts
-          this.posts = posts
 
           // 展开组织架构
           this.expandedDept(depts)
-          return users
+          return data
         })
       },
       selectedRowKeys: [],
       selectedRows: []
     }
   },
-  components: { STable, UserForm, STree },
+  components: { STable, STree },
   methods: {
     refreshTable (bool = false) {
       this.$refs.table.refresh(bool)
@@ -205,13 +190,13 @@ export default {
     onSelects (selectedKeys) {
       const { key } = selectedKeys
       Object.assign(this.queryParam, {
-        deptPid: key
+        dept_id: key
       })
       this.refreshTable(true)
     },
     expandedDept (depts) {
       depts.map(dept => {
-        this.expandedKeys.push(dept.value)
+        this.expandedKeys.push(dept.id)
         if (dept.children !== undefined) {
           this.expandedDept(dept.children)
         }

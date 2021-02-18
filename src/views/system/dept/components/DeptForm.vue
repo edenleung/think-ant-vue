@@ -11,7 +11,7 @@
         <a-input
           placeholder="公司/部门名称"
           v-decorator="[
-            'name',
+            'title',
             {
               rules: [{ required: true, message: '请输入公司/部门名称!' }]
             }
@@ -25,6 +25,7 @@
           :treeData="treeData"
           placeholder="选择所属上级"
           treeDefaultExpandAll
+          :replaceFields="{children:'children', title:'title', key:'id', value: 'id' }"
           v-decorator="[
             'pid',
             {

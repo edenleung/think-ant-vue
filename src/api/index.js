@@ -11,12 +11,13 @@ const api = {
   UserInfo: '/admin/user/info',
 
   Role: '/admin/role',
-  Permission: '/admin/permission',
+  Menu: '/admin/menu',
+  Action: '/admin/action',
   User: '/admin/user',
   UserCurrent: '/admin/user/current',
   ResetPassword: '/admin/user/reset-password',
   Avatar: '/admin/user/avatar',
-  Dept: '/admin/system/dept',
+  Dept: '/admin/dept',
   Post: '/admin/system/post',
   Log: {
     Acount: '/admin/log/acount',

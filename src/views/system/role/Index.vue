@@ -5,7 +5,7 @@
         <div class="ant-pro-table-toolbar-title">角色列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:CreateRole type="primary" icon="plus" @click="roleVisible = true">新建</a-button>
+            <a-button type="primary" icon="plus" @click="$router.push({ name: 'CreateRole' })">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -35,7 +35,7 @@
         :rowKey="(record) => record.id"
         :columns="columns"
         :data="loadData"
-        :alert="true"
+        :alert="false"
         :expandRowByClick="true"
         :showPagination="false"
       >
@@ -66,27 +66,14 @@
         </p> -->
 
         <template slot="tools" slot-scope="row">
-          <a v-action:UpdateRole @click="showRoleModal(row)">编辑</a>
+          <a @click="$router.push({ name: 'UpdateRole', params: { id: row.id} })">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:UpdateRoleAccess @click="showDataAccessModal(row)">数据权限</a>
+          <a @click="showDataAccessModal(row)">数据权限</a>
           <a-divider type="vertical" />
-          <a v-action:DeleteRole @click="handleRoleDeleteConfirm(row.id)">删除</a>
+          <a @click="handleRoleDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
     </a-card>
-
-    <RoleForm
-      ref="roleForm"
-      :rules="rules"
-      :treeData="roleTree"
-      :visible="roleVisible"
-      :confirmLoading="confirmLoading"
-      @changeRole="filterRuleAction"
-      @checkAllActionChange="onCheckAllActionChange"
-      @changeAction="onChangeAction"
-      @submit="handleRoleSubmit"
-      @cancel="handleRoleCancel"
-    />
 
     <DataAccessForm
       ref="dataAccessForm"
@@ -101,9 +88,8 @@
 </template>
 <script>
 import { STable } from '@/components'
-import RoleForm from './components/RoleForm'
 import DataAccessForm from './components/DataAccessForm'
-import { fetchRole, addRole, updateRole, deleteRole, updateMode } from '@/api/role'
+import { fetchRole, deleteRole, updateMode } from '@/api/role'
 const statusMap = {
   0: {
     status: 'default',
@@ -116,10 +102,6 @@ const statusMap = {
 }
 
 const columns = [
-  {
-    title: '唯一识别码',
-    dataIndex: 'name'
-  },
   {
     title: '角色名称',
     scopedSlots: { customRender: 'fulltitle' }
@@ -150,15 +132,7 @@ export default {
       queryParam: {},
       loadData: parameter => {
         return fetchRole(Object.assign(parameter, this.queryParam)).then(res => {
-          const { rules, roles, depts } = res.result
-          const { data, tree } = roles
-          this.roles = data
-          this.rules = rules
-          this.roleTree = tree
-          this.deptTree = depts
-
-          this.rulesSelectedInit(rules)
-          return roles
+          return res.result
         })
       },
       selectedRows: [],
@@ -166,7 +140,7 @@ export default {
       columns
     }
   },
-  components: { STable, RoleForm, DataAccessForm },
+  components: { STable, DataAccessForm },
   watch: {},
   filters: {
     statusFilter (type) {
@@ -196,41 +170,6 @@ export default {
       this.$refs.roleForm.form.resetFields()
       this.selectedId = 0
       this.rulesSelectedInit(this.rules)
-    },
-    handleRoleSubmit () {
-      this.$refs.roleForm.form.validateFields((err, values) => {
-        if (!err) {
-          const { selectedId, rules } = this
-          const tree = (data, selected = []) => {
-            let temp = []
-            data.map(item => {
-              if (item.type === 'menu' && item.selected.length) {
-                temp = [...temp, ...item.selected]
-              }
-              if (item.children !== undefined && item.children.length && item.type !== 'action') {
-                const result = tree(item.children)
-                if (result.length) {
-                  temp = [...temp, ...result]
-                }
-              }
-            })
-
-            return temp
-          }
-          values.rules = tree(rules)
-          const promise = selectedId === 0 ? addRole(values) : updateRole(selectedId, values)
-          this.confirmLoading = true
-          const hide = this.$message.loading('执行中..', 0)
-          promise.then(res => {
-            this.$message.success(this.selectedId === 0 ? '添加成功！' : '更新成功！')
-            this.handleRoleCancel()
-            this.refreshTable()
-          }).finally(() => {
-            hide()
-            this.confirmLoading = false
-          })
-        }
-      })
     },
     handleRoleDeleteConfirm (id) {
       this.$confirm({

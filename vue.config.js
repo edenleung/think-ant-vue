@@ -99,10 +99,11 @@ const vueConfig = {
         return args
       })
 
-      config
-        .plugin('webpack-bundle-analyzer')
-        .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
-        .end()
+      // 如使用云服务进行打包 请关闭此功能
+      // config
+      //   .plugin('webpack-bundle-analyzer')
+      //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+      //   .end()
     }
   },
 

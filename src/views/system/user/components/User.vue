@@ -11,9 +11,9 @@
           <a-input
             placeholder="请入登录账号"
             v-decorator="[
-              'name',
+              'username',
               {
-                rules: [{ required: true, message: '请输入登录账号!' }]
+                rules: [{ required: !id ? true : false, message: '请输入登录账号!' }]
               }
             ]"
           />
@@ -63,6 +63,7 @@
             placeholder="请选择角色"
             treeDefaultExpandAll
             @select="changeDeptTree"
+            :replaceFields="{children:'children', title:'title', key:'id', value: 'id' }"
             v-decorator="[
               'dept_id',
               {
@@ -95,28 +96,6 @@
         </a-form-item>
 
         <a-form-item
-          label="岗位"
-          hasFeedback
-          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
-          :wrapperCol="{lg: {span: 11}, sm: {span: 17} }"
-        >
-          <a-select
-            style="min-width:171px"
-            placeholder="请选择"
-            v-decorator="[
-              'posts',
-              {
-                rules: [{ required: false, message: '请选择岗位!' }]
-              }
-            ]"
-          >
-            <a-select-option v-for="post in posts" :key="post.id">
-              {{ post.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <a-form-item
           label="状态"
           hasFeedback
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
@@ -145,7 +124,7 @@
           :wrapperCol="{ span: 24 }"
           style="text-align: center"
         >
-          <a-button v-action:SaveCreateAccountView|SaveUpdateAccountView @click="handleSubmit" type="primary">提交</a-button>
+          <a-button @click="handleSubmit" type="primary">提交</a-button>
           <a-button style="margin-left: 8px" @click="$router.go(-1)">返回</a-button>
         </a-form-item>
       </a-form>
@@ -161,7 +140,6 @@ export default {
     return {
       loading: false,
       roles: [],
-      posts: [],
       depts: []
     }
   },
@@ -171,9 +149,8 @@ export default {
   mounted () {
     this.loading = true
     fetchData().then((res) => {
-      const { depts, posts, roles } = res.result
+      const { depts, roles } = res.result
       this.depts = depts
-      this.posts = posts
       this.roles = roles
       if (this.id) {
         this.getInfo(this.id)
@@ -226,8 +203,7 @@ export default {
             name: result.name,
             nickname: result.nickname,
             dept_id: result.dept_id,
-            roles: result.roles.map(item => item.id),
-            posts: result.posts[0] ? result.posts[0].id : '',
+            roles: result.roles.map(item => parseInt(item.v1)),
             status: result.status
           })
         })
@@ -239,7 +215,7 @@ export default {
           const promise = !this.id ? createAccount(values) : updateAccount(this.id, values)
           const hide = this.$message.loading('执行中..', 0)
           promise.then(res => {
-            this.$message.success(this.selected === 0 ? '添加成功！' : '更新成功！')
+            this.$message.success(!this.id ? '添加成功！' : '更新成功！')
             this.$router.back(-1)
           }).finally(() => {
             hide()

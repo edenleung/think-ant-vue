@@ -45,9 +45,9 @@
 
         <template slot="tools" slot-scope="row">
           <span v-if="row.pid">
-            <a v-action:UpdateDept @click="showModal(row)">编辑</a>
+            <a @click="showModal(row)">编辑</a>
             <a-divider type="vertical" />
-            <a v-action:DeleteDept @click="showDeleteConfirm(row.id)">删除</a>
+            <a @click="showDeleteConfirm(row.id)">删除</a>
           </span>
         </template>
       </s-table>
@@ -70,7 +70,7 @@ import { fetchDept, addDept, updateDept, deleteDept } from '@/api/dept'
 const columns = [
   {
     title: '部门名称',
-    dataIndex: 'name'
+    dataIndex: 'title'
   },
   {
     title: '状态',
@@ -95,10 +95,11 @@ export default {
       queryParam: {},
       loadData: parameter => {
         return fetchDept(Object.assign(parameter, this.queryParam)).then(res => {
-          this.tree = res.result
+          console.log(res.result.data)
+          this.tree = res.result.data
           // 展开所有行
-          this.expandedRow(res.result)
-          return { data: res.result }
+          this.expandedRow(res.result.data)
+          return res.result
         })
       },
       selectedRowKeys: [],
@@ -113,7 +114,7 @@ export default {
       const data = row
       this.$nextTick(() => {
         this.$refs.deptForm.form.setFieldsValue({
-          name: data.name,
+          title: data.title,
           pid: data.pid.toString(),
           status: data.status
         })

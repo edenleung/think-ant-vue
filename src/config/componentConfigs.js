@@ -13,8 +13,9 @@ export const Components = {
   Page: {
     Analysis: () => import(/* webpackChunkName: "Analysis" */ '@/views/dashboard/Analysis'),
     Workplace: () => import(/* webpackChunkName: "Workplace" */ '@/views/dashboard/Workplace'),
-    Permission: () => import(/* webpackChunkName: "Permission" */ '@/views/system/permission/Index'),
+    Menu: () => import(/* webpackChunkName: "Menu" */ '@/views/system/menu/Index'),
     Role: () => import(/* webpackChunkName: "Role" */ '@/views/system/role/Index'),
+    RoleForm: () => import(/* webpackChunkName: "RoleForm" */ '@/views/system/role/components/RoleForm'),
     Account: () => import(/* webpackChunkName: "Account" */ '@/views/system/user/Index'),
     AccountForm: () => import(/* webpackChunkName: "AccountForm" */ '@/views/system/user/components/User'),
     Dept: () => import(/* webpackChunkName: "Dept" */ '@/views/system/dept/Index'),
@@ -30,11 +31,6 @@ export const Components = {
     CustomSettings: () => import(/* webpackChunkName: "CustomSettings" */ '@/views/account/settings/Custom'),
     BindingSettings: () => import(/* webpackChunkName: "BindingSettings" */ '@/views/account/settings/Binding'),
     NotificationSettings: () => import(/* webpackChunkName: "NotificationSettings" */ '@/views/account/settings/Notification'),
-
-    // 权限测试
-    TestNotAjax: () => import(/* webpackChunkName: "TestNotAjax" */ '@/views/test/NotAjax'),
-    Form: () => import(/* webpackChunkName: "Form" */ '@/views/test/Form'),
-    CreateForm: () => import(/* webpackChunkName: "CreateForm" */ '@/views/test/components/CreateForm'),
 
     Article: () => import(/* webpackChunkName: "Article" */ '@/views/article/Index'),
     ArticleForm: () => import(/* webpackChunkName: "ArticleForm" */ '@/views/article/components/Article'),

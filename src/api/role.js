@@ -9,6 +9,13 @@ export function fetchRole (params) {
   })
 }
 
+export function getRole (id) {
+  return axios({
+    url: `${api.Role}/${id}`,
+    method: 'get'
+  })
+}
+
 export function fetchAllRole (params) {
   return axios({
     url: `${api.Role}/all`,
@@ -44,5 +51,12 @@ export function updateMode (id, data) {
     url: `${api.Role}/${id}/mode`,
     method: 'put',
     data
+  })
+}
+
+export function getConfig () {
+  return axios({
+    url: `${api.Role}/config`,
+    method: 'get'
   })
 }

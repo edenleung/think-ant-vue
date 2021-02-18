@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@ant-design-vue/pro-layout@^0.3.4":
+"@ant-design-vue/pro-layout@0.3.4":
   version "0.3.4"
-  resolved "https://registry.npmjs.org/@ant-design-vue/pro-layout/-/pro-layout-0.3.4.tgz#f7158cd7d9485b4dc1cb5b4f3d56015b4d08607a"
-  integrity sha512-N33XDb+E/AfIwWL6cC0aBSqG8YwwTv4pbUPvNmEjZTA0QV58iUDXr8+hjcxCkW4qZVyKJ4UdsBf43o1OzKZw3Q==
+  resolved "https://registry.npm.taobao.org/@ant-design-vue/pro-layout/download/@ant-design-vue/pro-layout-0.3.4.tgz#f7158cd7d9485b4dc1cb5b4f3d56015b4d08607a"
+  integrity sha1-9xWM19lIW03By1tPPVYBW00IYHo=
   dependencies:
     ant-design-vue "^1.6.2"
     classnames "^2.2.6"
@@ -2018,13 +2018,14 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
     "@types/color-name" "^1.1.1"
     color-convert "^2.0.1"
 
-ant-design-vue@^1.6.2:
-  version "1.6.2"
-  resolved "https://registry.npm.taobao.org/ant-design-vue/download/ant-design-vue-1.6.2.tgz#983634caac9cdaca0b3a095b540105b4f76da29f"
-  integrity sha1-mDY0yqyc2soLOglbVAEFtPdtop8=
+ant-design-vue@1.7.2:
+  version "1.7.2"
+  resolved "https://registry.npm.taobao.org/ant-design-vue/download/ant-design-vue-1.7.2.tgz?cache=0&sync_timestamp=1612620095556&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fant-design-vue%2Fdownload%2Fant-design-vue-1.7.2.tgz#aac7ff802205711631c8698e2a0c7b4e61dfd73e"
+  integrity sha1-qsf/gCIFcRYxyGmOKgx7TmHf1z4=
   dependencies:
     "@ant-design/icons" "^2.1.1"
     "@ant-design/icons-vue" "^2.0.0"
+    "@simonwep/pickr" "~1.7.0"
     add-dom-event-listener "^1.0.2"
     array-tree-filter "^2.1.0"
     async-validator "^3.0.3"
@@ -2053,14 +2054,13 @@ ant-design-vue@^1.6.2:
     vue-ref "^2.0.0"
     warning "^4.0.0"
 
-ant-design-vue@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.npm.taobao.org/ant-design-vue/download/ant-design-vue-1.6.4.tgz?cache=0&sync_timestamp=1595313716804&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fant-design-vue%2Fdownload%2Fant-design-vue-1.6.4.tgz#daba1ce6b357b6688dfe44a825864953a5c6c624"
-  integrity sha1-2roc5rNXtmiN/kSoJYZJU6XGxiQ=
+ant-design-vue@^1.6.2:
+  version "1.6.2"
+  resolved "https://registry.npm.taobao.org/ant-design-vue/download/ant-design-vue-1.6.2.tgz#983634caac9cdaca0b3a095b540105b4f76da29f"
+  integrity sha1-mDY0yqyc2soLOglbVAEFtPdtop8=
   dependencies:
     "@ant-design/icons" "^2.1.1"
     "@ant-design/icons-vue" "^2.0.0"
-    "@simonwep/pickr" "~1.7.0"
     add-dom-event-listener "^1.0.2"
     array-tree-filter "^2.1.0"
     async-validator "^3.0.3"

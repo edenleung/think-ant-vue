@@ -2,10 +2,10 @@
   <div class="page-header-index-wide">
     <a-card :body-style="{ padding: 0 }">
       <div class="ant-pro-table-toolbar">
-        <div class="ant-pro-table-toolbar-title">规则列表</div>
+        <div class="ant-pro-table-toolbar-title">菜单列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:CreatePermission type="primary" icon="plus" @click="visible = true">新建</a-button>
+            <a-button type="primary" icon="plus" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -48,12 +48,11 @@
                 <div style="margin-bottom:15px">唯一识别码: {{ action.name }}</div>
                 <a-button
                   size="small"
-                  v-action:UpdatePermission
                   type="primary"
                   ghost
                   @click="showActionModal(action)"
                   style="margin-right:10px">编辑</a-button>
-                <a-button size="small" v-action:DeletePermission type="danger" ghost @click="showDeleteConfirm(action.id)">删除</a-button>
+                <a-button size="small" type="danger" ghost @click="showDeleteActionConfirm(action.id)">删除</a-button>
               </template>
               <a-tag>{{ action.title }}</a-tag>
             </a-popover>
@@ -73,20 +72,20 @@
         </template>
 
         <template slot="tools" slot-scope="row">
-          <a v-action:UpdatePermission @click="showActionModal(row)">编辑</a>
+          <a @click="showActionModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:DeletePermission @click="showDeleteConfirm(row.id)" :disabled="row.name === 'Index'">删除</a>
+          <a @click="showDeleteConfirm(row.id)" :disabled="row.name === 'Index'">删除</a>
         </template>
       </s-table>
     </a-card>
 
-    <PermissionForm
-      ref="permissionForm"
+    <MenuForm
+      ref="MenuForm"
       :visible="visible"
       :selected="selected"
       :status="status"
       :typeMap="typeMap"
-      :treeData="roleTree"
+      :treeData="treeData"
       :confirmLoading="confirmLoading"
       @submit="handleSubmit"
       @cancel="handleCancel"
@@ -95,8 +94,8 @@
 </template>
 <script>
 import { STable } from '@/components'
-import PermissionForm from './components/PermissionForm'
-import { fetchPermission, addPermission, updatePermission, deletePermission } from '@/api/permission'
+import MenuForm from './components/MenuForm'
+import { fetchMenu, addMenu, updateMenu, deleteMenu, addAction, updateAction, deleteAction } from '@/api/menu'
 const status = [{ label: '是', value: 1 }, { label: '否', value: 0 }]
 const statusMap = {
   0: {
@@ -131,7 +130,7 @@ const columns = [
     dataIndex: 'title'
   },
   {
-    title: '唯一识别码',
+    title: '资源名',
     dataIndex: 'name'
   },
   {
@@ -166,13 +165,11 @@ export default {
       expandedKeys: [],
       queryParam: {},
       loadData: parameter => {
-        return fetchPermission(Object.assign(parameter, this.queryParam)).then(res => {
-          res = res.result
-          const { tree, data } = res
-          this.roleTree = tree
+        return fetchMenu(Object.assign(parameter, this.queryParam)).then(res => {
+          this.treeData = res.result.data
           // 展开所有
-          this.expandedRow(data)
-          return res
+          this.expandedRow(res.result.data)
+          return res.result
         })
       },
       loading: false,
@@ -185,7 +182,7 @@ export default {
       selectedRows: []
     }
   },
-  components: { STable, PermissionForm },
+  components: { STable, MenuForm },
   filters: {
     statusFilter (type) {
       return statusMap[type].text
@@ -205,7 +202,7 @@ export default {
       this.visible = true
       this.selected = row.id
       this.$nextTick(() => {
-        this.$refs.permissionForm.form.setFieldsValue({
+        this.$refs.MenuForm.form.setFieldsValue({
           type: row.type,
           title: row.title,
           name: row.name,
@@ -226,10 +223,16 @@ export default {
       })
     },
     handleSubmit () {
-      this.$refs.permissionForm.form.validateFields((err, values) => {
+      this.$refs.MenuForm.form.validateFields((err, values) => {
         if (!err) {
           this.confirmLoading = true
-          const promise = this.selected === 0 ? addPermission(values) : updatePermission(this.selected, values)
+          let promise = null
+          if (values.type === 'action') {
+            values.menu_id = values.pid
+            promise = this.selected === 0 ? addAction(values) : updateAction(this.selected, values)
+          } else {
+            promise = this.selected === 0 ? addMenu(values) : updateMenu(this.selected, values)
+          }
           const hide = this.$message.loading('执行中..', 0)
           promise.then(res => {
             this.$message.success(this.selected === 0 ? '添加成功！' : '更新成功！')
@@ -246,18 +249,38 @@ export default {
     handleCancel () {
       this.visible = false
       this.selected = 0
-      this.$refs.permissionForm.form.resetFields()
+      this.$refs.MenuForm.form.resetFields()
     },
-    showDeleteConfirm (id) {
+    showDeleteActionConfirm (id) {
       this.$confirm({
-        title: '确定删除此规则吗?',
+        title: '确定删除此按钮吗?',
         content: '',
         okText: '确定',
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
           const hide = this.$message.loading('删除中..', 0)
-          deletePermission(id).then(res => {
+          deleteAction(id).then(res => {
+            this.$message.success('删除成功！')
+            this.refreshTable()
+            this.$store.dispatch('ReloadRouters')
+          }).finally(() => {
+            hide()
+            this.updating = false
+          })
+        }
+      })
+    },
+    showDeleteConfirm (id) {
+      this.$confirm({
+        title: '确定删除此菜单吗?',
+        content: '',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk: () => {
+          const hide = this.$message.loading('删除中..', 0)
+          deleteMenu(id).then(res => {
             this.$message.success('删除成功！')
             this.refreshTable()
             this.$store.dispatch('ReloadRouters')
