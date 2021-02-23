@@ -5,7 +5,7 @@
         <div class="ant-pro-table-toolbar-title">菜单列表</div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button type="primary" icon="plus" @click="visible = true">新建</a-button>
+            <a-button v-action:Create type="primary" icon="plus" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -47,12 +47,13 @@
               <template slot="content">
                 <div style="margin-bottom:15px">唯一识别码: {{ action.name }}</div>
                 <a-button
+                  v-action:Update
                   size="small"
                   type="primary"
                   ghost
                   @click="showActionModal(action)"
                   style="margin-right:10px">编辑</a-button>
-                <a-button size="small" type="danger" ghost @click="showDeleteActionConfirm(action.id)">删除</a-button>
+                <a-button v-action:Delete size="small" type="danger" ghost @click="showDeleteActionConfirm(action.id)">删除</a-button>
               </template>
               <a-tag>{{ action.title }}</a-tag>
             </a-popover>
@@ -72,9 +73,9 @@
         </template>
 
         <template slot="tools" slot-scope="row">
-          <a @click="showActionModal(row)">编辑</a>
+          <a v-action:Update @click="showActionModal(row)">编辑</a>
           <a-divider type="vertical" />
-          <a @click="showDeleteConfirm(row.id)" :disabled="row.name === 'Index'">删除</a>
+          <a v-action:Delete @click="showDeleteConfirm(row.id)" :disabled="row.name === 'Index'">删除</a>
         </template>
       </s-table>
     </a-card>
@@ -164,6 +165,7 @@ export default {
       status,
       expandedKeys: [],
       queryParam: {},
+      treeData: [],
       loadData: parameter => {
         return fetchMenu(Object.assign(parameter, this.queryParam)).then(res => {
           this.treeData = res.result.data

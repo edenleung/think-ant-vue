@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import store from '@/store'
-import ignore from '@/config/rootIgnore'
 
 /**
  * Action 权限指令
@@ -18,32 +17,21 @@ import ignore from '@/config/rootIgnore'
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
     const actionName = binding.arg
-    const actions = actionName.split('|')
     const roles = store.getters.roles
-    const elVal = vnode.context.$route.meta.permission
-    const permissionId = (elVal instanceof Array && elVal) || (elVal instanceof String && [elVal]) || []
-    let flag = false
+    const permissionId = vnode.context.$route.meta.permission
+    let actions = []
     roles.permissions.forEach(p => {
-      if (!permissionId.includes(p.permissionId)) {
+      if (permissionId.indexOf(p.permissionId) === -1) {
         return
       }
-
-      for (const i in actions) {
-        const actionName = actions[i]
-        if (p.actionList && p.actionList.includes(actionName)) {
-          flag = true
-          break
-        }
-      }
+      actions = p.actionList
     })
-
-    // 超管某些情况下不允许显示的按钮
-    if (store.getters.userInfo.id === 1 && ignore.actions.length && ignore.actions.indexOf(actionName) !== -1) {
-      flag = false
-    }
-
-    if (flag === false) {
-      el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+    if (actions.indexOf(actionName) < 0) {
+      if (el.parentNode == null) {
+        el.style.display = 'none'
+      } else {
+        el.parentNode.removeChild(el)
+      }
     }
   }
 })
