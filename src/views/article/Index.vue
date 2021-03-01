@@ -74,7 +74,7 @@
         <div class="ant-pro-table-toolbar-title"></div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button v-action:CreateArticle type="primary" icon="plus" @click="$router.push({ name: 'CreateArticleView' })">新建</a-button>
+            <a-button v-action:Create type="primary" icon="plus" @click="$router.push({ name: 'CreateArticle' })">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -123,9 +123,9 @@
           <a-badge :status="type[text].status" :text="type[text].label" />
         </template>
         <template slot="tools" slot-scope="row">
-          <a v-action:UpdateArticle @click="$router.push({ name: 'UpdateArticleView', params: { id: row.id } })">编辑</a>
+          <a v-action:Update @click="$router.push({ name: 'UpdateArticle', params: { id: row.id } })">编辑</a>
           <a-divider type="vertical" />
-          <a v-action:DeleteArticle @click="showDeleteConfirm(row.id)">删除</a>
+          <a v-action:Delete @click="showDeleteConfirm(row.id)">删除</a>
         </template>
       </s-table>
     </a-card>
@@ -157,7 +157,7 @@ const columns = [
   },
   {
     title: '分类名称',
-    dataIndex: 'category_name'
+    dataIndex: 'category.title'
   },
   {
     title: '状态',

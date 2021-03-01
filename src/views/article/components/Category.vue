@@ -11,7 +11,7 @@
         <a-input
           placeholder="分类名称"
           v-decorator="[
-            'name',
+            'title',
             {
               rules: [{ required: true, message: '请输入分类名称!' }]
             }

@@ -11,7 +11,7 @@
         <a-form-item label="文章分类" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
           <a-select
             v-decorator="[
-              'category_id',
+              'article_category_id',
               { rules: [{ required: true, message: '请选择文章栏目!' }] },
             ]"
             placeholder="选择文章栏目"
@@ -36,7 +36,7 @@
             list-type="picture-card"
             class="avatar-uploader"
             :show-upload-list="false"
-            :action="baseUrl + '/api/upload/file'"
+            :action="baseUrl + '/admin/upload/file'"
             :headers="headers"
             :before-upload="beforeUpload"
             @change="handleChange"
@@ -61,7 +61,7 @@
           />
         </a-form-item>
         <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-          <a-button v-action:SaveUpdateArticleView|SaveCreateArticleView type="primary" html-type="submit">
+          <a-button v-action:Save type="primary" html-type="submit">
             发布
           </a-button>
         </a-form-item>
