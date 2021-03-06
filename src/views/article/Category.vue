@@ -5,7 +5,7 @@
         <div class="ant-pro-table-toolbar-title"></div>
         <div class="ant-pro-table-toolbar-option">
           <div class="ant-pro-table-toolbar-item">
-            <a-button type="primary" icon="plus" :loading="loading" @click="visible = true">新建</a-button>
+            <a-button v-action:Create type="primary" icon="plus" :loading="loading" @click="visible = true">新建</a-button>
           </div>
           <template v-if="selectedRows.length">
             <div class="ant-pro-table-toolbar-item">
@@ -47,9 +47,9 @@
 
         <template slot="tools" slot-scope="row">
           <template v-if="row.pid !== 0">
-            <a @click="showModal(row)">编辑</a>
+            <a v-action:Update @click="showModal(row)">编辑</a>
             <a-divider type="vertical" />
-            <a @click="showDeleteConfirm(row.id)" :disabled="row.pid === 0">删除</a>
+            <a v-action:Delete @click="showDeleteConfirm(row.id)" :disabled="row.pid === 0">删除</a>
           </template>
         </template>
       </a-table>

@@ -16,21 +16,23 @@ import store from '@/store'
  */
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
-    const actionName = binding.arg
-    const roles = store.getters.roles
-    const permissionId = vnode.context.$route.meta.permission
-    let actions = []
-    roles.permissions.forEach(p => {
-      if (permissionId.indexOf(p.permissionId) === -1) {
-        return
-      }
-      actions = p.actionList
-    })
-    if (actions.indexOf(actionName) < 0) {
-      if (el.parentNode == null) {
-        el.style.display = 'none'
-      } else {
-        el.parentNode.removeChild(el)
+    if (store.getters.userInfo.is_super !== true) {
+      const actionName = binding.arg
+      const roles = store.getters.roles
+      const permissionId = vnode.context.$route.meta.permission
+      let actions = []
+      roles.permissions.forEach(p => {
+        if (permissionId.indexOf(p.permissionId) === -1) {
+          return
+        }
+        actions = p.actionList
+      })
+      if (actions.indexOf(actionName) < 0) {
+        if (el.parentNode == null) {
+          el.style.display = 'none'
+        } else {
+          el.parentNode.removeChild(el)
+        }
       }
     }
   }
