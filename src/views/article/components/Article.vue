@@ -187,8 +187,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.avatar-uploader img {
+<style lang="sass">
+.avatar-uploader img
   max-width: 100%
-}
+
 </style>

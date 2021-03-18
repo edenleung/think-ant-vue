@@ -72,7 +72,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 .article-image {
   max-width: 25px;
   max-height: 25px;

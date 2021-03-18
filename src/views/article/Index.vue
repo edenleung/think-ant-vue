@@ -244,9 +244,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.article-image {
-  max-width: 25px;
-  max-height: 25px;
-}
+<style lang="sass" scoped>
+.article-image
+  max-width: 25px
+  max-height: 25px
 </style>

@@ -25,7 +25,7 @@
         <span>头像</span>
       </dir>
       <div class="account-settings-info-view-avatar">
-        <a-avatar :src="avatar" style="width: 144px;height:144px" />
+        <a-avatar :src="avatar" style="width: 144pxheight:144px" />
       </div>
       <a-upload
         name="file"
@@ -117,57 +117,45 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  .account-settings-info-view {
-    display: flex;
-    padding-top: 12px;
-  }
-  .account-settings-info-view- {
-    &button_view {
-      width: 144px;
-      text-align: center;
-    }
-    &avatar_title {
-      height: 22px;
-      margin-bottom: 8px;
-      color: rgba(0,0,0,.85);
-      font-size: 14px;
-      padding-left: 0;
-      margin-top: 0;
-      line-height: 22px;
-    }
-    &left {
-      min-width: 224px;
-      max-width: 448px;
-    }
-    &right {
-      flex: 1 1;
-      padding-left: 104px;
-    }
-    &avatar {
-      width: 144px;
-      height: 144px;
-      margin-bottom: 12px;
-      overflow: hidden;
-        img {
-          width: 100%;
-        }
-    }
-  }
+<style lang="sass" scoped>
+  .account-settings-info-view
+    display: flex
+    padding-top: 12px
+  .account-settings-info-view-
+    &button_view
+      width: 144px
+      text-align: center
+    &avatar_title
+      height: 22px
+      margin-bottom: 8px
+      color: rgba(0,0,0,.85)
+      font-size: 14px
+      padding-left: 0
+      margin-top: 0
+      line-height: 22px
+    &left
+      min-width: 224px
+      max-width: 448px
+    &right
+      flex: 1 1
+      padding-left: 104px
+    &avatar
+      width: 144px
+      height: 144px
+      margin-bottom: 12px
+      overflow: hidden
+      img
+        width: 100%
 
-  @media screen and (max-width: 1200px) {
-    .account-settings-info-view {
-      flex-direction: column-reverse;
-    }
-    .account-settings-info-view-avatar_title {
+  @media screen and (max-width: 1200px)
+    .account-settings-info-view
+      flex-direction: column-reverse
+    .account-settings-info-view-avatar_title
       display: none
-    }
-    .account-settings-info-view-right {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 448px;
-      padding: 20px;
-    }
-  }
+    .account-settings-info-view-right
+      display: flex
+      flex-direction: column
+      align-items: center
+      max-width: 448px
+      padding: 20px
 </style>

@@ -206,20 +206,18 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.company {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    padding: 0 24px;
-    line-height: 64px;
-    &-title {
-      flex: 1 1;
-      color: #000;
-      font-size: 16px;
-      line-height: 24px;
-      opacity: .85;
-    }
-}
+<style lang="sass">
+.company
+    display: flex
+    align-items: center
+    justify-content: space-between
+    height: 64px
+    padding: 0 24px
+    line-height: 64px
+    &-title
+      flex: 1 1
+      color: #000
+      font-size: 16px
+      line-height: 24px
+      opacity: .85
 </style>
