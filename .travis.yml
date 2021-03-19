@@ -1,4 +1,6 @@
 language: ruby
+node_js:
+  - "10"
 services:
   - docker
 cache:
