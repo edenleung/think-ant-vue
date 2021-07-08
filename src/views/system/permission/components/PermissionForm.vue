@@ -330,7 +330,7 @@ export default {
       const t = temp(this.treeData, pid)
       this.form.setFieldsValue({
         title: this.$enum()[v].label,
-        name: t.name + v
+        name: v + t.name
       })
     }
   }
